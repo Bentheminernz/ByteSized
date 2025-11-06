@@ -10,8 +10,28 @@ import FoundationModels
 
 struct TemperatureLesson: View {
   @State private var temperature: Double = 0.5
-  @State private var userInput: String = ""
-  @State private var modelOutput: String = "Model output will appear here."
+  @State private var userInput: String = "Hello there! Can you tell me a joke?"
+  @State private var modelOutput: String = ""
+  @State private var generationStatus: generationState = .idle
+  var modelStatusText: String {
+    switch generationStatus {
+    case .idle:
+      return ""
+    case .requested:
+      return "Preparing..."
+    case .generating:
+      return "Generating..."
+    case .completed:
+      return "Completed"
+    }
+  }
+  
+  enum generationState {
+    case idle
+    case requested
+    case generating
+    case completed
+  }
   
   let session: LanguageModelSession
   
@@ -21,8 +41,14 @@ struct TemperatureLesson: View {
   
   var body: some View {
     VStack {
+      Text("Temperature: \(String(format: "%.1f", temperature))")
+        .contentTransition(.numericText(value: temperature))
       Slider(value: $temperature, in: 0...1, step: 0.1) {
         Text("Temperature: \(String(format: "%.1f", temperature))")
+      } minimumValueLabel: {
+        Text("0.0")
+      } maximumValueLabel: {
+        Text("1.0")
       }
       
       TextField("Enter your prompt here", text: $userInput)
@@ -35,29 +61,50 @@ struct TemperatureLesson: View {
         }
       }
       
+      Text(modelStatusText)
+
       Text(modelOutput)
         .padding()
         .glassEffect(in: .rect(cornerRadius: 10))
     }
+    .padding()
+    .animation(.bouncy, value: temperature)
     .onAppear {
       session.prewarm()
+    }
+    .onChange(of: temperature) {
+      if generationStatus != .generating && generationStatus != .requested {
+        modelOutput = ""
+        Task {
+          await generateResponse()
+        }
+      }
     }
   }
   
   private func generateResponse() async {
-    let options: GenerationOptions = GenerationOptions(
-      temperature: temperature
-    )
-    
-    let response = try? await session.respond(
-      to: userInput,
-      options: options
-    )
-    
-    if let response {
-      modelOutput = response.content
-    } else {
-      modelOutput = "Failed to generate response."
+    generationStatus = .requested
+    do {
+      let options: GenerationOptions = GenerationOptions(
+        temperature: temperature,
+        maximumResponseTokens: 150
+      )
+      
+      let response = session.streamResponse(
+        to: userInput,
+        options: options
+      )
+      generationStatus = .generating
+      
+      for try await content in response {
+        withAnimation(.bouncy) {
+          modelOutput = content.content
+        }
+      }
+      generationStatus = .completed
+    } catch {
+      modelOutput = "Failed to generate response: \(error.localizedDescription)"
+      generationStatus = .completed
     }
   }
 }

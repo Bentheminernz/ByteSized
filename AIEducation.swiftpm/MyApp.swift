@@ -2,10 +2,12 @@ import SwiftUI
 
 @main
 struct MyApp: App {
-    var body: some Scene {
-        WindowGroup {
-            TemperatureLesson()
-        }
+  var body: some Scene {
+    WindowGroup {
+      NavigationStack {
+        MainView()
+      }
     }
+  }
 }
 
