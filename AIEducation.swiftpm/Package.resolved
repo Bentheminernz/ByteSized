@@ -1,0 +1,15 @@
+{
+  "originHash" : "d2e35e31b3753c9d0e4cfde86c14613f99283587b2fcc8e0ac84c16f59423bc4",
+  "pins" : [
+    {
+      "identity" : "intelligenceglow",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Livsy90/IntelligenceGlow",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7801e6fdad21a81f1fbad06c5a6352c836bc42af"
+      }
+    }
+  ],
+  "version" : 3
+}

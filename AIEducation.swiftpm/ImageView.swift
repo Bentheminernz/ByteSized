@@ -8,6 +8,7 @@
 import SwiftUI
 import FoundationModels
 import ImagePlayground
+import UIKit
 
 struct FallingImage: Identifiable {
     let id = UUID()
@@ -209,9 +210,11 @@ struct AIImageGenTutorial: View {
       case .trainingData:
         TrainingData()
       case .demo:
-        Spacer()
+        DemoView()
       }
     }
+    
+    Spacer()
     
     HStack {
       Button("Previous") {
@@ -297,3 +300,85 @@ struct TrainingData: View {
     }
   }
 }
+
+struct DemoView: View {
+  @State private var generatedImages: [CGImage?] = Array(repeating: nil, count: 3)
+  @State private var imageStyle: ImagePlaygroundStyle = .animation
+  
+  var body: some View {
+    VStack {
+      Picker("Image Style", selection: $imageStyle) {
+        Text("Animation").tag(ImagePlaygroundStyle.animation)
+        Text("Sketch").tag(ImagePlaygroundStyle.sketch)
+        Text("Illustration").tag(ImagePlaygroundStyle.illustration)
+      }
+      
+      ScrollView(.horizontal) {
+        HStack(spacing: 16) {
+          ForEach(generatedImages.indices, id: \.self) { idx in
+            Group {
+              if let cgImage = generatedImages[idx] {
+                Image(uiImage: UIImage(cgImage: cgImage))
+                  .resizable()
+                  .scaledToFit()
+                  .clipShape(.rect(cornerRadius: 8))
+                  .intelligence(spread: 4, shape: .rect(cornerRadius: 8))
+              } else {
+                ZStack {
+                  RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.gray.opacity(0.15))
+                    .overlay(
+                      RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+                  VStack(spacing: 8) {
+                    ProgressView()
+                    Text("Loading…")
+                      .font(.footnote)
+                      .foregroundStyle(.secondary)
+                  }
+                }
+                .frame(width: 300, height: 300)
+              }
+            }
+          }
+        }
+        .padding()
+      }
+    }
+    .padding()
+    .onAppear {
+      generatedImages = Array(repeating: nil, count: 3)
+      Task {
+        await generateImages()
+      }
+    }
+    .onChange(of: imageStyle) {
+      generatedImages = Array(repeating: nil, count: 3)
+      Task {
+        await generateImages()
+      }
+    }
+  }
+  
+  private func generateImages() async {
+    do {
+      let imageCreator = try await ImageCreator()
+      let imageSequence = imageCreator.images(
+        for: [.text("A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze")],
+        style: imageStyle,
+        limit: 3
+      )
+      for try await generated in imageSequence {
+        if let emptyIndex = generatedImages.firstIndex(where: { $0 == nil }) {
+          withAnimation(.bouncy) {
+            generatedImages[emptyIndex] = generated.cgImage
+          }
+        }
+      }
+    } catch {
+      print("Error occurred \(error)")
+    }
+  }
+}
+
