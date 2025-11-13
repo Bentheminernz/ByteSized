@@ -7,48 +7,58 @@
 
 import SwiftUI
 
-struct Lesson: Identifiable, Equatable {
-  let id: String
-  let title: String
-  let description: String
-}
-
 struct MainView: View {
   @Namespace private var animation
   @State private var selectedLesson: Lesson?
-
-  let grid = [
-    GridItem(.flexible()),
-    GridItem(.flexible())
-  ]
   
   var body: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      LazyHGrid(rows: grid, spacing: 20) {
-        ForEach(1...12, id: \.self) { index in
-          let lesson = Lesson(
-            id: "lesson_\(index)",
-            title: "Lorem \(index)",
-            description: "Description for lorem \(index)."
-          )
-          Button {
-            selectedLesson = lesson
-          } label: {
-            LessonCard(id: lesson.id, title: lesson.title, description: lesson.description)
+    ScrollView {
+      VStack(alignment: .leading, spacing: 24) {
+        ForEach(LessonCourses.allCourses) { course in
+          VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading) {
+              Text(course.title)
+                .font(.title2).bold()
+              
+              Text(course.description)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+              LazyHStack(spacing: 16) {
+                ForEach(course.lessons) { lesson in
+                  Button {
+                    selectedLesson = lesson
+                  } label: {
+                    LessonCard(lesson)
+                      .frame(width: 400, height: 120, alignment: .leading)
+                  }
+                  .buttonStyle(.plain)
+                  .matchedTransitionSource(id: lesson.id, in: animation)
+                  .scrollTransition { content, phase in
+                    content
+                      .opacity(phase.isIdentity ? 1 : 0)
+                      .scaleEffect(phase.isIdentity ? 1 : 0.8)
+                      .blur(radius: phase.isIdentity ? 0 : 10)
+                  }
+                }
+              }
+              .padding()
+            }
           }
-          .buttonStyle(.plain)
-          .matchedTransitionSource(id: lesson.id, in: animation)
           .scrollTransition { content, phase in
             content
               .opacity(phase.isIdentity ? 1 : 0)
-              .scaleEffect(phase.isIdentity ? 1 : 0.5)
+              .scaleEffect(phase.isIdentity ? 1 : 0.95)
               .blur(radius: phase.isIdentity ? 0 : 10)
           }
         }
       }
-      .padding()
     }
-    .navigationTitle("Lorem")
+    .padding(.top)
+    .navigationTitle("AI Education")
     .background(
       LinearGradient(
         gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.2)]),
@@ -62,10 +72,10 @@ struct MainView: View {
   }
   
   @ViewBuilder
-  private func LessonCard(id: String, title: String, description: String) -> some View {
+  private func LessonCard(_ lesson: Lesson) -> some View {
     VStack(alignment: .leading) {
       HStack {
-        Image(systemName: "star")
+        Image(systemName: "\(lesson.icon, default: "book")")
           .resizable()
           .scaledToFit()
           .frame(width: 40, height: 40)
@@ -73,10 +83,10 @@ struct MainView: View {
           .symbolColorRenderingMode(.gradient)
         
         VStack(alignment: .leading) {
-          Text(title)
+          Text(lesson.title)
             .font(.headline)
             .padding(.bottom, 2)
-          Text(description)
+          Text(lesson.description)
             .font(.subheadline)
             .foregroundColor(.secondary)
         }
@@ -97,6 +107,8 @@ struct LessonSheet: View {
     VStack(alignment: .leading, spacing: 16) {
       LessonHeaderCard(id: lesson.id, title: lesson.title)
         .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
+      
+      lesson.view
     }
     .padding()
     .background(
@@ -114,7 +126,7 @@ struct LessonSheet: View {
 }
 
 private struct LessonHeaderCard: View {
-  let id: String
+  let id: Int
   let title: String
 
   var body: some View {
@@ -135,21 +147,16 @@ private struct LessonHeaderCard: View {
 }
 
 private struct FakeNavBar: View {
+  @Environment(\.colorScheme) private var colorScheme
   let title: String
   let onClose: () -> Void
 
   var body: some View {
     ZStack {
       Rectangle()
-        .fill(.black)
+        .fill(colorScheme == .light ? .gray.opacity(0.1) : .black)
         .ignoresSafeArea(edges: .top)
         .frame(height: 56)
-//        .overlay(
-//          Rectangle()
-//            .fill(Color.primary.opacity(0.08))
-//            .frame(height: 0.5)
-//            .frame(maxHeight: .infinity, alignment: .bottom), alignment: .bottom
-//        )
 
       HStack {
         Spacer().frame(width: 44)
@@ -175,4 +182,3 @@ private struct FakeNavBar: View {
     }
   }
 }
-
