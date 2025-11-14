@@ -26,7 +26,6 @@ func AppleIntelligenceUnavailableUI(_ reason: SystemLanguageModel.Availability.U
   case .modelNotReady:
     ContentUnavailableView {
       Label("Apple Intelligence Not Ready", systemImage: "apple.intelligence.badge.xmark")
-        .symbolEffect(.drawOn)
     } description: {
       Text("Apple Intelligence is not ready yet. Please try again later.")
     }

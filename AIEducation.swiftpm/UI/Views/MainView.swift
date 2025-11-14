@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainView: View {
   @Namespace private var animation
+  @State private var expandedCardId: Int?
   @State private var selectedLesson: Lesson?
   
   var body: some View {
@@ -29,20 +30,14 @@ struct MainView: View {
             ScrollView(.horizontal, showsIndicators: false) {
               LazyHStack(spacing: 16) {
                 ForEach(course.lessons) { lesson in
-                  Button {
-                    selectedLesson = lesson
-                  } label: {
-                    LessonCard(lesson)
-                      .frame(width: 400, height: 120, alignment: .leading)
-                  }
-                  .buttonStyle(.plain)
-                  .matchedTransitionSource(id: lesson.id, in: animation)
-                  .scrollTransition { content, phase in
-                    content
-                      .opacity(phase.isIdentity ? 1 : 0)
-                      .scaleEffect(phase.isIdentity ? 1 : 0.8)
-                      .blur(radius: phase.isIdentity ? 0 : 10)
-                  }
+                  LessonCard(lesson)
+                    .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
+                    .onTapGesture {
+                      withAnimation(.bouncy(duration: 0.3)) {
+                        expandedCardId = (expandedCardId == lesson.id) ? nil : lesson.id
+                      }
+                    }
+                    .matchedTransitionSource(id: lesson.id, in: animation)
                 }
               }
               .padding()
@@ -61,13 +56,14 @@ struct MainView: View {
     .navigationTitle("AI Education")
     .background(
       LinearGradient(
-        gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.2)]),
+        gradient: Gradient(colors: [Colours.Icterine.opacity(0.5), Colours.LightGreen.opacity(0.5)]),
         startPoint: .topLeading,
         endPoint: .bottomTrailing
       )
     )
     .fullScreenCover(item: $selectedLesson) { lesson in
       LessonSheet(lesson: lesson, animation: animation, onClose: { selectedLesson = nil })
+        .interactiveDismissDisabled()
     }
   }
   
@@ -79,7 +75,7 @@ struct MainView: View {
           .resizable()
           .scaledToFit()
           .frame(width: 40, height: 40)
-          .foregroundColor(.accentColor)
+//          .foregroundStyle(.accentColor)
           .symbolColorRenderingMode(.gradient)
         
         VStack(alignment: .leading) {
@@ -88,10 +84,24 @@ struct MainView: View {
             .padding(.bottom, 2)
           Text(lesson.description)
             .font(.subheadline)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
         }
       }
       Spacer()
+      
+      if expandedCardId == lesson.id {
+        Button(action: {
+          selectedLesson = lesson
+          expandedCardId = nil
+        }) {
+          Text("Start Lesson")
+            .font(.headline)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial, in: Capsule())
+        }
+        .buttonStyle(.plain)
+      }
     }
     .padding()
     .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
@@ -102,13 +112,61 @@ struct LessonSheet: View {
   let lesson: Lesson
   let animation: Namespace.ID
   let onClose: () -> Void
+  
+  @State private var currentIndex: Int = 0
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      LessonHeaderCard(id: lesson.id, title: lesson.title)
-        .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
+      if currentIndex == 0 {
+        LessonHeaderCard(id: lesson.id, title: lesson.title)
+          .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
+      }
       
-      lesson.view
+      Group {
+        lesson.slides[currentIndex]
+      }
+      .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+      .animation(.bouncy, value: currentIndex)
+      .frame(maxHeight: .infinity)
+      
+      Spacer()
+      
+      HStack {
+        Button("Previous") {
+          withAnimation(.bouncy) {
+            currentIndex = max(currentIndex - 1, 0)
+          }
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(currentIndex == 0)
+        
+        Spacer()
+        
+        HStack {
+          ForEach(lesson.slides.indices, id: \.self) { idx in
+            Capsule()
+              .fill(idx == currentIndex ? Color.green : Color.gray.opacity(0.5))
+              .frame(width: idx == currentIndex ? 40 : 15, height: 15)
+              .onTapGesture {
+                withAnimation(.bouncy) {
+                  currentIndex = idx
+                }
+              }
+          }
+        }
+        .padding()
+        .glassEffect(.clear.interactive(), in: .capsule)
+        
+        Spacer()
+        
+        Button("Next") {
+          withAnimation(.bouncy) {
+            currentIndex = min(currentIndex + 1, lesson.slides.count - 1)
+          }
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(currentIndex == lesson.slides.count - 1)
+      }
     }
     .padding()
     .background(
@@ -119,9 +177,11 @@ struct LessonSheet: View {
       )
       .ignoresSafeArea()
     )
-    .safeAreaInset(edge: .top) {
-      FakeNavBar(title: lesson.title, onClose: onClose)
+    #if DEBUG
+    .onPencilSqueeze {phase in 
+      onClose()
     }
+    #endif
   }
 }
 
@@ -135,7 +195,6 @@ private struct LessonHeaderCard: View {
         .resizable()
         .scaledToFit()
         .frame(width: 48, height: 48)
-        .foregroundColor(.accentColor)
         .symbolColorRenderingMode(.gradient)
       Text(title)
         .font(.title2).bold()
@@ -146,39 +205,10 @@ private struct LessonHeaderCard: View {
   }
 }
 
-private struct FakeNavBar: View {
-  @Environment(\.colorScheme) private var colorScheme
-  let title: String
-  let onClose: () -> Void
-
-  var body: some View {
-    ZStack {
-      Rectangle()
-        .fill(colorScheme == .light ? .gray.opacity(0.1) : .black)
-        .ignoresSafeArea(edges: .top)
-        .frame(height: 56)
-
-      HStack {
-        Spacer().frame(width: 44)
-
-        Text(title)
-          .font(.headline)
-          .lineLimit(1)
-          .truncationMode(.tail)
-          .frame(maxWidth: .infinity)
-
-        Button(action: onClose) {
-          Text("Done")
-            .font(.headline)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(.ultraThinMaterial, in: Capsule())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Close")
-      }
-      .padding(.horizontal, 12)
-      .frame(height: 56)
-    }
-  }
+struct Colours {
+  static let Icterine = Color(red: 0.38, green: 0.949, blue: 0.761)
+  static let GreenYellow = Color(red: 0.761, green: 0.949, blue: 0.38) // #c2f261
+  static let LightGreen = Color(red: 0.569, green: 0.949, blue: 0.569) // #91f291
+  static let Aquamarine = Color(red: 0.38, green: 0.949, blue: 0.761) // #61f2c2
+  static let FlourescantCyan = Color(red: 0.188, green: 0.949, blue: 0.949) // #30f2f2
 }
