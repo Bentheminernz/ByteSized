@@ -8,13 +8,13 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "AIEduation",
+    name: "AIEducation",
     platforms: [
         .iOS("26.0")
     ],
     products: [
         .iOSApplication(
-            name: "AIEduation",
+            name: "AIEducation",
             targets: ["AppModule"],
             bundleIdentifier: "com.bentheminernz.AIEduation",
             teamIdentifier: "4TD3JXVDW7",

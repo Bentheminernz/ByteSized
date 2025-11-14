@@ -3,6 +3,8 @@ import FoundationModels
 
 @main
 struct MyApp: App {
+  @AppStorage("hasSeenWelcome") var hasSeenWelcome: Bool = false
+  
   let model: SystemLanguageModel = SystemLanguageModel.default
   
   var body: some Scene {
@@ -23,6 +25,14 @@ struct MyApp: App {
                   .navigationTitle("Playground")
               }
             }
+          }
+          .fullScreenCover(
+            isPresented: Binding(
+              get: { !hasSeenWelcome },
+              set: { _ in }
+            )
+          ) {
+            Welcome()
           }
         case .unavailable(let unavailableReason):
           AppleIntelligenceUnavailableUI(unavailableReason)

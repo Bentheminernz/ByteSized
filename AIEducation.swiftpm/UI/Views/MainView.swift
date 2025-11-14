@@ -117,13 +117,13 @@ struct LessonSheet: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      if currentIndex == 0 {
-        LessonHeaderCard(id: lesson.id, title: lesson.title)
+      if lesson.slides[currentIndex].hideHeader != true {
+        LessonHeaderCard(slide: lesson.slides[currentIndex])
           .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
       }
       
       Group {
-        lesson.slides[currentIndex]
+        lesson.slides[currentIndex].content
       }
       .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
       .animation(.bouncy, value: currentIndex)
@@ -178,7 +178,7 @@ struct LessonSheet: View {
       .ignoresSafeArea()
     )
     #if DEBUG
-    .onPencilSqueeze {phase in 
+    .onPencilSqueeze {phase in
       onClose()
     }
     #endif
@@ -186,17 +186,16 @@ struct LessonSheet: View {
 }
 
 private struct LessonHeaderCard: View {
-  let id: Int
-  let title: String
+  let slide: Slide
 
   var body: some View {
     HStack(spacing: 12) {
-      Image(systemName: "sparkles")
+      Image(systemName: slide.icon)
         .resizable()
         .scaledToFit()
         .frame(width: 48, height: 48)
         .symbolColorRenderingMode(.gradient)
-      Text(title)
+      Text(slide.title)
         .font(.title2).bold()
       Spacer()
     }
