@@ -7,6 +7,8 @@
 
 import SwiftUI
 import FoundationModels
+import AVKit
+import MediaPlayer
 
 struct WhatIsAILesson1: View {
   var body: some View {
@@ -237,27 +239,127 @@ struct WhatIsAILesson3: View {
 }
 
 struct WhatIsAILesson4: View {
-  var body: some View {
-    VStack {
-      HStack {
-        Circle()
-        
-        Image(systemName: "arrow.left.arrow.right")
+    @State private var player = AVPlayer(url: Bundle.main.url(forResource: "newFeatures", withExtension: "mp4")!)
+    @State private var vehicleState: VehicleState = .stop
 
-        Circle()
-      }
-      
-      HStack {
-        Circle()
-      }
-      
-      HStack {
-        Circle()
-        
-        Image(systemName: "arrow.left.arrow.right")
-        
-        Circle()
-      }
+    enum VehicleState {
+        case stop
+        case go
     }
+
+    var body: some View {
+        VStack {
+            Text("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
+                .padding()
+
+            HStack {
+                CleanVideoPlayer(player: player)
+                    .frame(width: 300, height: 200)
+                    .onAppear { player.play() }
+                    .onVideoTime(3.21, player: player) {
+                        vehicleState = .go
+                    }
+                    .onVideoTime(7.0, player: player) {
+                        vehicleState = .stop
+                    }
+
+                Image(systemName: "arrow.right")
+                    .font(.largeTitle)
+
+                NeuralNetwork()
+                    .frame(width: 400, height: 200)
+
+                Image(systemName: "arrow.right")
+                    .font(.largeTitle)
+
+                VStack {
+                    Image(systemName: vehicleState == .go ? "car.fill" : "car")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 100)
+                        .foregroundStyle(vehicleState == .go ? Color.green.gradient : Color.red.gradient)
+                        .symbolEffect(.pulse, isActive: vehicleState == .go)
+
+                    Text(vehicleState == .go ? "Go!" : "Stop")
+                }
+                .frame(width: 120)
+            }
+        }
+        .onAppear {
+            player.seek(to: .zero)
+            vehicleState = .stop
+        }
+    }
+}
+
+struct NeuralNetwork: View {
+  var body: some View {
+    GeometryReader { geo in
+      let shortest = min(geo.size.width, geo.size.height)
+      let circleSize = shortest * 0.27
+      
+      let w = geo.size.width
+      let h = geo.size.height
+      
+      let topY = h * 0.20
+      let midY = h * 0.50
+      let botY = h * 0.80
+      
+      let leftX = w * 0.25
+      let rightX = w * 0.75
+      
+      ZStack {
+        circle(at: CGPoint(x: leftX,  y: topY),  size: circleSize)
+        circle(at: CGPoint(x: rightX, y: topY),  size: circleSize)
+        circle(at: CGPoint(x: w/2,    y: midY),  size: circleSize * 0.9)
+        circle(at: CGPoint(x: leftX,  y: botY),  size: circleSize)
+        circle(at: CGPoint(x: rightX, y: botY),  size: circleSize)
+        
+        arrow(from: CGPoint(x: leftX, y: topY),
+              to:   CGPoint(x: rightX, y: topY))
+        
+        arrow(from: CGPoint(x: leftX, y: botY),
+              to:   CGPoint(x: rightX, y: botY))
+        
+        arrow(from: CGPoint(x: leftX,  y: topY),
+              to:   CGPoint(x: w/2,    y: midY))
+        
+        arrow(from: CGPoint(x: rightX, y: topY),
+              to:   CGPoint(x: w/2,    y: midY))
+        
+        arrow(from: CGPoint(x: w/2,    y: midY),
+              to:   CGPoint(x: leftX,  y: botY))
+        
+        arrow(from: CGPoint(x: w/2,    y: midY),
+              to:   CGPoint(x: rightX, y: botY))
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+  }
+  
+  func circle(at point: CGPoint, size: CGFloat) -> some View {
+    Circle()
+      .fill(Color.blue.gradient)
+      .frame(width: size, height: size)
+      .position(point)
+  }
+  
+  func arrow(from: CGPoint, to: CGPoint) -> some View {
+    let dx = to.x - from.x
+    let dy = to.y - from.y
+    let angle = atan2(dy, dx) * 180 / .pi
+    
+    return Image(systemName: "arrow.left.arrow.right")
+      .font(.system(size: 36))
+      .symbolEffect(.pulse)
+      .symbolEffect(.wiggle.byLayer,
+                    options: .repeat(.continuous).speed(0.15))
+      .symbolRenderingMode(.palette)
+      .foregroundStyle(Color.green.gradient, Color.blue.gradient)
+      .rotationEffect(.degrees(angle))
+      .position(CGPoint(
+        x: (from.x + to.x) / 2,
+        y: (from.y + to.y) / 2
+      ))
   }
 }
