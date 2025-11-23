@@ -94,9 +94,15 @@ struct LessonCourses {
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
+              title: "Tokens",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
+              content: AnyView(TokenContextLesson1())
+            ),
+            Slide(
+              id: 2,
+              title: "Context Windows",
+              icon: "book.fill",
+              content: AnyView(TokenContextLesson2())
             )
           ]
         ),

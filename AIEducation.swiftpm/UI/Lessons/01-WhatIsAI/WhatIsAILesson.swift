@@ -239,57 +239,85 @@ struct WhatIsAILesson3: View {
 }
 
 struct WhatIsAILesson4: View {
-    @State private var player = AVPlayer(url: Bundle.main.url(forResource: "newFeatures", withExtension: "mp4")!)
-    @State private var vehicleState: VehicleState = .stop
-
-    enum VehicleState {
-        case stop
-        case go
+  @State private var player = AVPlayer(url: Bundle.main.url(forResource: "driving", withExtension: "mp4")!)
+  @State private var vehicleState: VehicleState = .go
+  
+  enum VehicleState {
+    case stop
+    case braking
+    case go
+    
+    var systemImageName: String {
+      switch self {
+      case .stop:
+        return "car.fill"
+      case .braking:
+        return "car.fill"
+      case .go:
+        return "car.fill"
+      }
     }
-
-    var body: some View {
-        VStack {
-            Text("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
-                .padding()
-
-            HStack {
-                CleanVideoPlayer(player: player)
-                    .frame(width: 300, height: 200)
-                    .onAppear { player.play() }
-                    .onVideoTime(3.21, player: player) {
-                        vehicleState = .go
-                    }
-                    .onVideoTime(7.0, player: player) {
-                        vehicleState = .stop
-                    }
-
-                Image(systemName: "arrow.right")
-                    .font(.largeTitle)
-
-                NeuralNetwork()
-                    .frame(width: 400, height: 200)
-
-                Image(systemName: "arrow.right")
-                    .font(.largeTitle)
-
-                VStack {
-                    Image(systemName: vehicleState == .go ? "car.fill" : "car")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 100)
-                        .foregroundStyle(vehicleState == .go ? Color.green.gradient : Color.red.gradient)
-                        .symbolEffect(.pulse, isActive: vehicleState == .go)
-
-                    Text(vehicleState == .go ? "Go!" : "Stop")
-                }
-                .frame(width: 120)
-            }
-        }
-        .onAppear {
-            player.seek(to: .zero)
+    
+    var description: String {
+      switch self {
+      case .stop:
+        return "Stop"
+      case .braking:
+        return "Brake"
+      case .go:
+        return "Go"
+      }
+    }
+      
+  }
+  
+  var body: some View {
+    VStack {
+      Text("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
+        .padding()
+      
+      HStack {
+        CleanVideoPlayer(player: player)
+          .frame(width: 300, height: 200)
+          .onAppear { player.play() }
+          .onVideoTime(3, player: player) {
+            vehicleState = .braking
+          }
+          .onVideoTime(17.0, player: player) {
             vehicleState = .stop
+          }
+          .onVideoTime(25.0, player: player) {
+            vehicleState = .go
+          }
+        
+        Image(systemName: "arrow.right")
+          .font(.largeTitle)
+        
+        NeuralNetwork()
+          .frame(width: 400, height: 200)
+        
+        Image(systemName: "arrow.right")
+          .font(.largeTitle)
+        
+        VStack {
+          Image(systemName: vehicleState.systemImageName)
+            .resizable()
+            .scaledToFit()
+            .frame(height: 100)
+            .foregroundStyle(vehicleState == .go ? Color.green.gradient : Color.red.gradient)
+            .symbolEffect(.pulse, isActive: vehicleState == .go)
+          
+          Text(vehicleState.description)
+            .font(.headline)
         }
+        .frame(width: 120)
+      }
     }
+    .onAppear {
+      player.seek(to: .zero)
+      vehicleState = .stop
+    }
+  }
 }
 
 struct NeuralNetwork: View {

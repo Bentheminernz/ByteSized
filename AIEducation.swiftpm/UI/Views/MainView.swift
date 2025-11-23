@@ -11,7 +11,7 @@ struct MainView: View {
   @Namespace private var animation
   @State private var expandedCardId: Int?
   #if DEBUG
-  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.first?.lessons.first
+  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first
   #else
   @State private var selectedLesson: Lesson?
   #endif

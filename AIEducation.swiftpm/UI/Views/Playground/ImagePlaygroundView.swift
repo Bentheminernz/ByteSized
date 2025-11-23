@@ -249,7 +249,7 @@ struct ImagePlaygroundView: View {
           }
         }
       }
-      .edgesIgnoringSafeArea(.bottom)
+      .ignoresSafeArea(edges: .bottom)
     }
   }
   

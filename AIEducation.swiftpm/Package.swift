@@ -33,7 +33,8 @@ let package = Package(
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
-                .photoLibraryAdd(purposeString: "AI Education needs access in order to save images.")
+                .photoLibraryAdd(purposeString: "AI Education needs access in order to save images."),
+                .contacts(purposeString: "Let the AI Model access your contacts.")
             ]
         )
     ],
