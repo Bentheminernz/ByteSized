@@ -38,9 +38,15 @@ let package = Package(
             ]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/appstefan/HighlightSwift", "1.0.9"..<"2.0.0")
+    ],
     targets: [
         .executableTarget(
             name: "AppModule",
+            dependencies: [
+                .product(name: "HighlightSwift", package: "highlightswift")
+            ],
             path: ".",
             resources: [
                 .process("Resources")

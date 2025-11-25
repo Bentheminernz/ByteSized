@@ -19,8 +19,24 @@ struct ImagePlaygroundView: View {
   @State private var playgroundLoadedImages: [CGImage] = []
   @State private var generatedImages: [CGImage?] = []
   
-  @State private var isGenerating: Bool = false
+  @State private var generationState: GenerationState = .idle
   @State private var generationError: ImageCreator.Error?
+  
+  enum GenerationState {
+    case idle
+    case requested
+    case generating
+    case completed
+    
+    var modelStatusText: String {
+      switch self {
+      case .idle: return "Idle"
+      case .requested: return "Preparing..."
+      case .generating: return "Generating..."
+      case .completed: return "Completed"
+      }
+    }
+  }
   
   var body: some View {
     GeometryReader { geometry in
@@ -31,6 +47,29 @@ struct ImagePlaygroundView: View {
             Text("Controls")
               .font(.title2.bold())
               .padding(.bottom, 8)
+            
+            if !loadedImages.isEmpty {
+              Text("Selected Reference Images")
+                .font(.headline)
+              
+              ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                  ForEach(loadedImages.indices, id: \.self) { index in
+                    Image(uiImage: loadedImages[index])
+                      .resizable()
+                      .scaledToFit()
+                      .frame(height: 200)
+                      .cornerRadius(8)
+                      .contextMenu {
+                        Button("Remove", systemImage: "trash", role: .destructive) {
+                          loadedImages.remove(at: index)
+                          playgroundLoadedImages.remove(at: index)
+                        }
+                      }
+                  }
+                }
+              }
+            }
             
             PhotosPicker(
               selection: $selectedImages,
@@ -127,7 +166,7 @@ struct ImagePlaygroundView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
             }
-            .disabled(isGenerating || (textPrompts.isEmpty && playgroundLoadedImages.isEmpty))
+            .disabled([.requested, .generating].contains(generationState) || (textPrompts.isEmpty && playgroundLoadedImages.isEmpty))
             .tint(Color.green.gradient)
             .buttonStyle(.glassProminent)
             
@@ -143,29 +182,20 @@ struct ImagePlaygroundView: View {
         // MARK: Right Panel - Results
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
-            if !loadedImages.isEmpty {
-              Text("Selected Reference Images")
-                .font(.headline)
-                .padding(.top)
+            HStack {
+              Image(systemName: "sparkles")
+                .font(.system(size: 32))
+                .symbolEffect(.breathe, isActive: generationState == .generating)
+                .symbolRenderingMode(.multicolor)
+                .symbolColorRenderingMode(.gradient)
               
-              ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                  ForEach(loadedImages.indices, id: \.self) { index in
-                    Image(uiImage: loadedImages[index])
-                      .resizable()
-                      .scaledToFit()
-                      .frame(height: 200)
-                      .cornerRadius(8)
-                      .contextMenu {
-                        Button("Remove", systemImage: "trash", role: .destructive) {
-                          loadedImages.remove(at: index)
-                          playgroundLoadedImages.remove(at: index)
-                        }
-                      }
-                  }
-                }
-              }
+              Text("Model Output")
+                .font(.title2).bold()
             }
+            
+            Text(generationState.modelStatusText)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
             
             if !generatedImages.isEmpty {
               Text("Generated Images")
@@ -183,6 +213,7 @@ struct ImagePlaygroundView: View {
                             .scaledToFit()
                             .frame(width: 300, height: 300)
                             .cornerRadius(8)
+                            .intelligence(shape: .rect(cornerRadius: 8))
                             .contextMenu {
                               Button("Save", systemImage: "square.and.arrow.down") {
                                 saveImageToPhotos(cgImage)
@@ -208,6 +239,7 @@ struct ImagePlaygroundView: View {
                       }
                     }
                   }
+                  .padding()
                 }
               } else {
                 if let error = generationError {
@@ -237,6 +269,34 @@ struct ImagePlaygroundView: View {
               }
             }
             
+            VStack(alignment: .leading) {
+              Text("Swift Code Output")
+                .font(.headline)
+              
+              VStack {
+                let code = """
+                  import ImagePlayground
+                  
+                  // Creates the image creator
+                  let imageCreator = try await ImageCreator()
+                  
+                  // Generate the images
+                  let imageSequence = imageCreator.images(
+                    for: [\(playgroundLoadedImages.map { _ in ".image(yourCGImage)" }.joined(separator: ", "))
+                          \(textPrompts.isEmpty ? "" : (playgroundLoadedImages.isEmpty ? "" : ", "))\(textPrompts.map { ".text(\"\($0)\")" }.joined(separator: ", "))],
+                    style: .\(imageStyleToString(imageStyle).lowercased()),
+                    limit: \(imageCount)
+                  )
+                  
+                  // Iterate through the generated images
+                  for try await image in imageSequence {
+                    // Use the generated image (CGImage)
+                  }
+                  """
+                CodeViewer(code: code, language: "swift")
+              }
+            }
+            
             Spacer()
           }
           .padding()
@@ -254,8 +314,8 @@ struct ImagePlaygroundView: View {
   }
   
   func generateImages() async -> ImageCreator.Error? {
-    isGenerating = true
-    defer { isGenerating = false } // ensure this is always reset
+    generationState = .requested
+    defer { generationState = .completed }
     
     do {
       let creator = try await ImageCreator()
@@ -268,6 +328,7 @@ struct ImagePlaygroundView: View {
         concepts.append(.text(prompt))
       }
       
+      generationState = .generating
       let imageSequence = creator.images(
         for: concepts,
         style: imageStyle,
@@ -283,13 +344,15 @@ struct ImagePlaygroundView: View {
         }
         idx += 1
       }
-      
+      generationState = .completed
       return nil // success, no error
     } catch let imageError as ImageCreator.Error {
+      generationState = .completed
       return imageError
     } catch {
       // Some other unexpected error
       print("Unexpected error generating images: \(error)")
+      generationState = .completed
       return nil
     }
   }
@@ -298,4 +361,18 @@ struct ImagePlaygroundView: View {
     let uiImage = UIImage(cgImage: cgImage)
     UIImageWriteToSavedPhotosAlbum(uiImage, nil, nil, nil)
   }
+  
+  func imageStyleToString(_ style: ImagePlaygroundStyle) -> String {
+    switch style {
+    case .animation:
+      return "Animation"
+    case .sketch:
+      return "Sketch"
+    case .illustration:
+      return "Illustration"
+    default:
+      return "Unknown"
+    }
+  }
 }
+

@@ -7,19 +7,21 @@
 
 import SwiftUI
 import FoundationModels
+import HighlightSwift
 
 struct FoundationModelsPlayground: View {
-  let session: LanguageModelSession
+  let highlight: Highlight
   
-  init(session: LanguageModelSession = LanguageModelSession()) {
-    self.session = session
+  init(highlight: Highlight = Highlight()) {
+    self.highlight = highlight
   }
   
   @State private var userInput: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
   @State private var generationStatus: GenerationState = .idle
   @State private var generationMode: GenerationMode = .stream
-  @State private var continuousSession: Bool = false
+  
+  @State private var swiftCodeOutput: String?
   
   // Generation options
   @State private var temperature: Double = 0.5
@@ -30,6 +32,15 @@ struct FoundationModelsPlayground: View {
     case requested
     case generating
     case completed
+    
+    var modelStatusText: String {
+      switch self {
+      case .idle: return "Idle"
+      case .requested: return "Preparing..."
+      case .generating: return "Generating..."
+      case .completed: return "Completed"
+      }
+    }
   }
   
   enum GenerationMode {
@@ -37,14 +48,7 @@ struct FoundationModelsPlayground: View {
     case respondTo
   }
   
-  var modelStatusText: String {
-    switch generationStatus {
-    case .idle: return ""
-    case .requested: return "Preparing..."
-    case .generating: return "Generating..."
-    case .completed: return "Completed"
-    }
-  }
+  @Environment(\.colorScheme) private var colorScheme: ColorScheme
   
   var body: some View {
     GeometryReader { geometry in
@@ -83,8 +87,6 @@ struct FoundationModelsPlayground: View {
                 Text("Stream").tag(GenerationMode.stream)
                 Text("Respond To").tag(GenerationMode.respondTo)
               }
-              
-              Toggle("Continuous Session", isOn: $continuousSession)
             }
             .padding(.bottom, 4)
             
@@ -131,32 +133,55 @@ struct FoundationModelsPlayground: View {
                 .font(.title2).bold()
             }
             
-            Text(modelStatusText)
+            Text(generationStatus.modelStatusText)
               .font(.subheadline)
               .foregroundStyle(.secondary)
             
-            Text(modelOutput)
-              .padding()
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .glassEffect(in: .rect(cornerRadius: 10))
-              .intelligence(shape: .rect(cornerRadius: 10))
-            
-            ForEach(session.transcript, id: \.id) { entry in
-              switch entry {
-              case .instructions(let instruction):
-                Text(instruction.description)
-              case .prompt(let prompt):
-                Text(prompt.description)
-              case .response(let response):
-                Text(response.description)
-              case .toolCalls(let toolcall):
-                Text(toolcall.description)
-              case .toolOutput(let output):
-                Text("\(output.toolName) \(output.description)")
-              default:
-                Text("Unsupported entry type")
-              }
+            if modelOutput != "" {
+              Text(modelOutput)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .glassEffect(in: .rect(cornerRadius: 10))
+                .intelligence(shape: .rect(cornerRadius: 10))
             }
+            
+            Text("Swift Code Output")
+              .font(.headline)
+            VStack {
+              let header = """
+              import FoundationModels
+
+              // Creates the language model session
+              let model = LanguageModelSession()
+              
+              // Sets up the generation options
+              let generationOptions = GenerationOptions(
+                temperature: \(String(format: "%.1f", temperature)),
+                maximumResponseTokens: \(maxTokens)
+              )
+              
+              // Calls the model to generate a response\n
+              """
+              let callPrefix = generationMode == .stream
+              ? "let response = model.streamResponse(\n"
+              : "let response = try await model.respond(\n"
+              let body = """
+                to: \"\"\"
+                    \(userInput)
+                    \"\"\",
+                options: generationOptions
+              )
+              
+              \(generationMode == .stream ? "// Streams the response content\n" : "// Gets the full response content at once\n")
+              """
+              
+              let prefex = generationMode == .stream
+              ? "for try await content in response {\n    print(content.content)\n}"
+              : "print(response.content)"
+              let fullCode = header + callPrefix + body + prefex
+              CodeViewer(code: fullCode, language: "swift")
+            }
+            .glassEffect(in: .rect(cornerRadius: 10))
           }
           .padding()
           .frame(width: geometry.size.width * 0.6)
@@ -167,7 +192,7 @@ struct FoundationModelsPlayground: View {
   }
   
   private func generateResponse() async {
-    let model = continuousSession ? session : LanguageModelSession()
+    let model = LanguageModelSession()
     
     generationStatus = .requested
     switch generationMode {
@@ -195,6 +220,7 @@ struct FoundationModelsPlayground: View {
       }
     case .respondTo:
       do {
+        generationStatus = .generating
         let response = try await model.respond(
           to: userInput,
           options: GenerationOptions(
