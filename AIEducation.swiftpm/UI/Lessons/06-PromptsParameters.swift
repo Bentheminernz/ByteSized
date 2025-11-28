@@ -8,35 +8,34 @@
 import SwiftUI
 import FoundationModels
 
-struct TemperatureLesson: View {
+// MARK: - WIP
+
+struct PromptsAndParameters1: View {
+  var body: some View {
+    
+  }
+}
+
+struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
   @State private var userInput: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
   @State private var generationStatus: generationState = .idle
-  var modelStatusText: String {
-    switch generationStatus {
-    case .idle:
-      return ""
-    case .requested:
-      return "Preparing..."
-    case .generating:
-      return "Generating..."
-    case .completed:
-      return "Completed"
-    }
-  }
   
   enum generationState {
     case idle
     case requested
     case generating
     case completed
-  }
-  
-  let session: LanguageModelSession
-  
-  init(session: LanguageModelSession = LanguageModelSession()) {
-    self.session = session
+    
+    var modelStatusText: String {
+      switch self {
+      case .idle: return "Idle"
+      case .requested: return "Preparing..."
+      case .generating: return "Generating..."
+      case .completed: return "Completed"
+      }
+    }
   }
   
   var body: some View {
@@ -61,7 +60,9 @@ struct TemperatureLesson: View {
         }
       }
       
-      Text(modelStatusText)
+      Text(generationStatus.modelStatusText)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
 
       Text(modelOutput)
         .padding()
@@ -69,9 +70,6 @@ struct TemperatureLesson: View {
     }
     .padding()
     .animation(.bouncy, value: temperature)
-    .onAppear {
-      session.prewarm()
-    }
     .onChange(of: temperature) {
       if generationStatus != .generating && generationStatus != .requested {
         modelOutput = ""
@@ -85,6 +83,7 @@ struct TemperatureLesson: View {
   private func generateResponse() async {
     generationStatus = .requested
     do {
+      let session = LanguageModelSession()
       let options: GenerationOptions = GenerationOptions(
         temperature: temperature,
         maximumResponseTokens: 150

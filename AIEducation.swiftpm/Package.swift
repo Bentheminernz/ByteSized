@@ -20,7 +20,7 @@ let package = Package(
             teamIdentifier: "4TD3JXVDW7",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .carrot),
+            appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.green),
             supportedDeviceFamilies: [
                 .pad,
@@ -35,7 +35,8 @@ let package = Package(
             capabilities: [
                 .photoLibraryAdd(purposeString: "AI Education needs access in order to save images."),
                 .contacts(purposeString: "Let the AI Model access your contacts.")
-            ]
+            ],
+            appCategory: .education
         )
     ],
     dependencies: [
@@ -52,5 +53,6 @@ let package = Package(
                 .process("Resources")
             ]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.version("6")]
 )

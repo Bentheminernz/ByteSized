@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - WIP
+
 struct TokenContextLesson1: View {
   @State private var tokenizer: Tokenizer = Tokenizer()
   @State private var inputText: String = ""
@@ -22,18 +24,25 @@ struct TokenContextLesson1: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack {
-        Text("Large Language Models process text by breaking it down into smaller units called tokens. These tokens can represent words, subwords, or even individual characters depending on the tokenizer used. Understanding tokenization is crucial for working effectively with LLMs.")
+        Text("Large Language Models process text by breaking it down into smaller units called tokens. These tokens can represent words, subwords, or even individual characters depending on the tokenizer used. Understanding tokenization is crucial for working effectively with LLMs. These tokens can be represented as text or numerical IDs that the model uses for processing.")
           .font(.body)
           .foregroundStyle(.secondary)
         
-        Text("For example take this sentence, \(fullDemoText). If we throw it into a tokenizer we get the following tokens:")
+        Text("For example take this sentence, \"\(fullDemoText)\". If we throw it into a tokenizer we get the following tokens:")
           .font(.body)
           .foregroundStyle(.secondary)
         
         WrapLayout(spacing: 6) {
           ForEach(tokenizer.tokenize(visibleDemoText).indices, id: \.self) { index in
-            TokenChip(text: tokenizer.tokenize(visibleDemoText)[index].text,
-                      color: TokenChip.color(for: index))
+            switch viewState {
+            case .text:
+              TokenChip(text: tokenizer.tokenize(visibleDemoText)[index].text,
+                        color: TokenChip.color(for: index))
+            case .token:
+              TokenChip(text: String(tokenizer.tokenize(visibleDemoText)[index].tokenID),
+                        color: .clear,
+                        border: .secondary)
+            }
           }
         }
       }
@@ -76,6 +85,7 @@ struct TokenContextLesson1: View {
     .onAppear {
       startTextAnimation()
     }
+    .animation(.bouncy, value: viewState)
   }
   
   private func startTextAnimation() {
@@ -101,10 +111,13 @@ struct TokenContextLesson1: View {
 
 struct TokenContextLesson2: View {
   var body: some View {
-    HStack {
-      Spacer()
-      DefinableText("SwiftUI is such an awesome framework")
-      Spacer()
+    VStack {
+      Text("LLMs don't remember everythingn forever, they only 'see' a limited amount of text at once. This visible area is called the Context Window")
+        .font(.body)
+        .foregroundStyle(.secondary)
+      
+      DefinableText("Think of it like a chat history the model can read, everything is inside that window, your messages, the model's replies and any hidden system instructions is made up of tokens")
+      TripleCircleDiagram()
     }
   }
 }
@@ -188,5 +201,58 @@ struct TokenChip: View {
   static func color(for index: Int) -> Color {
     let palette: [Color] = [.blue, .green, .orange, .pink, .purple, .teal, .indigo, .red, .mint, .brown]
     return palette[index % palette.count]
+  }
+}
+
+struct TripleCircleDiagram: View {
+  let outerDiameter: CGFloat = 220
+  let innerDiameter: CGFloat = 80
+  let label: String = "lorem ipsum"
+
+  var body: some View {
+    ZStack {
+      // Outer circle container
+      Circle()
+        .strokeBorder(.secondary.opacity(0.5), lineWidth: 2)
+        .frame(width: outerDiameter, height: outerDiameter)
+        .overlay(
+          Circle()
+            .fill(.ultraThinMaterial)
+            .overlay(
+              Text("Context Window" )
+            )
+        )
+
+      // Inner circles
+      innerCircle(label)
+        .offset(y: -outerDiameter * 0.33) // Top
+
+      innerCircle(label)
+        .offset(x: -outerDiameter * 0.22, y: outerDiameter * 0.25) // Bottom-left
+
+      innerCircle(label)
+        .offset(x: outerDiameter * 0.22, y: outerDiameter * 0.25) // Bottom-right
+    }
+    .frame(width: outerDiameter, height: outerDiameter)
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("Three circles arranged inside a larger circle: top, bottom left, and bottom right.")
+  }
+
+  @ViewBuilder
+  private func innerCircle(_ text: String) -> some View {
+    Circle()
+      .fill(.regularMaterial)
+      .overlay(
+        Circle()
+          .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+      )
+      .shadow(radius: 2, y: 1)
+      .frame(width: innerDiameter, height: innerDiameter)
+      .overlay(
+        Text(text)
+          .font(.caption)
+          .multilineTextAlignment(.center)
+          .padding(8)
+      )
   }
 }

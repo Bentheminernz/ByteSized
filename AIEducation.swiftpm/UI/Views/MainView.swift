@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MainView: View {
   @Namespace private var animation
   @State private var expandedCardId: Int?
+  @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
 //  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first
   @State private var selectedLesson: Lesson?
   #else
   @State private var selectedLesson: Lesson?
   #endif
+  
+  @Environment(\.modelContext) private var modelContext
   
   var body: some View {
     ScrollView {
@@ -36,6 +40,19 @@ struct MainView: View {
               LazyHStack(spacing: 16) {
                 ForEach(course.lessons) { lesson in
                   LessonCard(lesson)
+                    #if DEBUG
+                    .contextMenu {
+                      Button("Mark as completed") {
+                        CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+                      }
+                      Button("Unmark as completed") {
+                        if let completedLesson = completedLessons.first(where: { $0.lessonID == lesson.id }) {
+                          modelContext.delete(completedLesson)
+                          try? modelContext.save()
+                        }
+                      }
+                    }
+                    #endif
                     .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
                     .onTapGesture {
                       withAnimation(.bouncy(duration: 0.3)) {
@@ -56,6 +73,38 @@ struct MainView: View {
           }
         }
       }
+      
+      #if DEBUG
+      Text("All Completed Lesson instances:")
+      ForEach(completedLessons, id: \.lessonID) { completedLesson in
+        Text("Lesson ID: \(completedLesson.lessonID)")
+          .contextMenu {
+            Button("Delete") {
+              modelContext.delete(completedLesson)
+              try? modelContext.save()
+            }
+          }
+      }
+      
+      HStack {
+        Button("Mark all as completed") {
+          for course in LessonCourses.allCourses {
+            for lesson in course.lessons {
+              if !completedLessons.contains(where: { $0.lessonID == lesson.id }) {
+                CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+              }
+            }
+          }
+        }
+        
+        Button("Unmark all as completed") {
+          for completedLesson in completedLessons {
+            modelContext.delete(completedLesson)
+          }
+          try? modelContext.save()
+        }
+      }
+      #endif
     }
     .padding(.top)
     .navigationTitle("AI Education")
@@ -74,6 +123,7 @@ struct MainView: View {
   
   @ViewBuilder
   private func LessonCard(_ lesson: Lesson) -> some View {
+    let isCompleted = completedLessons.contains(where: { $0.lessonID == lesson.id })
     VStack(alignment: .leading) {
       HStack {
         Image(systemName: "\(lesson.icon, default: "book")")
@@ -90,6 +140,11 @@ struct MainView: View {
           Text(lesson.description)
             .font(.subheadline)
             .foregroundStyle(.secondary)
+          
+          if isCompleted {
+            Image(systemName: "checkmark.seal.fill")
+              .foregroundStyle(.green)
+          }
         }
       }
       Spacer()

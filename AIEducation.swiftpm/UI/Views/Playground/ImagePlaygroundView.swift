@@ -213,7 +213,7 @@ struct ImagePlaygroundView: View {
                             .scaledToFit()
                             .frame(width: 300, height: 300)
                             .cornerRadius(8)
-                            .intelligence(shape: .rect(cornerRadius: 8))
+                            .intelligence(in: .rect(cornerRadius: 8))
                             .contextMenu {
                               Button("Save", systemImage: "square.and.arrow.down") {
                                 saveImageToPhotos(cgImage)

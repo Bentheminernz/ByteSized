@@ -17,7 +17,9 @@ struct DefinableText: View {
   private static let defaultDefinitions: [String: String] = [
     "ai": "Artificial Intelligence, the simulation of human intelligence in machines.",
     "model": "A representation or simulation of a system or process.",
-    "swiftui": "A framework for building user interfaces for Apple platforms using Swift."
+    "swiftui": "A framework for building user interfaces for Apple platforms using Swift.",
+    "tokens": "The fundamental unit of text or data that the model uses for processing, analysis and, generation.",
+    "neural networks": "A series of algorithms that mimic the operations of a human brain to recognise relationships between vast amounts of data.",
   ]
   
   init(_ text: String, definitions: [String: String]? = nil) {

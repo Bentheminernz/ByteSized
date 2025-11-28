@@ -10,6 +10,8 @@ import FoundationModels
 import ImagePlayground
 import UIKit
 
+// MARK: - WIP
+
 struct FallingImage: Identifiable {
     let id = UUID()
     let filename: String
@@ -244,7 +246,7 @@ struct DemoView: View {
                   .resizable()
                   .scaledToFit()
                   .clipShape(.rect(cornerRadius: 8))
-                  .intelligence(spread: 4, shape: .rect(cornerRadius: 8))
+                  .intelligence(in: .rect(cornerRadius: 8), spread: 4)
               } else {
                 ZStack {
                   RoundedRectangle(cornerRadius: 10)

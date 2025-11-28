@@ -38,7 +38,7 @@ struct IntelligenceViewModifier<S: Shape>: ViewModifier {
 }
 
 public extension View {
-  func intelligence<S: Shape>(spread: CGFloat = 0, blur: CGFloat = 8, shape: S) -> some View {
+  func intelligence<S: Shape>(in shape: S, spread: CGFloat = 0, blur: CGFloat = 8) -> some View {
     modifier(IntelligenceViewModifier(shape: shape, spread: spread, blur: blur))
   }
 }

@@ -17,6 +17,7 @@ struct LessonCourses {
       title: "Foundations of AI",
       description: "What is AI? How does it work? Get started with the basics.",
       lessons: [
+        // MARK: - Lesson 1
         Lesson(
           id: 1,
           icon: "thermometer",
@@ -49,8 +50,31 @@ struct LessonCourses {
               icon: "network",
               content: AnyView(WhatIsAILesson4())
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
+        // MARK: - Lesson 2
         Lesson(
           id: 2,
           icon: "book.fill",
@@ -63,8 +87,31 @@ struct LessonCourses {
               icon: "book.fill",
               content: AnyView(Text("AI"))
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
+        // MARK: - Lesson 3
         Lesson(
           id: 3,
           icon: "book.fill",
@@ -77,6 +124,28 @@ struct LessonCourses {
               icon: "book.fill",
               content: AnyView(Text("AI"))
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
       ]
@@ -86,6 +155,7 @@ struct LessonCourses {
       title: "Working with LLMs",
       description: "Dive into Large Language Models and learn how to harness their power.",
       lessons: [
+        // MARK: - Lesson 4
         Lesson(
           id: 4,
           icon: "book.fill",
@@ -104,8 +174,31 @@ struct LessonCourses {
               icon: "book.fill",
               content: AnyView(TokenContextLesson2())
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
+        // MARK: - Lesson 5
         Lesson(
           id: 5,
           icon: "thermometer",
@@ -116,10 +209,39 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(TemperatureLesson())
+              content: AnyView(PromptsAndParameters1())
+            ),
+            Slide(
+              id: 2,
+              title: "How do machines learn?",
+              icon: "book.fill",
+              content: AnyView(PromptsAndParameters2())
+            )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
             )
           ]
         ),
+        // MARK: - Lesson 6
         Lesson(
           id: 6,
           icon: "book.fill",
@@ -132,6 +254,28 @@ struct LessonCourses {
               icon: "book.fill",
               content: AnyView(Text("AI"))
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         )
       ]
@@ -141,6 +285,7 @@ struct LessonCourses {
       title: "Multi-Modal AI",
       description: "Explore the exciting world of multi-modal AI and its applications.",
       lessons: [
+        // MARK: - Lesson 7
         Lesson(
           id: 7,
           icon: "photo",
@@ -166,8 +311,31 @@ struct LessonCourses {
               content: AnyView(DemoView()),
               hideHeader: true
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
+        // MARK: - Lesson 8
         Lesson(
           id: 8,
           icon: "photo",
@@ -180,8 +348,31 @@ struct LessonCourses {
               icon: "book.fill",
               content: AnyView(Text("AI"))
             )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
+            )
           ]
         ),
+        // MARK: - Lesson 9
         Lesson(
           id: 9,
           icon: "camera",
@@ -193,6 +384,28 @@ struct LessonCourses {
               title: "How do machines learn?",
               icon: "book.fill",
               content: AnyView(Text("AI"))
+            )
+          ],
+          questions: [
+            LessonQuestion(
+              id: 1,
+              question: "What does AI stand for?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Artificial Intelligence", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Automated Interaction", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Advanced Integration", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Applied Informatics", isCorrect: false)
+              ]
+            ),
+            LessonQuestion(
+              id: 2,
+              question: "Which of the following is a subset of AI?",
+              answers: [
+                LessonAnswer(id: 1, answer: "Machine Learning", isCorrect: true),
+                LessonAnswer(id: 2, answer: "Quantum Computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
+                LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
+              ]
             )
           ]
         )
@@ -214,6 +427,19 @@ struct Lesson: Identifiable {
   let title: String
   let description: String
   let slides: [Slide]
+  let questions: [LessonQuestion]
+}
+
+struct LessonQuestion: Identifiable {
+  let id: Int
+  let question: String
+  let answers: [LessonAnswer]
+}
+
+struct LessonAnswer: Identifiable {
+  let id: Int
+  let answer: String
+  let isCorrect: Bool
 }
 
 struct Slide: Identifiable {

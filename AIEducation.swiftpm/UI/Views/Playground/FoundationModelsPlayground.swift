@@ -142,7 +142,7 @@ struct FoundationModelsPlayground: View {
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .glassEffect(in: .rect(cornerRadius: 10))
-                .intelligence(shape: .rect(cornerRadius: 10))
+                .intelligence(in: .rect(cornerRadius: 10))
             }
             
             Text("Swift Code Output")

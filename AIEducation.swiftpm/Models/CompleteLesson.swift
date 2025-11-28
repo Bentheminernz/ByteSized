@@ -10,11 +10,17 @@ import SwiftData
 
 @Model
 class CompletedLesson {
-    @Attribute(.unique) var lessonID: Int
-    var completedAt: Date
-
-    init(lessonID: Int, completedAt: Date = Date()) {
-        self.lessonID = lessonID
-        self.completedAt = completedAt
-    }
+  @Attribute(.unique) var lessonID: Int
+  var completedAt: Date
+  
+  init(lessonID: Int, completedAt: Date = Date()) {
+    self.lessonID = lessonID
+    self.completedAt = completedAt
+  }
+  
+  static func markLessonAsCompleted(lessonID: Int, in context: ModelContext) {
+    let completedLesson = CompletedLesson(lessonID: lessonID)
+    context.insert(completedLesson)
+    try? context.save()
+  }
 }

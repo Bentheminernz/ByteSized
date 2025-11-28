@@ -10,6 +10,8 @@ import FoundationModels
 import AVKit
 import MediaPlayer
 
+// MARK: - Status: WIP
+
 struct WhatIsAILesson1: View {
   var body: some View {
     VStack {
@@ -101,7 +103,7 @@ struct WhatIsAILesson2: View {
         .frame(maxWidth: 600, maxHeight: 200)
         .padding()
         .glassEffect(.regular, in: .rect(cornerRadius: 15))
-        .intelligence(shape: .rect(cornerRadius: 15))
+        .intelligence(in: .rect(cornerRadius: 15))
       }
     }
     .onAppear {
@@ -273,7 +275,11 @@ struct WhatIsAILesson4: View {
   
   var body: some View {
     VStack {
-      Text("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
+      DefinableText("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
+        .padding()
+      
+      Text("An example of deep learning in action is self-driving cars. These cars use deep learning models to analyze video footage from cameras and make decisions about when to stop, brake, or go.")
+        .font(.body)
         .padding()
       
       HStack {
