@@ -23,4 +23,15 @@ class CompletedLesson {
     context.insert(completedLesson)
     try? context.save()
   }
+  
+  @MainActor
+  static func areAllLessonsCompleted(completedLessons: [CompletedLesson]) -> Bool {
+    let allLessonIDs = LessonCourses.allCourses.flatMap { course in
+      course.lessons.map { $0.id }
+    }
+    
+    let completedLessonIDs = Set(completedLessons.map { $0.lessonID })
+    
+    return allLessonIDs.allSatisfy { completedLessonIDs.contains($0) }
+  }
 }

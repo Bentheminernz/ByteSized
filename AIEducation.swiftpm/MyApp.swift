@@ -5,9 +5,15 @@ import SwiftData
 
 @main
 struct MyApp: App {
+  @State var confettiManager: ConfettiManager = .shared
+  
   var body: some Scene {
     WindowGroup {
       RootView()
+        .environment(confettiManager)
+        .onPencilDoubleTap { _ in
+          confettiManager.start(displayDuration: 10)
+        }
     }
     .modelContainer(for: [CompletedLesson.self])
   }
@@ -32,12 +38,10 @@ struct RootView: View {
             }
           }
           
-          if areAllLessonsCompleted() {
-            Tab("Playground", systemImage: "wand.and.stars.inverse") {
-              NavigationStack {
-                PlaygroundView()
-                  .navigationTitle("Playground")
-              }
+          Tab("Playground", systemImage: "wand.and.stars.inverse") {
+            NavigationStack {
+              PlaygroundView()
+                .navigationTitle("Playground")
             }
           }
         }
@@ -53,13 +57,13 @@ struct RootView: View {
         AppleIntelligenceUnavailableUI(unavailableReason)
       }
     }
-    #if DEBUG
-    .onPencilDoubleTap { _ in
-      exit(0)
-    }
-    #endif
+//    #if DEBUG
+//    .onPencilDoubleTap { _ in
+//      exit(0)
+//    }
+//    #endif
     .adaptiveModal(isPresented: Binding(
-      get: { hasSeenCompletedAllLessons == false && areAllLessonsCompleted() },
+      get: { hasSeenCompletedAllLessons == false && CompletedLesson.areAllLessonsCompleted(completedLessons: completedLessons) },
       set: { newValue in
         if newValue == false {
           hasSeenCompletedAllLessons = true
@@ -70,15 +74,6 @@ struct RootView: View {
         Text("Yyay")
       }
     }
-  }
-  
-  func areAllLessonsCompleted() -> Bool {
-    let allLessonIDs = LessonCourses.allCourses.flatMap { course in
-      course.lessons.map { $0.id }
-    }
-    
-    let completedLessonIDs = Set(completedLessons.map { $0.lessonID })
-    
-    return allLessonIDs.allSatisfy { completedLessonIDs.contains($0) }
+//    .confettiOverlay() MARK: Reevaluate
   }
 }

@@ -39,7 +39,7 @@ struct MainView: View {
               LazyHStack(spacing: 16) {
                 ForEach(course.lessons) { lesson in
                   LessonCard(lesson)
-                    #if DEBUG
+#if DEBUG
                     .contextMenu {
                       Button("Mark as completed") {
                         CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
@@ -51,7 +51,7 @@ struct MainView: View {
                         }
                       }
                     }
-                    #endif
+#endif
                     .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
                     .onTapGesture {
                       withAnimation(.bouncy(duration: 0.3)) {
@@ -73,7 +73,7 @@ struct MainView: View {
         }
       }
       
-      #if DEBUG
+#if DEBUG
       Text("All Completed Lesson instances:")
       ForEach(completedLessons, id: \.lessonID) { completedLesson in
         Text("Lesson ID: \(completedLesson.lessonID)")
@@ -103,7 +103,7 @@ struct MainView: View {
           try? modelContext.save()
         }
       }
-      #endif
+#endif
     }
     .padding(.top)
     .navigationTitle("AI Education")
@@ -115,8 +115,16 @@ struct MainView: View {
       )
     )
     .fullScreenCover(item: $selectedLesson) { lesson in
-      LessonSheet(lesson: lesson, animation: animation, onClose: { selectedLesson = nil })
-        .interactiveDismissDisabled()
+      LessonSheet(
+        lesson: lesson,
+        animation: animation,
+        onClose: {
+          selectedLesson = nil
+          CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+        }
+      )
+      .confettiOverlay()
+      .interactiveDismissDisabled()
     }
   }
   

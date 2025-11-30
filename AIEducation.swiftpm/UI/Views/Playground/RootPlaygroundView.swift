@@ -9,29 +9,46 @@ import SwiftUI
 import FoundationModels
 import ImagePlayground
 import PhotosUI
+import SwiftData
 
 struct PlaygroundView: View {
-  enum currentView { case foundationModels, imagePlayground }
+  @Query private var completedLessons: [CompletedLesson]
   
-  @State private var selectedView: currentView = .foundationModels
+  enum CurrentView { case foundationModels, imagePlayground }
+  
+  @State private var selectedView: CurrentView = .foundationModels
+  @State private var showPlayground: Bool = false
   
   var body: some View {
     VStack {
-      Picker("Select View", selection: $selectedView) {
-        Text("LLM Playground").tag(currentView.foundationModels)
-        Text("Image Generation Playground").tag(currentView.imagePlayground)
+      if showPlayground {
+        Picker("Select View", selection: $selectedView) {
+          Text("LLM Playground").tag(CurrentView.foundationModels)
+          Text("Image Generation Playground").tag(CurrentView.imagePlayground)
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding(.horizontal)
+        .padding(.top)
+        
+        //      Divider()
+        
+        switch selectedView {
+        case .foundationModels:
+          FoundationModelsPlayground()
+        case .imagePlayground:
+          ImagePlaygroundView()
+        }
+      } else {
+        ContentUnavailableView {
+          Label("Playground Locked", systemImage: "lock.fill")
+        } description: {
+          Text("Complete all lessons to unlock the playground features.")
+        }
       }
-      .pickerStyle(SegmentedPickerStyle())
-      .padding(.horizontal)
-      .padding(.top)
-      
-//      Divider()
-      
-      switch selectedView {
-      case .foundationModels:
-        FoundationModelsPlayground()
-      case .imagePlayground:
-        ImagePlaygroundView()
+    }
+    .onAppear {
+      Task {
+        showPlayground = CompletedLesson.areAllLessonsCompleted(completedLessons: completedLessons)
       }
     }
   }

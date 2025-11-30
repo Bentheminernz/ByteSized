@@ -16,181 +16,248 @@ struct LessonSheet: View {
   @State private var quizIndex: Int = 0
   @State private var selectedAnswerID: Int? = nil
   @State private var isAdvancing: Bool = true
+  @State private var hasSubmitted: Bool = false
+  @State private var showCompletion: Bool = false
+  @State private var answersCorrect: Int = 0
+  @State private var selectedAnswerIDsByQuestion: [Int?] = []
 
   var body: some View {
     let showingSlides = currentIndex < lesson.slides.count
 
-    return VStack(alignment: .leading, spacing: 16) {
-      if showingSlides {
-        if lesson.slides[currentIndex].hideHeader != true {
-          SlideHeaderCard(slide: lesson.slides[currentIndex])
-            .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
-        }
-
-        Group {
-          lesson.slides[currentIndex].content
-        }
-        .transition(isAdvancing ? .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)) : .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
-//        .animation(.bouncy, value: currentIndex)
-        .frame(maxHeight: .infinity)
-
-        Spacer()
-
-        HStack {
-          Button("Previous") {
-            isAdvancing = false
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              withAnimation(.smooth) {
-                currentIndex = max(currentIndex - 1, 0)
-              }
-            }
-          }
-          .buttonStyle(.glassProminent)
-          .disabled(currentIndex == 0)
-
-          Spacer()
-
-          HStack {
-            ForEach(0..<lesson.slides.count, id: \.self) { idx in
-              Capsule()
-                .fill(idx == currentIndex ? Color.green : Color.gray.opacity(0.5))
-                .frame(width: idx == currentIndex ? 40 : 15, height: 15)
-            }
-            
-            Capsule()
-              .fill(Color.gray.opacity(0.5))
-              .frame(width: 15, height: 15)
-              .overlay(
-                Image(systemName: "questionmark")
-                  .font(.system(size: 10, weight: .bold))
-                  .foregroundStyle(.white)
-              )
-          }
-          .padding()
-          .glassEffect(.clear.interactive(), in: .capsule)
-
-          Spacer()
-
-          Button("Next") {
-            isAdvancing = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              withAnimation(.smooth) {
-                currentIndex = min(currentIndex + 1, lesson.slides.count)
-              }
-            }
-          }
-          .buttonStyle(.glassProminent)
-          .disabled(currentIndex == lesson.slides.count)
-        }
+    return Group {
+      if showCompletion {
+        LessonCompletionView(lesson: lesson,
+                             correct: answersCorrect,
+                             total: lesson.questions.count,
+                             onClose: onClose)
       } else {
-        // Questions phase
         VStack(alignment: .leading, spacing: 16) {
-          HStack(spacing: 12) {
-            Image(systemName: "questionmark.circle.fill")
-              .resizable()
-              .scaledToFit()
-              .frame(width: 48, height: 48)
-              .symbolColorRenderingMode(.gradient)
-            Text("Questions")
-              .font(.title2).bold()
-            Spacer()
-          }
-          .padding()
-          .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
-
-          let question = lesson.questions[quizIndex]
-
-          VStack(alignment: .leading, spacing: 12) {
-            Text(question.question)
-              .font(.headline)
-
-            ForEach(question.answers) { answer in
-              Button(action: {
-                withAnimation(.snappy) {
-                  selectedAnswerID = answer.id
-                }
-              }) {
-                HStack {
-                  Image(systemName: selectedAnswerID == answer.id ? "largecircle.fill.circle" : "circle")
-                  Text(answer.answer)
-                  Spacer()
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                  (selectedAnswerID == answer.id ? Color.green.opacity(0.15) : Color.gray.opacity(0.08)), in: RoundedRectangle(cornerRadius: 12)
-                )
-              }
-              .buttonStyle(.plain)
+          if showingSlides {
+            if lesson.slides[currentIndex].hideHeader != true {
+              SlideHeaderCard(slide: lesson.slides[currentIndex])
+                .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
             }
-          }
-          .padding()
-          .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
 
-          Spacer()
-
-          HStack {
-            Button("Previous") {
-              withAnimation(.smooth) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                  isAdvancing = false
-                }
-                
-                if quizIndex == 0 {
-                  currentIndex = max(lesson.slides.count - 1, 0)
-                } else {
-                  quizIndex = max(quizIndex - 1, 0)
-                  selectedAnswerID = nil
-                }
-              }
+            Group {
+              lesson.slides[currentIndex].content
             }
-            .buttonStyle(.glassProminent)
+            .transition(isAdvancing ? .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)) : .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
+//            .animation(.bouncy, value: currentIndex)
+            .frame(maxHeight: .infinity)
 
             Spacer()
 
             HStack {
-              ForEach(0..<lesson.questions.count, id: \.self) { idx in
+              Button("Previous") {
+                isAdvancing = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                  withAnimation(.smooth) {
+                    currentIndex = max(currentIndex - 1, 0)
+                  }
+                }
+              }
+              .buttonStyle(.glassProminent)
+              .disabled(currentIndex == 0)
+
+              Spacer()
+
+              HStack {
+                ForEach(0..<lesson.slides.count, id: \.self) { idx in
+                  Capsule()
+                    .fill(idx == currentIndex ? Color.green : Color.gray.opacity(0.5))
+                    .frame(width: idx == currentIndex ? 40 : 15, height: 15)
+                }
+                
                 Capsule()
-                  .fill(idx == quizIndex ? Color.green : Color.gray.opacity(0.5))
-                  .frame(width: idx == quizIndex ? 40 : 15, height: 15)
-                  .onTapGesture {
-                    withAnimation(.bouncy) {
-                      isAdvancing = (idx > quizIndex)
-                      quizIndex = idx
-                      selectedAnswerID = nil
-                    }
-                  }
+                  .fill(Color.gray.opacity(0.5))
+                  .frame(width: 15, height: 15)
+                  .overlay(
+                    Image(systemName: "questionmark")
+                      .font(.system(size: 10, weight: .bold))
+                      .foregroundStyle(.white)
+                  )
               }
-            }
-            .padding()
-            .glassEffect(.clear.interactive(), in: .capsule)
+              .padding()
+              .glassEffect(.clear.interactive(), in: .capsule)
 
-            Spacer()
+              Spacer()
 
-            if quizIndex == lesson.questions.count - 1 {
-              Button("Finish") {
-                withAnimation(.smooth) {
-                  onClose()
-                }
-              }
-              .buttonStyle(.glassProminent)
-              .disabled(selectedAnswerID == nil)
-            } else {
               Button("Next") {
-                withAnimation(.smooth) {
-                  if selectedAnswerID != nil {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                      isAdvancing = true
+                isAdvancing = true
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                  withAnimation(.smooth) {
+                    currentIndex = min(currentIndex + 1, lesson.slides.count)
+                    if currentIndex == lesson.slides.count {
+                      quizIndex = 0
+                      selectedAnswerID = nil
+                      hasSubmitted = false
+                      selectedAnswerIDsByQuestion = Array(repeating: nil, count: lesson.questions.count)
                     }
-                    quizIndex = min(quizIndex + 1, lesson.questions.count - 1)
-                    selectedAnswerID = nil
                   }
                 }
               }
               .buttonStyle(.glassProminent)
-              .disabled(selectedAnswerID == nil)
+              .disabled(currentIndex == lesson.slides.count)
+            }
+          } else {
+            // MARK: - Questions phase
+            VStack(alignment: .leading, spacing: 16) {
+              HStack(spacing: 12) {
+                Image(systemName: "questionmark.circle.fill")
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 48, height: 48)
+                  .symbolColorRenderingMode(.gradient)
+                Text("Questions")
+                  .font(.title2).bold()
+                Spacer()
+              }
+              .padding()
+              .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+
+              let question = lesson.questions[quizIndex]
+              let correctAnswerID = question.answers.first(where: { $0.isCorrect })?.id
+
+              VStack(alignment: .leading, spacing: 12) {
+                Text(question.question)
+                  .font(.headline)
+
+                ForEach(question.answers) { answer in
+                  Button(action: {
+                    guard !hasSubmitted else { return }
+                    withAnimation(.snappy) {
+                      selectedAnswerID = answer.id
+                      if quizIndex < selectedAnswerIDsByQuestion.count {
+                        selectedAnswerIDsByQuestion[quizIndex] = answer.id
+                      }
+                    }
+                  }) {
+                    HStack {
+                      if hasSubmitted {
+                        if answer.id == correctAnswerID {
+                          Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                        } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                          Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
+                        } else {
+                          Image(systemName: "circle")
+                        }
+                      } else {
+                        Image(systemName: selectedAnswerID == answer.id ? "largecircle.fill.circle" : "circle")
+                      }
+                      Text(answer.answer)
+                      Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                      {
+                        if hasSubmitted {
+                          if answer.id == correctAnswerID {
+                            return Color.green.opacity(0.2)
+                          } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                            return Color.red.opacity(0.2)
+                          } else {
+                            return Color.gray.opacity(0.08)
+                          }
+                        } else {
+                          return (selectedAnswerID == answer.id ? Color.green.opacity(0.15) : Color.gray.opacity(0.08))
+                        }
+                      }(), in: RoundedRectangle(cornerRadius: 12)
+                    )
+                  }
+                  .buttonStyle(.plain)
+                }
+              }
+              .padding()
+              .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+
+              Spacer()
+
+              HStack {
+                Button("Previous") {
+                  withAnimation(.smooth) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                      isAdvancing = false
+                    }
+                    
+                    if quizIndex == 0 {
+                      currentIndex = max(lesson.slides.count - 1, 0)
+                    } else {
+                      quizIndex = max(quizIndex - 1, 0)
+                      selectedAnswerID = nil
+                      hasSubmitted = false
+                      if quizIndex < selectedAnswerIDsByQuestion.count {
+                        selectedAnswerID = selectedAnswerIDsByQuestion[quizIndex]
+                      }
+                    }
+                  }
+                }
+                .buttonStyle(.glassProminent)
+
+                Spacer()
+
+                HStack {
+                  ForEach(0..<lesson.questions.count, id: \.self) { idx in
+                    Capsule()
+                      .fill(idx == quizIndex ? Color.green : Color.gray.opacity(0.5))
+                      .frame(width: idx == quizIndex ? 40 : 15, height: 15)
+                      .onTapGesture {
+                        withAnimation(.bouncy) {
+                          isAdvancing = (idx > quizIndex)
+                          quizIndex = idx
+                          selectedAnswerID = nil
+                          hasSubmitted = false
+                          if idx < selectedAnswerIDsByQuestion.count { selectedAnswerID = selectedAnswerIDsByQuestion[idx] }
+                        }
+                      }
+                  }
+                }
+                .padding()
+                .glassEffect(.clear.interactive(), in: .capsule)
+
+                Spacer()
+
+                if !hasSubmitted {
+                  Button("Submit") {
+                    withAnimation(.smooth) {
+                      hasSubmitted = true
+                    }
+                  }
+                  .buttonStyle(.glassProminent)
+                  .disabled(selectedAnswerID == nil)
+                } else if quizIndex == lesson.questions.count - 1 {
+                  Button("Finish") {
+                    withAnimation(.smooth) {
+                      let correctIDs = lesson.questions.map { q in q.answers.first(where: { $0.isCorrect })?.id }
+                      var score = 0
+                      for (i, sel) in selectedAnswerIDsByQuestion.enumerated() {
+                        if i < correctIDs.count, let sel, let correct = correctIDs[i], sel == correct { score += 1 }
+                      }
+                      answersCorrect = score
+                      showCompletion = true
+                    }
+                  }
+                  .buttonStyle(.glassProminent)
+                  .disabled(selectedAnswerIDsByQuestion.contains(where: { $0 == nil }))
+                } else {
+                  Button("Next") {
+                    withAnimation(.smooth) {
+                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        isAdvancing = true
+                      }
+                      quizIndex = min(quizIndex + 1, lesson.questions.count - 1)
+                      selectedAnswerID = nil
+                      hasSubmitted = false
+                      if quizIndex < selectedAnswerIDsByQuestion.count {
+                        selectedAnswerID = selectedAnswerIDsByQuestion[quizIndex]
+                      }
+                    }
+                  }
+                  .buttonStyle(.glassProminent)
+                }
+              }
             }
           }
         }
@@ -230,5 +297,58 @@ struct SlideHeaderCard: View {
     }
     .padding()
     .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+  }
+}
+
+struct LessonCompletionView: View {
+  let lesson: Lesson
+  let correct: Int
+  let total: Int
+  let onClose: () -> Void
+  
+  var message: String {
+    let fractionCorrect = Double(correct) / Double(total)
+    
+    if fractionCorrect == 1.0 {
+      return "Perfect score! 🎉"
+    } else if fractionCorrect >= 2.0 / 3.0 {
+      return "Great job! 👍"
+    } else {
+      return "Nearly there! Keep practicing! 🚀"
+    }
+  }
+  
+  @State private var confettiManager: ConfettiManager = .shared
+
+  var body: some View {
+    VStack(spacing: 20) {
+      Image(systemName: "checkmark.seal.fill")
+        .font(.system(size: 64))
+        .foregroundStyle(.green)
+      
+      Text("Completed \(lesson.title)")
+        .font(.title).bold()
+      
+      Text("Score: \(correct) / \(total)")
+        .font(.headline)
+      
+      Text(message)
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      
+      HStack {
+        Button("Done") { onClose() }
+          .buttonStyle(.glassProminent)
+      }
+    }
+    .padding()
+    .onAppear {
+      if correct == total {
+        confettiManager.start()
+      }
+    }
+    .onDisappear {
+      confettiManager.stop()
+    }
   }
 }

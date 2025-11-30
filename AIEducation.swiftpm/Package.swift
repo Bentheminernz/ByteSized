@@ -40,19 +40,20 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/appstefan/HighlightSwift", "1.0.9"..<"2.0.0")
+        .package(url: "https://github.com/appstefan/HighlightSwift", "1.0.9"..<"2.0.0"),
+        .package(url: "https://github.com/ottijp/confetti-swiftui", "0.1.0"..<"1.0.0")
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
             dependencies: [
-                .product(name: "HighlightSwift", package: "highlightswift")
+                .product(name: "HighlightSwift", package: "highlightswift"),
+                .product(name: "Confetti", package: "confetti-swiftui")
             ],
             path: ".",
             resources: [
                 .process("Resources")
             ]
         )
-    ],
-    swiftLanguageVersions: [.version("6")]
+    ]
 )
