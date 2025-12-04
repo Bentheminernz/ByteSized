@@ -39,26 +39,26 @@ class ConfettiManager {
   }
 }
 
-struct ConfettiModifier: ViewModifier {
-  @State private var manager = ConfettiManager.shared
-  
+private struct ConfettiOverlayModifier<Confetti: View>: ViewModifier {
+  @Binding var isPresented: Bool
+  let confetti: () -> Confetti
+
   func body(content: Content) -> some View {
-    content
-      .overlay(
-        ZStack {
-          if manager.isShowingConfetti {
-            ForEach(0..<manager.confettiAmount, id: \.self) { _ in
-              ConfettiView(emissionDuration: manager.emissionDuration)
-            }
-          }
-        }
-        .allowsHitTesting(false)
-      )
+    ZStack {
+      content
+      if isPresented {
+        confetti()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .ignoresSafeArea()
+          .allowsHitTesting(false)
+          .transition(.opacity)
+      }
+    }
   }
 }
 
-extension View {
-  func confettiOverlay() -> some View {
-    self.modifier(ConfettiModifier())
+public extension View {
+  func confettiOverlay(isPresented: Binding<Bool>, @ViewBuilder confetti: @escaping () -> some View) -> some View {
+    modifier(ConfettiOverlayModifier(isPresented: isPresented, confetti: confetti))
   }
 }

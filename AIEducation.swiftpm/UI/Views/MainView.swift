@@ -6,6 +6,7 @@
 
 import SwiftUI
 import SwiftData
+import Confetti
 
 struct MainView: View {
   @Namespace private var animation
@@ -19,6 +20,21 @@ struct MainView: View {
   #endif
   
   @Environment(\.modelContext) private var modelContext
+  
+  @State private var confettiManager: ConfettiManager = .shared
+  
+  private var nextUncompletedLessonID: Int? {
+    // Flatten all lessons in order and find the first that is not completed
+    let completedIDs = Set(completedLessons.map { $0.lessonID })
+    for course in LessonCourses.allCourses {
+      for lesson in course.lessons {
+        if !completedIDs.contains(lesson.id) {
+          return lesson.id
+        }
+      }
+    }
+    return nil
+  }
   
   var body: some View {
     ScrollView {
@@ -38,7 +54,7 @@ struct MainView: View {
             ScrollView(.horizontal, showsIndicators: false) {
               LazyHStack(spacing: 16) {
                 ForEach(course.lessons) { lesson in
-                  LessonCard(lesson)
+                  LessonCard(lesson, isNext: nextUncompletedLessonID == lesson.id)
 #if DEBUG
                     .contextMenu {
                       Button("Mark as completed") {
@@ -123,13 +139,24 @@ struct MainView: View {
           CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
         }
       )
-      .confettiOverlay()
+      .confettiOverlay(isPresented: Binding(
+        get: {
+          confettiManager.isShowingConfetti
+        },
+        set: { newValue in
+          confettiManager.isShowingConfetti = newValue
+        }
+      )) {
+        ConfettiView(
+          emissionDuration: confettiManager.emissionDuration
+        )
+      }
       .interactiveDismissDisabled()
     }
   }
   
   @ViewBuilder
-  private func LessonCard(_ lesson: Lesson) -> some View {
+  private func LessonCard(_ lesson: Lesson, isNext: Bool = false) -> some View {
     let isCompleted = completedLessons.contains(where: { $0.lessonID == lesson.id })
     VStack(alignment: .leading) {
       HStack {
@@ -172,6 +199,27 @@ struct MainView: View {
     }
     .padding()
     .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+    .overlay(
+      Group {
+        if isNext {
+          RoundedRectangle(cornerRadius: 15)
+            .stroke(Color.green, lineWidth: 4)
+            .shadow(color: Color.green.opacity(0.4), radius: 6)
+        }
+      }
+    )
+  }
+  
+  private func nextLesson(after lesson: Lesson) -> Int? {
+    for course in LessonCourses.allCourses {
+      if let index = course.lessons.firstIndex(where: { $0.id == lesson.id }) {
+        let nextIndex = course.lessons.index(after: index)
+        if nextIndex < course.lessons.endIndex {
+          return course.lessons[nextIndex].id
+        }
+      }
+    }
+    return nil
   }
 }
 

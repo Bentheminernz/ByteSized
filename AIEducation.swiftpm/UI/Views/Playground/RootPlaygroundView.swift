@@ -19,6 +19,14 @@ struct PlaygroundView: View {
   @State private var selectedView: CurrentView = .foundationModels
   @State private var showPlayground: Bool = false
   
+  var totalLessons: Int {
+    LessonCourses.allCourses.flatMap { $0.lessons }.count
+  }
+  
+  var completedLessonsCount: Int {
+    completedLessons.count
+  }
+  
   var body: some View {
     VStack {
       if showPlayground {
@@ -42,7 +50,7 @@ struct PlaygroundView: View {
         ContentUnavailableView {
           Label("Playground Locked", systemImage: "lock.fill")
         } description: {
-          Text("Complete all lessons to unlock the playground features.")
+          Text("Complete all lessons to unlock the playground features. You have completed \(completedLessonsCount) out of \(totalLessons) lessons.")
         }
       }
     }

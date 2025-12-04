@@ -45,7 +45,7 @@ struct VideoTimeEventModifier: ViewModifier {
 }
 
 extension View {
-  func onVideoTime(_ seconds: Double, player: AVPlayer, perform action: @escaping () -> Void) -> some View {
+  func onVideoTime(_ seconds: Double, _ player: AVPlayer, perform action: @escaping () -> Void) -> some View {
       let cmtime = CMTime(seconds: seconds, preferredTimescale: 1000)
       return self.modifier(VideoTimeEventModifier(player: player, time: cmtime, action: action))
   }

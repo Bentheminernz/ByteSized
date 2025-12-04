@@ -85,7 +85,7 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
+              content: AnyView(HowDoMachinesLearn1())
             )
           ],
           questions: [

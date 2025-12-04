@@ -286,13 +286,13 @@ struct WhatIsAILesson4: View {
         CleanVideoPlayer(player: player)
           .frame(width: 300, height: 200)
           .onAppear { player.play() }
-          .onVideoTime(3, player: player) {
+          .onVideoTime(3, player) {
             vehicleState = .braking
           }
-          .onVideoTime(17.0, player: player) {
+          .onVideoTime(17.0, player) {
             vehicleState = .stop
           }
-          .onVideoTime(25.0, player: player) {
+          .onVideoTime(25.0, player) {
             vehicleState = .go
           }
         

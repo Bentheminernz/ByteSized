@@ -253,7 +253,7 @@ struct LessonSheet: View {
                       if quizIndex < selectedAnswerIDsByQuestion.count {
                         selectedAnswerID = selectedAnswerIDsByQuestion[quizIndex]
                       }
-                    }
+                    } 
                   }
                   .buttonStyle(.glassProminent)
                 }

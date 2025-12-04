@@ -13,16 +13,14 @@ import UIKit
 // MARK: - WIP
 
 struct FallingImage: Identifiable {
-    let id = UUID()
-    let filename: String
-    let xPosition: CGFloat
-    let delay: Double
-    let duration: Double
-    let cachedImage: UIImage?
-}
-
-struct CascadingImagesView: View {
-  let natureImageFilenames: [String] = [
+  let id = UUID()
+  let filename: String
+  let xPosition: CGFloat
+  let delay: Double
+  let duration: Double
+  let cachedImage: UIImage?
+  
+  static let natureImageFilenames: [String] = [
     "3D3F56CC-E856-42F6-A5B3-C50C638DB5AF.jpeg",
     "3EC1B106-EEF1-4A1B-8C6F-AEE9CD93B36D.jpeg",
     "4ECC047F-9F80-4A31-A933-857A2C17ADCA.jpeg",
@@ -45,46 +43,30 @@ struct CascadingImagesView: View {
     "F9C5FC3D-D113-491D-97F6-180FE534894D.jpeg",
     "F1394BA7-8566-4E5D-A86F-F0C4EB49697F.jpeg"
   ]
-  
-  @State private var fallingImages: [FallingImage] = []
-  @State private var screenHeight: CGFloat = 0
+}
+
+struct CascadingImagesView: View {
   @State private var imageCache: [String: UIImage] = [:]
-  @State private var timer: Timer?
   
   var body: some View {
-    GeometryReader { geometry in
-      ZStack {
-        Color.black.opacity(0.1)
-          .ignoresSafeArea()
-        
-        ForEach(fallingImages) { fallingImage in
-          FallingImageView(
-            cachedImage: fallingImage.cachedImage,
-            xPosition: fallingImage.xPosition,
-            duration: fallingImage.duration,
-            screenHeight: geometry.size.height,
-            onComplete: {
-              recycleImage(fallingImage)
-            }
-          )
-        }
-      }
-      .onAppear {
-        screenHeight = geometry.size.height
-        preloadImages()
-        
-      }
-      .onDisappear {
-        timer?.invalidate()
-        timer = nil
+    FallingItemsView(items: FallingImage.natureImageFilenames) { filename in
+      if let uiImage = imageCache[filename] {
+        Image(uiImage: uiImage)
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+          .frame(width: 80, height: 80)
+          .clipShape(RoundedRectangle(cornerRadius: 8))
+          .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
       }
     }
-    .drawingGroup()
+    .onAppear {
+      preloadImages()
+    }
   }
   
   func preloadImages() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let loadedImages = natureImageFilenames.compactMap { filename -> (String, UIImage)? in
+      let loadedImages = FallingImage.natureImageFilenames.compactMap { filename -> (String, UIImage)? in
         guard let path = Bundle.main.path(forResource: filename, ofType: nil),
               let image = UIImage(contentsOfFile: path) else {
           return nil
@@ -102,43 +84,7 @@ struct CascadingImagesView: View {
       
       DispatchQueue.main.async {
         self.imageCache = Dictionary(uniqueKeysWithValues: loadedImages)
-        self.generateInitialImages()
-        self.startContinuousFlow()
       }
-    }
-  }
-  
-  func generateInitialImages() {
-    for i in 0..<12 {
-      addNewImage(delay: Double(i) * 0.4)
-    }
-  }
-  
-  func startContinuousFlow() {
-    timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { [weak timer] _ in
-      addNewImage(delay: 0)
-    }
-  }
-  
-  func addNewImage(delay: Double) {
-    let randomFilename = natureImageFilenames.randomElement() ?? natureImageFilenames[0]
-    let xPosition = CGFloat.random(in: 0.1...0.9)
-    let duration = Double.random(in: 6...10)
-    
-    let newImage = FallingImage(
-      filename: randomFilename,
-      xPosition: xPosition,
-      delay: delay,
-      duration: duration,
-      cachedImage: imageCache[randomFilename]
-    )
-    
-    fallingImages.append(newImage)
-  }
-  
-  func recycleImage(_ image: FallingImage) {
-    if let index = fallingImages.firstIndex(where: { $0.id == image.id }) {
-      fallingImages.remove(at: index)
     }
   }
 }
