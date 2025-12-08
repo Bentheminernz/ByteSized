@@ -20,6 +20,20 @@ struct DefinableText: View {
     "swiftui": "A framework for building user interfaces for Apple platforms using Swift.",
     "tokens": "The fundamental unit of text or data that the model uses for processing, analysis and, generation.",
     "neural networks": "A series of algorithms that mimic the operations of a human brain to recognise relationships between vast amounts of data.",
+    "loss": "A number that measures how wrong the model’s predictions are. Lower is better.",
+    "epoch": "One full pass through the training data.",
+    "parameters": "The adjustable values inside the model (like a, b, c) that change during training.",
+    "gradient": "The direction and magnitude to change parameters to reduce loss.",
+    "learning rate": "How big a step the model takes when updating parameters.",
+    "overfitting": "When a model memorises training data but fails to generalise to new data.",
+    "underfitting": "When a model is too simple to capture the underlying pattern.",
+    "dataset": "The collection of examples used for training or evaluation.",
+    "noise": "Random variation added to data to simulate real-world imperfections.",
+    "mse": "Mean Squared Error, an average of squared differences between predictions and true values.",
+    "curve": "The function the model draws to represent its predictions over x.",
+    "prediction": "The output the model produces for a given input.",
+    "training": "The process of adjusting parameters to reduce loss.",
+    "validation": "Evaluating the model on held-out data to check generalisation."
   ]
   
   init(_ text: String, definitions: [String: String]? = nil) {
@@ -50,7 +64,6 @@ struct DefinableText: View {
         return .handled
       })
       .simultaneousGesture(
-        // for future reference: using drag gesture because it provides location info! can also place bubble based on where the user tapped
         DragGesture(minimumDistance: 0)
           .onEnded { value in
             popoverPosition = CGPoint(x: value.location.x - 10, y: value.location.y - 20)
@@ -66,7 +79,6 @@ struct DefinableText: View {
           showingPopover = false
         }
         .overlay(alignment: .topLeading) {
-          // need to use this clamp method to avoid a purple error
           let clampedY = max(0, min(popoverPosition.y, geometry.size.height))
           let clampedX = max(0, min(popoverPosition.x, geometry.size.width - 250))
           DefinitionBubble(
@@ -83,15 +95,19 @@ struct DefinableText: View {
   private func buildAttributedText() -> AttributedString {
     var result = AttributedString()
     let words = text.split(separator: " ", omittingEmptySubsequences: false)
+    var seenDefinedWords = Set<String>() // track first occurrences only
     
     for (index, word) in words.enumerated() {
       let cleanWord = word.trimmingCharacters(in: .punctuationCharacters)
+      let key = cleanWord.lowercased()
       var wordString = AttributedString(String(word))
       
-      if definitions.keys.contains(where: { $0.lowercased() == cleanWord.lowercased() }) {
+      if definitions.keys.contains(where: { $0.lowercased() == key }) && !seenDefinedWords.contains(key) {
+        // only first occurrence gets link and underline
         wordString.underlineStyle = .single
         wordString.foregroundColor = .blue
         wordString.link = URL(string: "define://\(cleanWord)")
+        seenDefinedWords.insert(key)
       }
       
       result.append(wordString)
@@ -116,31 +132,30 @@ struct DefinableText: View {
 }
 
 struct DefinitionBubble: View {
-    let word: String
-    let definition: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(word)
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            Text(definition)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding()
-        .frame(maxWidth: 250)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(uiColor: .systemBackground))
-                .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(uiColor: .separator), lineWidth: 1)
-        )
+  let word: String
+  let definition: String
+  
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(word)
+        .font(.headline)
+        .foregroundColor(.primary)
+      
+      Text(definition)
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
     }
+    .padding()
+    .frame(maxWidth: 250)
+    .background(
+      RoundedRectangle(cornerRadius: 12)
+        .fill(Color(uiColor: .systemBackground))
+        .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+    )
+    .overlay(
+      RoundedRectangle(cornerRadius: 12)
+        .stroke(Color(uiColor: .separator), lineWidth: 1)
+    )
+  }
 }
-

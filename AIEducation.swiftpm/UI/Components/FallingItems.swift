@@ -46,9 +46,6 @@ struct FallingItemsView<Content, ItemView: View>: View {
   var body: some View {
     GeometryReader { geometry in
       ZStack {
-        Color.black.opacity(0.1)
-          .ignoresSafeArea()
-        
         ForEach(fallingItems) { fallingItem in
           FallingItemContainer(
             content: itemBuilder(fallingItem.content),

@@ -86,7 +86,13 @@ struct LessonCourses {
               title: "How do machines learn?",
               icon: "book.fill",
               content: AnyView(HowDoMachinesLearn1())
-            )
+            ),
+            Slide(
+              id: 2,
+              title: "Supervised Learning",
+              icon: "book.fill",
+              content: AnyView(HowDoMachinesLearnPage2())
+            ),
           ],
           questions: [
             LessonQuestion(
