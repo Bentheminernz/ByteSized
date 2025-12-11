@@ -22,22 +22,6 @@ struct ImagePlaygroundView: View {
   @State private var generationState: GenerationState = .idle
   @State private var generationError: ImageCreator.Error?
   
-  enum GenerationState {
-    case idle
-    case requested
-    case generating
-    case completed
-    
-    var modelStatusText: String {
-      switch self {
-      case .idle: return "Idle"
-      case .requested: return "Preparing..."
-      case .generating: return "Generating..."
-      case .completed: return "Completed"
-      }
-    }
-  }
-  
   var body: some View {
     GeometryReader { geometry in
       HStack(spacing: 0) {

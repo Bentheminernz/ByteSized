@@ -27,22 +27,6 @@ struct FoundationModelsPlayground: View {
   @State private var temperature: Double = 0.5
   @State private var maxTokens: Int = 2000
   
-  enum GenerationState {
-    case idle
-    case requested
-    case generating
-    case completed
-    
-    var modelStatusText: String {
-      switch self {
-      case .idle: return "Idle"
-      case .requested: return "Preparing..."
-      case .generating: return "Generating..."
-      case .completed: return "Completed"
-      }
-    }
-  }
-  
   enum GenerationMode {
     case stream
     case respondTo

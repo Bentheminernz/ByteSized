@@ -28,28 +28,30 @@ struct LessonCourses {
               id: 1,
               title: "What is AI?",
               icon: "thermometer",
-              content: AnyView(WhatIsAILesson1()),
-//              hideHeader: true
-              
-            ),
+            ) {
+              WhatIsAILesson1()
+            },
             Slide(
               id: 2,
               title: "Artificial Intelligence",
               icon: "brain",
-              content: AnyView(WhatIsAILesson2())
-            ),
+            ) {
+              WhatIsAILesson2()
+            },
             Slide(
               id: 3,
               title: "Machine Learning",
               icon: "cpu",
-              content: AnyView(WhatIsAILesson3())
-            ),
+            ) {
+              WhatIsAILesson3()
+            },
             Slide(
               id: 4,
               title: "Deep Learning",
               icon: "network",
-              content: AnyView(WhatIsAILesson4())
-            )
+            ) {
+              WhatIsAILesson4()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -85,14 +87,16 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(HowDoMachinesLearn1())
-            ),
+            ) {
+              HowDoMachinesLearn1()
+            },
             Slide(
               id: 2,
               title: "Supervised Learning",
               icon: "book.fill",
-              content: AnyView(HowDoMachinesLearnPage2())
-            ),
+            ) {
+              HowDoMachinesLearnPage2()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -128,8 +132,9 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
-            )
+            ) {
+              Text("AI")
+            }
           ],
           questions: [
             LessonQuestion(
@@ -172,14 +177,16 @@ struct LessonCourses {
               id: 1,
               title: "Tokens",
               icon: "book.fill",
-              content: AnyView(TokenContextLesson1())
-            ),
+            ) {
+              TokenContextLesson1()
+            },
             Slide(
               id: 2,
               title: "Context Windows",
               icon: "book.fill",
-              content: AnyView(TokenContextLesson2())
-            )
+            ) {
+              TokenContextLesson2()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -215,14 +222,16 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(PromptsAndParameters1())
-            ),
+            ) {
+              PromptsAndParameters1()
+            },
             Slide(
               id: 2,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(PromptsAndParameters2())
-            )
+            ) {
+              PromptsAndParameters2()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -254,12 +263,20 @@ struct LessonCourses {
           title: "Master Prompt Engineering",
           description: "Become proficient in crafting effective prompts to get the best results from LLMs.",
           slides: [
-            Slide(
+            Slide (
               id: 1,
-              title: "How do machines learn?",
+              title: "Prompt Engineering",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
-            )
+            ) {
+              MasterPromptEngineering1()
+            },
+            Slide(
+              id: 2,
+              title: "Demo?",
+              icon: "book.fill",
+            ) {
+              MasterPromptEngineering2()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -302,21 +319,24 @@ struct LessonCourses {
               id: 1,
               title: "Image Generation",
               icon: "photo",
-              content: AnyView(IntroView())
-            ),
+            ) {
+              IntroView()
+            },
             Slide(
               id: 2,
               title: "Training Data",
               icon: "photo",
-              content: AnyView(TrainingData())
-            ),
+            ) {
+              TrainingData()
+            },
             Slide(
               id: 3,
               title: "Demo",
               icon: "photo",
-              content: AnyView(DemoView()),
               hideHeader: true
-            )
+            ) {
+              DemoView()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -352,8 +372,9 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
-            )
+            ) {
+              Text("AI")
+            }
           ],
           questions: [
             LessonQuestion(
@@ -389,8 +410,9 @@ struct LessonCourses {
               id: 1,
               title: "How do machines learn?",
               icon: "book.fill",
-              content: AnyView(Text("AI"))
-            )
+            ) {
+              Text("AI")
+            }
           ],
           questions: [
             LessonQuestion(
@@ -449,9 +471,28 @@ struct LessonAnswer: Identifiable {
 }
 
 struct Slide: Identifiable {
-  let id: Int
-  let title: String
-  let icon: String
-  let content: AnyView
-  var hideHeader: Bool? = false
+    let id: Int
+    let title: String
+    let icon: String
+    private let _content: () -> AnyView
+    var hideHeader: Bool = false
+    
+    init<Content: View>(
+        id: Int,
+        title: String,
+        icon: String,
+        hideHeader: Bool = false,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.id = id
+        self.title = title
+        self.icon = icon
+        self.hideHeader = hideHeader
+        self._content = { AnyView(content()) }
+    }
+    
+    @ViewBuilder
+    var content: some View {
+        _content()
+    }
 }

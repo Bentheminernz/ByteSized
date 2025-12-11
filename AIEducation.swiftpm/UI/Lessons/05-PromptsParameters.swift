@@ -1,5 +1,5 @@
 //
-//  Temperature.swift
+//  05-PromptsParameters.swift
 //  AIEduation
 //
 //  Created by Ben Lawrence on 06/11/2025.
@@ -20,23 +20,7 @@ struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
   @State private var userInput: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
-  @State private var generationStatus: generationState = .idle
-  
-  enum generationState {
-    case idle
-    case requested
-    case generating
-    case completed
-    
-    var modelStatusText: String {
-      switch self {
-      case .idle: return "Idle"
-      case .requested: return "Preparing..."
-      case .generating: return "Generating..."
-      case .completed: return "Completed"
-      }
-    }
-  }
+  @State private var generationStatus: GenerationState = .idle
   
   var body: some View {
     VStack {

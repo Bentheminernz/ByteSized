@@ -26,7 +26,11 @@ struct RootView: View {
   @Query private var completedLessons: [CompletedLesson]
   @State var confettiManager: ConfettiManager = .shared
   @State var selectedTab: Tabs = .lessons
-  @Environment(\.dismiss) private var dismiss: DismissAction
+  
+  @Environment(\.dismiss) private var dismiss
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  
+  @State private var showiPhoneWarning: Bool = false
   
   let model: SystemLanguageModel = SystemLanguageModel.default
   
@@ -95,6 +99,38 @@ struct RootView: View {
       interactiveDismissDisabled: true
     ) {
       AllLessonsCompleteModal(selectedTab: $selectedTab, hasSeenCompletedAllLessons: $hasSeenCompletedAllLessons)
+    }
+    .adaptiveModal(
+      isPresented: $showiPhoneWarning,
+      interactiveDismissDisabled: true
+    ) {
+      VStack {
+        WelcomeComponents.WelcomePageHeader(title: "iPhone Warning", subtitle: "Limited Functionality", imageName: "exclamationmark.triangle.fill", imageColor: .yellow)
+        Text("AIEducation is best experienced on an iPad due to its larger screen size and enhanced capabilities. Some features may be limited or not function optimally on an iPhone.")
+        
+        Spacer()
+        
+        Button(action: {
+          showiPhoneWarning = false
+        }) {
+          Text("Understood")
+            .font(.headline)
+            .padding()
+        }
+        .buttonStyle(.glassProminent)
+        .buttonSizing(.flexible)
+      }
+      .padding()
+    }
+    .onAppear {
+      if horizontalSizeClass == .compact {
+        showiPhoneWarning = true
+      }
+    }
+    .onChange(of: horizontalSizeClass) {
+      if horizontalSizeClass == .compact {
+        showiPhoneWarning = true
+      }
     }
   }
 }
