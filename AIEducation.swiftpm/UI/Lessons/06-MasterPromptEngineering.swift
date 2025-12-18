@@ -52,7 +52,7 @@ struct MasterPromptEngineering1: View {
   
   private func generateResponses() async {
     do {
-      let session1 = LanguageModelSession()
+      let session1 = LanguageModelSession(instructions: "When producing your output avoid using #'s for markdown titles.")
       
       let poorPrompt = "write very about dogs in apartments"
       let poorResponse = session1.streamResponse(to: poorPrompt)
@@ -62,7 +62,7 @@ struct MasterPromptEngineering1: View {
         }
       }
       
-      let session2 = LanguageModelSession()
+      let session2 = LanguageModelSession(instructions: "You are an expert dog trainer and pet care advisor specializing in apartment living. When producing your output avoid using #'s for markdown titles.")
       let goodPrompt = """
       write a guide for first-time dog owners who live in apartments. Can you explain the top 5 factors to consider when choosing a dog breed for apartment living? For each factor, include:
 
