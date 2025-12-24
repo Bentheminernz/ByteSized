@@ -12,13 +12,18 @@ import FoundationModels
 
 struct PromptsAndParameters1: View {
   var body: some View {
-    
+    VStack {
+      Text("The output from your AI model differs severely based on the prompts and parameters you provide. Experiment with different prompts and parameters to see how the output changes.")
+        .padding()
+      
+      
+    }
   }
 }
 
 struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
-  @State private var userInput: String = "Hello there! Can you tell me a joke?"
+  @State private var prompt: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
   @State private var generationStatus: GenerationState = .idle
   
@@ -34,15 +39,7 @@ struct PromptsAndParameters2: View {
         Text("1.0")
       }
       
-      TextField("Enter your prompt here", text: $userInput)
-        .textFieldStyle(RoundedBorderTextFieldStyle())
-        .padding()
-      
-      Button("Generate Response") {
-        Task {
-          await generateResponse()
-        }
-      }
+      Text(prompt)
       
       Text(generationStatus.modelStatusText)
         .font(.subheadline)
@@ -74,7 +71,7 @@ struct PromptsAndParameters2: View {
       )
       
       let response = session.streamResponse(
-        to: userInput,
+        to: prompt,
         options: options
       )
       generationStatus = .generating

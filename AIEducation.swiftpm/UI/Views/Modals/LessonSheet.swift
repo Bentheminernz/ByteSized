@@ -125,53 +125,68 @@ struct LessonSheet: View {
                   .font(.headline)
 
                 ForEach(question.answers) { answer in
-                  Button(action: {
+                  HStack {
+                    if hasSubmitted {
+                      if answer.id == correctAnswerID {
+                        Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                      } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
+                      } else {
+                        Image(systemName: "circle")
+                      }
+                    } else {
+                      Image(systemName: selectedAnswerID == answer.id ? "largecircle.fill.circle" : "circle")
+                    }
+                    Text(answer.answer)
+                    Spacer()
+                    
+                    if hasSubmitted {
+                      if answer.id == correctAnswerID {
+                        Text("Correct Answer")
+                          .font(.caption)
+                          .foregroundStyle(.green)
+                      } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                        Text("Your Answer")
+                          .font(.caption)
+                          .foregroundStyle(.red)
+                      }
+                    }
+                  }
+                  .padding()
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                  .background(
+                    {
+                      if hasSubmitted {
+                        if answer.id == correctAnswerID {
+                          return Color.green.opacity(0.2)
+                        } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                          return Color.red.opacity(0.2)
+                        } else {
+                          return Color.gray.opacity(0.08)
+                        }
+                      } else {
+                        return (selectedAnswerID == answer.id ? Color.green.opacity(0.15) : Color.gray.opacity(0.08))
+                      }
+                    }(), in: RoundedRectangle(cornerRadius: 12)
+                  )
+                  .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
+                  .onTapGesture {
                     guard !hasSubmitted else { return }
-                    withAnimation(.snappy) {
+                    withAnimation(.linear) {
                       selectedAnswerID = answer.id
                       if quizIndex < selectedAnswerIDsByQuestion.count {
                         selectedAnswerIDsByQuestion[quizIndex] = answer.id
                       }
                     }
-                  }) {
-                    HStack {
-                      if hasSubmitted {
-                        if answer.id == correctAnswerID {
-                          Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                        } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
-                          Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
-                        } else {
-                          Image(systemName: "circle")
-                        }
-                      } else {
-                        Image(systemName: selectedAnswerID == answer.id ? "largecircle.fill.circle" : "circle")
-                      }
-                      Text(answer.answer)
-                      Spacer()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                      {
-                        if hasSubmitted {
-                          if answer.id == correctAnswerID {
-                            return Color.green.opacity(0.2)
-                          } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
-                            return Color.red.opacity(0.2)
-                          } else {
-                            return Color.gray.opacity(0.08)
-                          }
-                        } else {
-                          return (selectedAnswerID == answer.id ? Color.green.opacity(0.15) : Color.gray.opacity(0.08))
-                        }
-                      }(), in: RoundedRectangle(cornerRadius: 12)
-                    )
                   }
-                  .buttonStyle(.plain)
                 }
               }
               .padding()
-              .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+              .background(
+                RoundedRectangle(cornerRadius: 15)
+                  .fill(Color(.systemBackground).opacity(0.8))
+                  .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+              )
 
               Spacer()
 

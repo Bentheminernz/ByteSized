@@ -24,6 +24,22 @@ class CompletedLesson {
     try? context.save()
   }
   
+  #if DEBUG
+  @MainActor
+  static func markAllLessonsAsCompleted(in context: ModelContext) {
+    let allLessonIDs = LessonCourses.allCourses.flatMap { course in
+      course.lessons.map { $0.id }
+    }
+    
+    for lessonID in allLessonIDs {
+      let completedLesson = CompletedLesson(lessonID: lessonID)
+      context.insert(completedLesson)
+    }
+    
+    try? context.save()
+  }
+  #endif
+  
   @MainActor
   static func areAllLessonsCompleted(completedLessons: [CompletedLesson]) -> Bool {
     let allLessonIDs = LessonCourses.allCourses.flatMap { course in

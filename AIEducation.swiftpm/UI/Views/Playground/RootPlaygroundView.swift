@@ -27,6 +27,10 @@ struct PlaygroundView: View {
     completedLessons.count
   }
   
+  #if DEBUG
+  @Environment(\.modelContext) private var modelContext
+  #endif
+  
   var body: some View {
     VStack {
       if showPlayground {
@@ -52,6 +56,13 @@ struct PlaygroundView: View {
         } description: {
           Text("Complete all lessons to unlock the playground features. You have completed \(completedLessonsCount) out of \(totalLessons) lessons.")
         }
+        #if DEBUG
+        .overlay(
+          Button("Unlock Playground") {
+            showPlayground = true
+          }
+        )
+        #endif
       }
     }
     .onAppear {

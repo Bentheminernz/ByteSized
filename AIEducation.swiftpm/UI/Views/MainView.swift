@@ -9,6 +9,8 @@ import SwiftData
 import Confetti
 
 struct MainView: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
   @Namespace private var animation
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
@@ -37,89 +39,122 @@ struct MainView: View {
   }
   
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 24) {
-        ForEach(LessonCourses.allCourses) { course in
-          VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading) {
-              Text(course.title)
-                .font(.title2).bold()
-              
-              Text(course.description)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-              LazyHStack(spacing: 16) {
-                ForEach(course.lessons) { lesson in
-                  LessonCard(lesson, isNext: nextUncompletedLessonID == lesson.id)
+    Group {
+      if horizontalSizeClass == .regular {
+        // iPad layout: keep existing horizontal carousels
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            ForEach(LessonCourses.allCourses) { course in
+              VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading) {
+                  Text(course.title)
+                    .font(.title2).bold()
+                  
+                  Text(course.description)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                  LazyHStack(spacing: 16) {
+                    ForEach(course.lessons) { lesson in
+                      LessonCard(lesson, isNext: nextUncompletedLessonID == lesson.id)
 #if DEBUG
-                    .contextMenu {
-                      Button("Mark as completed") {
-                        CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
-                      }
-                      Button("Unmark as completed") {
-                        if let completedLesson = completedLessons.first(where: { $0.lessonID == lesson.id }) {
-                          modelContext.delete(completedLesson)
-                          try? modelContext.save()
+                        .contextMenu {
+                          Button("Mark as completed") {
+                            CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+                          }
+                          Button("Unmark as completed") {
+                            if let completedLesson = completedLessons.first(where: { $0.lessonID == lesson.id }) {
+                              modelContext.delete(completedLesson)
+                              try? modelContext.save()
+                            }
+                          }
                         }
-                      }
-                    }
 #endif
-                    .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
-                    .onTapGesture {
-                      withAnimation(.bouncy(duration: 0.3)) {
-                        expandedCardId = (expandedCardId == lesson.id) ? nil : lesson.id
-                      }
+                        .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
+                        .onTapGesture {
+                          withAnimation(.bouncy(duration: 0.3)) {
+                            expandedCardId = (expandedCardId == lesson.id) ? nil : lesson.id
+                          }
+                        }
+                        .matchedTransitionSource(id: lesson.id, in: animation)
                     }
-                    .matchedTransitionSource(id: lesson.id, in: animation)
+                  }
+                  .padding()
                 }
               }
-              .padding()
+              .scrollTransition { content, phase in
+                content
+                  .opacity(phase.isIdentity ? 1 : 0)
+                  .scaleEffect(phase.isIdentity ? 1 : 0.95)
+                  .blur(radius: phase.isIdentity ? 0 : 10)
+              }
             }
           }
-          .scrollTransition { content, phase in
-            content
-              .opacity(phase.isIdentity ? 1 : 0)
-              .scaleEffect(phase.isIdentity ? 1 : 0.95)
-              .blur(radius: phase.isIdentity ? 0 : 10)
-          }
-        }
-      }
-      
 #if DEBUG
-      Text("All Completed Lesson instances:")
-      ForEach(completedLessons, id: \.lessonID) { completedLesson in
-        Text("Lesson ID: \(completedLesson.lessonID)")
-          .contextMenu {
-            Button("Delete") {
-              modelContext.delete(completedLesson)
+          Text("All Completed Lesson instances:")
+          ForEach(completedLessons, id: \.lessonID) { completedLesson in
+            Text("Lesson ID: \(completedLesson.lessonID)")
+              .contextMenu {
+                Button("Delete") {
+                  modelContext.delete(completedLesson)
+                  try? modelContext.save()
+                }
+              }
+          }
+          
+          HStack {
+            Button("Mark all as completed") {
+              for course in LessonCourses.allCourses {
+                for lesson in course.lessons {
+                  if !completedLessons.contains(where: { $0.lessonID == lesson.id }) {
+                    CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+                  }
+                }
+              }
+            }
+            
+            Button("Unmark all as completed") {
+              for completedLesson in completedLessons {
+                modelContext.delete(completedLesson)
+              }
               try? modelContext.save()
             }
           }
-      }
-      
-      HStack {
-        Button("Mark all as completed") {
-          for course in LessonCourses.allCourses {
-            for lesson in course.lessons {
-              if !completedLessons.contains(where: { $0.lessonID == lesson.id }) {
-                CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+#endif
+        }
+      } else {
+        // iPhone layout: vertical list, full-width cards, no horizontal scrolls
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            ForEach(LessonCourses.allCourses) { course in
+              VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(course.title)
+                    .font(.title3).bold()
+                  Text(course.description)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
+                
+                LazyVStack(spacing: 12) {
+                  ForEach(course.lessons) { lesson in
+                    LessonCardPhone(lesson, isNext: nextUncompletedLessonID == lesson.id)
+                      .onTapGesture {
+                        selectedLesson = lesson
+                        expandedCardId = nil
+                      }
+                      .padding(.horizontal)
+                  }
+                }
               }
             }
           }
         }
-        
-        Button("Unmark all as completed") {
-          for completedLesson in completedLessons {
-            modelContext.delete(completedLesson)
-          }
-          try? modelContext.save()
-        }
       }
-#endif
     }
     .padding(.top)
     .navigationTitle("AI Education")
@@ -153,6 +188,45 @@ struct MainView: View {
       }
       .interactiveDismissDisabled()
     }
+  }
+  
+  @ViewBuilder
+  private func LessonCardPhone(_ lesson: Lesson, isNext: Bool = false) -> some View {
+    let isCompleted = completedLessons.contains(where: { $0.lessonID == lesson.id })
+    HStack(alignment: .center, spacing: 12) {
+      Image(systemName: "\(lesson.icon, default: "book")")
+        .resizable()
+        .scaledToFit()
+        .frame(width: 28, height: 28)
+        .symbolColorRenderingMode(.gradient)
+      VStack(alignment: .leading, spacing: 2) {
+        HStack {
+          Text(lesson.title)
+            .font(.headline)
+            .lineLimit(2)
+          Spacer()
+          if isCompleted {
+            Image(systemName: "checkmark.seal.fill")
+              .foregroundStyle(.green)
+          }
+        }
+        Text(lesson.description)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .lineLimit(3)
+      }
+    }
+    .padding(12)
+    .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 12))
+    .overlay(
+      Group {
+        if isNext {
+          RoundedRectangle(cornerRadius: 12)
+            .stroke(Color.green, lineWidth: 3)
+            .shadow(color: Color.green.opacity(0.3), radius: 4)
+        }
+      }
+    )
   }
   
   @ViewBuilder

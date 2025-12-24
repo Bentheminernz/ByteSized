@@ -73,6 +73,16 @@ struct LessonCourses {
                 LessonAnswer(id: 3, answer: "Cloud Computing", isCorrect: false),
                 LessonAnswer(id: 4, answer: "Internet of Things", isCorrect: false)
               ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question: "What is Deep Learning?",
+              answers: [
+                LessonAnswer(id: 1, answer: "A subset of Machine Learning that uses neural networks", isCorrect: true),
+                LessonAnswer(id: 2, answer: "A type of cloud computing", isCorrect: false),
+                LessonAnswer(id: 3, answer: "A programming language for AI", isCorrect: false),
+                LessonAnswer(id: 4, answer: "A hardware component for AI processing", isCorrect: false)
+              ]
             )
           ]
         ),

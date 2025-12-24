@@ -10,7 +10,7 @@ import FoundationModels
 import AVKit
 import MediaPlayer
 
-// MARK: - Status: WIP
+// MARK: - Status: Completed
 
 struct WhatIsAILesson1: View {
   var body: some View {
@@ -276,6 +276,7 @@ struct WhatIsAILesson4: View {
   var body: some View {
     VStack {
       DefinableText("Deep Learning is a special type of machine learning that uses structures called neural networks to learn from large amounts of data.")
+        .font(.largeTitle.bold())
         .padding()
       
       Text("An example of deep learning in action is self-driving cars. These cars use deep learning models to analyze video footage from cameras and make decisions about when to stop, brake, or go.")

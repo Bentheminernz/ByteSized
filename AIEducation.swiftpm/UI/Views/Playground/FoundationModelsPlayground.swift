@@ -34,6 +34,42 @@ struct FoundationModelsPlayground: View {
   
   @Environment(\.colorScheme) private var colorScheme: ColorScheme
   
+  private var fullCode: String {
+    let header = """
+    import FoundationModels
+
+    // Creates the language model session
+    let model = LanguageModelSession()
+    
+    // Sets up the generation options
+    let generationOptions = GenerationOptions(
+      temperature: \(String(format: "%.1f", temperature)),
+      maximumResponseTokens: \(maxTokens)
+    )
+    
+    // Calls the model to generate a response
+
+    """
+    let callPrefix = generationMode == .stream
+      ? "let response = model.streamResponse(\n"
+      : "let response = try await model.respond(\n"
+    let body = """
+      to: \"\"\"
+          \(userInput)
+          \"\"\",
+      options: generationOptions
+    )
+    
+    \(generationMode == .stream ? "// Streams the response content\n" : "// Gets the full response content at once\n")
+    """
+    
+    let prefex = generationMode == .stream
+      ? "for try await content in response {\n    print(content.content)\n}"
+      : "print(response.content)"
+    
+    return header + callPrefix + body + prefex
+  }
+  
   var body: some View {
     GeometryReader { geometry in
       HStack(spacing: 0) {
@@ -80,7 +116,11 @@ struct FoundationModelsPlayground: View {
               
               TextEditor(text: $userInput)
                 .frame(minHeight: 150)
-                .border(Color.gray.opacity(0.3), width: 1)
+                .overlay(
+                  RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 8))
             }
             .padding(.bottom, 4)
@@ -129,40 +169,20 @@ struct FoundationModelsPlayground: View {
                 .intelligence(in: .rect(cornerRadius: 10))
             }
             
-            Text("Swift Code Output")
-              .font(.headline)
+            HStack {
+              Text("Swift Code Output")
+                .font(.headline)
+              
+              Spacer()
+              
+              Button("Copy", systemImage: "document.on.document") {
+                UIPasteboard.general.string = fullCode
+              }
+              .buttonStyle(.glassProminent)
+              .labelStyle(.iconOnly)
+              .accessibilityLabel("Copy Swift Code to Clipboard")
+            }
             VStack {
-              let header = """
-              import FoundationModels
-
-              // Creates the language model session
-              let model = LanguageModelSession()
-              
-              // Sets up the generation options
-              let generationOptions = GenerationOptions(
-                temperature: \(String(format: "%.1f", temperature)),
-                maximumResponseTokens: \(maxTokens)
-              )
-              
-              // Calls the model to generate a response\n
-              """
-              let callPrefix = generationMode == .stream
-              ? "let response = model.streamResponse(\n"
-              : "let response = try await model.respond(\n"
-              let body = """
-                to: \"\"\"
-                    \(userInput)
-                    \"\"\",
-                options: generationOptions
-              )
-              
-              \(generationMode == .stream ? "// Streams the response content\n" : "// Gets the full response content at once\n")
-              """
-              
-              let prefex = generationMode == .stream
-              ? "for try await content in response {\n    print(content.content)\n}"
-              : "print(response.content)"
-              let fullCode = header + callPrefix + body + prefex
               CodeViewer(code: fullCode, language: "swift")
             }
             .glassEffect(in: .rect(cornerRadius: 10))
@@ -226,3 +246,4 @@ struct FoundationModelsPlayground: View {
     }
   }
 }
+

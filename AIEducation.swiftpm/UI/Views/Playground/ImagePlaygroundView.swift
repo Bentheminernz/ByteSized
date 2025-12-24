@@ -22,6 +22,28 @@ struct ImagePlaygroundView: View {
   @State private var generationState: GenerationState = .idle
   @State private var generationError: ImageCreator.Error?
   
+  private var fullCode: String {
+    """
+    import ImagePlayground
+    
+    // Creates the image creator
+    let imageCreator = try await ImageCreator()
+    
+    // Generate the images
+    let imageSequence = imageCreator.images(
+      for: [\(playgroundLoadedImages.map { _ in ".image(yourCGImage)" }.joined(separator: ", "))
+            \(textPrompts.isEmpty ? "" : (playgroundLoadedImages.isEmpty ? "" : ", "))\(textPrompts.map { ".text(\"\($0)\")" }.joined(separator: ", "))],
+      style: .\(imageStyleToString(imageStyle).lowercased()),
+      limit: \(imageCount)
+    )
+    
+    // Iterate through the generated images
+    for try await image in imageSequence {
+      // Use the generated image (CGImage)
+    }
+    """
+  }
+  
   var body: some View {
     GeometryReader { geometry in
       HStack(spacing: 0) {
@@ -227,57 +249,30 @@ struct ImagePlaygroundView: View {
                 }
               } else {
                 if let error = generationError {
-                  switch error {
-                  case .backgroundCreationForbidden:
-                    Text("Error: Background creation is forbidden.")
-                  case .conceptsRequirePersonIdentity:
-                    Text("Error: Concepts require person identity. Try adding a reference image that contains a person.")
-                  case .creationCancelled:
-                    Text("Error: Image creation was cancelled.")
-                  case .creationFailed:
-                    Text("Error: Creation of the image failed. This could be caused by a bad reference isssue or prompt, try play around with different images and prompts. Sorry!")
-                  case .faceInImageTooSmall:
-                    Text("Error: Face in image is too small. Try using a higher resolution reference image.")
-                  case .notSupported:
-                    Text("Error: Image creation is not supported on this device.")
-                  case .unavailable:
-                    Text("Error: Image creation service is currently unavailable. Please try again later.")
-                  case .unsupportedInputImage:
-                    Text("Error: Unsupported input image. Please try a different image.")
-                  case .unsupportedLanguage:
-                    Text("Error: Unsupported language for text prompts. Please use English.")
-                  default:
-                    Text("Error: An unknown error occurred during image generation.")
-                  }
+                  Text(returnErrorMessage(for: error))
+                    .foregroundStyle(.red)
+                    .padding()
                 }
               }
             }
             
             VStack(alignment: .leading) {
-              Text("Swift Code Output")
-                .font(.headline)
+              HStack {
+                Text("Swift Code Output")
+                  .font(.headline)
+               
+                Spacer()
+                
+                Button("Copy", systemImage: "document.on.document") {
+                  UIPasteboard.general.string = fullCode
+                }
+                .buttonStyle(.glassProminent)
+                .labelStyle(.iconOnly)
+                .accessibilityLabel("Copy Swift Code to Clipboard")
+              }
               
               VStack {
-                let code = """
-                  import ImagePlayground
-                  
-                  // Creates the image creator
-                  let imageCreator = try await ImageCreator()
-                  
-                  // Generate the images
-                  let imageSequence = imageCreator.images(
-                    for: [\(playgroundLoadedImages.map { _ in ".image(yourCGImage)" }.joined(separator: ", "))
-                          \(textPrompts.isEmpty ? "" : (playgroundLoadedImages.isEmpty ? "" : ", "))\(textPrompts.map { ".text(\"\($0)\")" }.joined(separator: ", "))],
-                    style: .\(imageStyleToString(imageStyle).lowercased()),
-                    limit: \(imageCount)
-                  )
-                  
-                  // Iterate through the generated images
-                  for try await image in imageSequence {
-                    // Use the generated image (CGImage)
-                  }
-                  """
-                CodeViewer(code: code, language: "swift")
+                CodeViewer(code: fullCode, language: "swift")
               }
             }
             
@@ -356,6 +351,31 @@ struct ImagePlaygroundView: View {
       return "Illustration"
     default:
       return "Unknown"
+    }
+  }
+  
+  private func returnErrorMessage(for error: ImagePlayground.ImageCreator.Error) -> String {
+    switch error {
+    case .backgroundCreationForbidden:
+      return "Error: Background creation is forbidden."
+    case .conceptsRequirePersonIdentity:
+      return "Error: Concepts require person identity. Try adding a reference image that contains a person."
+    case .creationCancelled:
+      return "Error: Image creation was cancelled."
+    case .creationFailed:
+      return "Error: Creation of the image failed. This could be caused by a bad reference isssue or prompt, try play around with different images and prompts. Sorry!"
+    case .faceInImageTooSmall:
+      return "Error: Face in image is too small. Try using a higher resolution reference image."
+    case .notSupported:
+      return "Error: Image creation is not supported on this device."
+    case .unavailable:
+      return "Error: Image creation service is currently unavailable. Please try again later."
+    case .unsupportedInputImage:
+      return "Error: Unsupported input image. Please try a different image."
+    case .unsupportedLanguage:
+      return "Error: Unsupported language for text prompts. Please use English."
+    default:
+      return "Error: An unknown error occurred during image generation."
     }
   }
 }
