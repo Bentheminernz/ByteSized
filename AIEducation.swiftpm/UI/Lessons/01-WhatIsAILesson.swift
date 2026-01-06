@@ -76,12 +76,15 @@ struct WhatIsAILesson1: View {
 }
 
 struct WhatIsAILesson2: View {
-  let session: LanguageModelSession
+  @Environment(FoundationModelsService.self) var foundationModelsService
   
   @State private var llmOutput: String = ""
   
+  // Using a variable where possible to eliminate spelling mistakes
+  /// The session to use for this lesson
+  let session: FoundationModelSession = .custom("WhatIsAILesson2")
+  
   init(session: LanguageModelSession = LanguageModelSession(instructions: "You are a professional kids author, who specialises in writing short 130-150 word stories for children. Don't say anything like 'here is the story', just give it to me")) {
-    self.session = session
   }
   
   var body: some View {
@@ -107,16 +110,21 @@ struct WhatIsAILesson2: View {
       }
     }
     .onAppear {
-      session.prewarm()
       Task {
         await generateOutput()
       }
+    }
+    .onDisappear {
+      foundationModelsService.clearSession(for: session)
     }
   }
   
   func generateOutput() async {
     do {
-      let stream = session.streamResponse(to: "Tell me a super short story about a magical cat. Make it a maximum of 150 words.")
+      let stream = foundationModelsService.streamResponse(
+        from: session,
+        to: "Tell me a super short story about a magical cat. Make it a maximum of 150 words."
+      )
       for try await chunk in stream {
         withAnimation(.bouncy) {
           llmOutput = chunk.content

@@ -70,6 +70,8 @@ struct FoundationModelsPlayground: View {
     return header + callPrefix + body + prefex
   }
   
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  
   var body: some View {
     GeometryReader { geometry in
       HStack(spacing: 0) {
@@ -196,20 +198,17 @@ struct FoundationModelsPlayground: View {
   }
   
   private func generateResponse() async {
-    let model = LanguageModelSession()
-    
     generationStatus = .requested
     switch generationMode {
     case .stream:
       do {
-        let response = model.streamResponse(
+        let response = foundationModelsService.streamResponse(
           to: userInput,
           options: GenerationOptions(
             temperature: temperature,
             maximumResponseTokens: maxTokens
           )
         )
-        generationStatus = .generating
         
         for try await content in response {
           withAnimation(.bouncy) {
@@ -225,7 +224,7 @@ struct FoundationModelsPlayground: View {
     case .respondTo:
       do {
         generationStatus = .generating
-        let response = try await model.respond(
+        let response = try await foundationModelsService.respond(
           to: userInput,
           options: GenerationOptions(
             temperature: temperature,

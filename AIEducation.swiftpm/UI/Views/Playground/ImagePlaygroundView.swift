@@ -274,6 +274,7 @@ struct ImagePlaygroundView: View {
               VStack {
                 CodeViewer(code: fullCode, language: "swift")
               }
+              .glassEffect(in: .rect(cornerRadius: 10))
             }
             
             Spacer()

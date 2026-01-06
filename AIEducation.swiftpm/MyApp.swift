@@ -6,15 +6,16 @@ import Confetti
 
 @main
 struct MyApp: App {
-  @State var confettiManager: ConfettiManager = .shared
-
+  @State private var confettiManager: ConfettiManager = .shared
+  @State private var imageCreatorService: ImageCreatorService = .shared
+  @State private var foundationModelsService: FoundationModelsService = .shared
+  
   var body: some Scene {
     WindowGroup {
       RootView()
         .environment(confettiManager)
-        .onPencilDoubleTap { _ in
-          confettiManager.start(displayDuration: 10)
-        }
+        .environment(imageCreatorService)
+        .environment(foundationModelsService)
     }
     .modelContainer(for: [CompletedLesson.self])
   }
@@ -63,6 +64,10 @@ struct RootView: View {
     }
   }
   
+  #if DEBUG
+  @State var showDebugMenu: Bool = false
+  #endif
+  
   var body: some View {
     VStack {
       switch model.availability {
@@ -87,6 +92,34 @@ struct RootView: View {
         AppleIntelligenceUnavailableUI(unavailableReason)
       }
     }
+    #if DEBUG
+    .onPencilDoubleTap { _ in
+      showDebugMenu.toggle()
+    }
+    .overlay {
+      if showDebugMenu {
+        VStack {
+          Button("Close Debug Menu") {
+            showDebugMenu = false
+          }
+          
+          Button("Exit") {
+            exit(0)
+          }
+          
+          Button("hasSeenWelcome: \(hasSeenWelcome.description)") {
+            hasSeenWelcome.toggle()
+          }
+          
+          Button("hasSeenCompletedAllLessons: \(hasSeenCompletedAllLessons.description)") {
+            hasSeenCompletedAllLessons.toggle()
+          }
+        }
+        .padding()
+        .glassEffect(.regular.tint(.black.opacity(0.5)), in: .rect(cornerRadius: 12))
+      }
+    }
+    #endif
     .adaptiveModal(
       isPresented: Binding(
         get: { hasSeenCompletedAllLessons == false && CompletedLesson.areAllLessonsCompleted(completedLessons: completedLessons) },

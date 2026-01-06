@@ -27,6 +27,9 @@ struct PromptsAndParameters2: View {
   @State private var modelOutput: String = ""
   @State private var generationStatus: GenerationState = .idle
   
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  let session: FoundationModelSession = .custom("PromptsAndParameters2")
+  
   var body: some View {
     VStack {
       Text("Temperature: \(String(format: "%.1f", temperature))")
@@ -64,13 +67,13 @@ struct PromptsAndParameters2: View {
   private func generateResponse() async {
     generationStatus = .requested
     do {
-      let session = LanguageModelSession()
       let options: GenerationOptions = GenerationOptions(
         temperature: temperature,
         maximumResponseTokens: 150
       )
       
-      let response = session.streamResponse(
+      let response = foundationModelsService.streamResponse(
+        from: session,
         to: prompt,
         options: options
       )

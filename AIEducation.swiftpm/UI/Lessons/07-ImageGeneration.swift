@@ -89,58 +89,6 @@ struct CascadingImagesView: View {
   }
 }
 
-struct FallingImageView: View {
-  let cachedImage: UIImage?
-  let xPosition: CGFloat
-  let duration: Double
-  let screenHeight: CGFloat
-  let onComplete: () -> Void
-  
-  @State private var yOffset: CGFloat = -100
-  @State private var opacity: Double = 0
-  
-  var body: some View {
-    GeometryReader { geometry in
-      if let uiImage = cachedImage {
-        Image(uiImage: uiImage)
-          .resizable()
-          .aspectRatio(contentMode: .fill)
-          .frame(width: 80, height: 80)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
-          .opacity(opacity)
-          .position(
-            x: geometry.size.width * xPosition,
-            y: yOffset
-          )
-          .onAppear {
-            startAnimation()
-          }
-      }
-    }
-  }
-  
-  func startAnimation() {
-    withAnimation(.easeIn(duration: 0.3)) {
-      opacity = 1
-    }
-    
-    withAnimation(.linear(duration: duration)) {
-      yOffset = screenHeight + 100
-    }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + duration - 1) { [opacity] in
-      withAnimation(.easeOut(duration: 0.5)) {
-        self.opacity = 0
-      }
-    }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-      onComplete()
-    }
-  }
-}
-
 struct IntroView: View {
   var body: some View {
     Text("Welcome to the AI Image Generation Tutorial!")
