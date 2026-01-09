@@ -304,3 +304,7 @@ struct Colours {
   static let Aquamarine = Color(red: 0.38, green: 0.949, blue: 0.761) // #61f2c2
   static let FlourescantCyan = Color(red: 0.188, green: 0.949, blue: 0.949) // #30f2f2
 }
+
+#Preview(traits: .landscapeLeft) {
+  MainView()
+}

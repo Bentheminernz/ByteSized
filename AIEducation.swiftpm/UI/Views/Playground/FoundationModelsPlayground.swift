@@ -18,7 +18,6 @@ struct FoundationModelsPlayground: View {
   
   @State private var userInput: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
-  @State private var generationStatus: GenerationState = .idle
   @State private var generationMode: GenerationMode = .stream
   
   @State private var swiftCodeOutput: String?
@@ -37,7 +36,7 @@ struct FoundationModelsPlayground: View {
   private var fullCode: String {
     let header = """
     import FoundationModels
-
+    
     // Creates the language model session
     let model = LanguageModelSession()
     
@@ -48,11 +47,11 @@ struct FoundationModelsPlayground: View {
     )
     
     // Calls the model to generate a response
-
+    
     """
     let callPrefix = generationMode == .stream
-      ? "let response = model.streamResponse(\n"
-      : "let response = try await model.respond(\n"
+    ? "let response = model.streamResponse(\n"
+    : "let response = try await model.respond(\n"
     let body = """
       to: \"\"\"
           \(userInput)
@@ -64,13 +63,16 @@ struct FoundationModelsPlayground: View {
     """
     
     let prefex = generationMode == .stream
-      ? "for try await content in response {\n    print(content.content)\n}"
-      : "print(response.content)"
+    ? "for try await content in response {\n    print(content.content)\n}"
+    : "print(response.content)"
     
     return header + callPrefix + body + prefex
   }
   
   @Environment(FoundationModelsService.self) private var foundationModelsService
+  var generationStatus: GenerationState {
+    foundationModelsService.statuses[.shared] ?? .idle
+  }
   
   var body: some View {
     GeometryReader { geometry in
@@ -198,10 +200,9 @@ struct FoundationModelsPlayground: View {
   }
   
   private func generateResponse() async {
-    generationStatus = .requested
-    switch generationMode {
-    case .stream:
-      do {
+    do {
+      switch generationMode {
+      case .stream:
         let response = foundationModelsService.streamResponse(
           to: userInput,
           options: GenerationOptions(
@@ -215,15 +216,7 @@ struct FoundationModelsPlayground: View {
             modelOutput = content.content
           }
         }
-        generationStatus = .completed
-      } catch {
-        print("Error during generation: \(error)")
-        modelOutput = "Failed to generate response: \(error.localizedDescription)"
-        generationStatus = .completed
-      }
-    case .respondTo:
-      do {
-        generationStatus = .generating
+      case .respondTo:
         let response = try await foundationModelsService.respond(
           to: userInput,
           options: GenerationOptions(
@@ -235,13 +228,10 @@ struct FoundationModelsPlayground: View {
         withAnimation(.bouncy) {
           modelOutput = response.content
         }
-        
-        generationStatus = .completed
-      } catch {
-        print("Error during generation: \(error)")
-        modelOutput = "Failed to generate response: \(error.localizedDescription)"
-        generationStatus = .completed
       }
+    } catch {
+      print("Unexpected error: \(error)")
+      modelOutput = "An unexpected error occurred: \(error.localizedDescription)"
     }
   }
 }

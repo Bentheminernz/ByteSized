@@ -26,10 +26,17 @@ final class FoundationModelsService {
   static let shared = FoundationModelsService()
   
   private var sessions: [FoundationModelSession: LanguageModelSession] = [:]
+  private(set) var statuses: [FoundationModelSession: GenerationState] = [:]
   
   private init() {
     sessions[.shared] = LanguageModelSession()
     sessions[.shared]?.prewarm()
+    statuses[.shared] = .idle
+  }
+  
+  /// Get the generation status for a specific session
+  func status(for session: FoundationModelSession) -> GenerationState {
+    return statuses[session] ?? .idle
   }
   
   // TODO: - Add Schema support
@@ -38,15 +45,18 @@ final class FoundationModelsService {
     to prompt: String,
     options: GenerationOptions? = nil
   ) async throws -> LanguageModelSession.Response<String> {
-    let session: LanguageModelSession = getSession(for: session)
+    let sessionObj: LanguageModelSession = getSession(for: session)
+    
+    statuses[session] = .generating
+    defer { statuses[session] = .idle }
     
     if let options {
-      return try await session.respond(
+      return try await sessionObj.respond(
         to: prompt,
         options: options
       )
     } else {
-      return try await session.respond(to: prompt)
+      return try await sessionObj.respond(to: prompt)
     }
   }
   
@@ -55,16 +65,24 @@ final class FoundationModelsService {
     to prompt: String,
     options: GenerationOptions? = nil
   ) -> LanguageModelSession.ResponseStream<String> {
-    let session: LanguageModelSession = getSession(for: session)
+    let sessionObj: LanguageModelSession = getSession(for: session)
+    
+    // Set status to generating when stream starts
+    statuses[session] = .generating
     
     if let options {
-      return session.streamResponse(
+      return sessionObj.streamResponse(
         to: prompt,
         options: options
       )
     } else {
-      return session.streamResponse(to: prompt)
+      return sessionObj.streamResponse(to: prompt)
     }
+  }
+  
+  /// Marks a streaming session as complete
+  func completeStream(for session: FoundationModelSession) {
+    statuses[session] = .idle
   }
   
   /// Get or create a LanguageModelSession for the given context.
@@ -81,6 +99,7 @@ final class FoundationModelsService {
       : LanguageModelSession()
     
     sessions[context] = newSession
+    statuses[context] = .idle
     return newSession
   }
   
@@ -92,7 +111,27 @@ final class FoundationModelsService {
     session.prewarm()
   }
   
-  func clearSession(for context: FoundationModelSession) {
+  func createSession(
+    for contexts: [FoundationModelSession],
+  ) {
+    for context in contexts {
+      createSession(for: context)
+    }
+  }
+  
+  func clearSession(
+    for context: FoundationModelSession
+  ) {
     sessions.removeValue(forKey: context)
+    statuses.removeValue(forKey: context)
+  }
+  
+  func clearSession(
+    for contexts: [FoundationModelSession]
+  ) {
+    for context in contexts {
+      clearSession(for: context)
+    }
   }
 }
+

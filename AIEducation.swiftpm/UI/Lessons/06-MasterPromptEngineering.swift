@@ -9,6 +9,10 @@ import SwiftUI
 import FoundationModels
 
 struct MasterPromptEngineering1: View {
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  let session1: FoundationModelSession = .custom("MasterPromptEngineering1")
+  let session2: FoundationModelSession = .custom("MasterPromptEngineering2")
+  
   @State private var poorOutput: String = ""
   @State private var goodOutput: String = ""
   
@@ -48,19 +52,33 @@ struct MasterPromptEngineering1: View {
     .task {
       await generateResponses()
     }
+    .onAppear {
+      foundationModelsService.createSession(for: session1, instructions: """
+      When producing your output avoid using #'s for markdown titles.
+      """)
+      
+      foundationModelsService.createSession(for: session2, instructions: """
+      You are an expert dog trainer and pet care advisor specializing in apartment living. When producing your output avoid using #'s for markdown titles.
+      """)
+    }
+    .onDisappear {
+      foundationModelsService.clearSession(for: [session1, session2])
+    }
   }
   
   private func generateResponses() async {
     do {
-      let session1 = LanguageModelSession(instructions: "When producing your output avoid using #'s for markdown titles.")
-      
       let poorPrompt = "write very about dogs in apartments"
-      let poorResponse = session1.streamResponse(to: poorPrompt)
+      let poorResponse = foundationModelsService.streamResponse(
+        from: session1,
+        to: poorPrompt
+      )
       for try await content in poorResponse {
         withAnimation(.bouncy) {
           poorOutput = content.content
         }
       }
+      foundationModelsService.completeStream(for: session1)
       
       let session2 = LanguageModelSession(instructions: "You are an expert dog trainer and pet care advisor specializing in apartment living. When producing your output avoid using #'s for markdown titles.")
       let goodPrompt = """
@@ -84,82 +102,90 @@ struct MasterPromptEngineering1: View {
 }
 
 struct MasterPromptEngineering2: View {
-  enum GeneratorID: Int, CaseIterable { case one = 0, two = 1 }
-  
-  struct GeneratorState {
-    var prompt: String = ""
-    var output: String = ""
-    var status: GenerationState = .idle
-  }
-  
-  @State private var generators: [GeneratorState] = [
-    GeneratorState(), GeneratorState()
-  ]
-  
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  private let sessionOne = FoundationModelSession.custom("PromptEngineeringExample1")
+  private let sessionTwo = FoundationModelSession.custom("PromptEngineeringExample2")
+
+  @State private var promptOne: String = ""
+  @State private var promptTwo: String = ""
+  @State private var outputOne: String = ""
+  @State private var outputTwo: String = ""
+
   var body: some View {
     VStack(spacing: 16) {
-      ForEach(GeneratorID.allCases, id: \.self) { id in
-        let idx = id.rawValue
-        VStack(alignment: .leading, spacing: 8) {
-          Text("Generator \(idx + 1)")
-            .font(.headline)
-          
-          TextField("Enter your prompt here", text: $generators[idx].prompt)
-            .padding()
-            .glassEffect(.regular.interactive(), in: .capsule)
-            .onSubmit {
-              Task {
-                await generateResponse(for: id)
-              }
-            }
-          
-          Button("Generate Response") {
-            Task {
-              await generateResponse(for: id)
-            }
-          }
-          .disabled(generators[idx].prompt.isEmpty || generators[idx].status == .generating)
-          
-          Text("Status: \(generators[idx].status.modelStatusText)")
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-          
-          if !generators[idx].output.isEmpty {
-            Text("Output:")
-              .font(.subheadline)
-              .bold()
-            Text(generators[idx].output)
-              .padding()
-              .glassEffect(in: .rect(cornerRadius: 8))
-              .intelligence(in: .rect(cornerRadius: 8))
-          }
-        }
-        .padding()
-        .background(Color.blue.opacity(0.05))
-        .cornerRadius(10)
+      generatorView(title: "Generator 1",
+                    prompt: $promptOne,
+                    output: outputOne,
+                    status: foundationModelsService.status(for: sessionOne)) {
+        Task { await generateResponse(for: sessionOne, prompt: promptOne, setOutput: { outputOne = $0 }) }
+      }
+
+      generatorView(title: "Generator 2",
+                    prompt: $promptTwo,
+                    output: outputTwo,
+                    status: foundationModelsService.status(for: sessionTwo)) {
+        Task { await generateResponse(for: sessionTwo, prompt: promptTwo, setOutput: { outputTwo = $0 }) }
       }
     }
     .padding()
+    .onAppear {
+      foundationModelsService.createSession(for: [sessionOne, sessionTwo])
+    }
+    .onDisappear {
+      foundationModelsService.clearSession(for: [sessionOne, sessionTwo])
+    }
   }
-  
-  private func generateResponse(for id: GeneratorID) async {
-    let idx = id.rawValue
-    generators[idx].status = .requested
-    generators[idx].output = ""
-    
-    generators[idx].status = .generating
-    let session = LanguageModelSession()
-    
-    do {
-      let text = try await session.respond(to: generators[idx].prompt)
-      withAnimation(.bouncy) {
-        generators[idx].output = text.content
+
+  @ViewBuilder
+  private func generatorView(title: String,
+                             prompt: Binding<String>,
+                             output: String,
+                             status: GenerationState,
+                             action: @escaping () -> Void) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(title)
+        .font(.headline)
+
+      TextField("Enter your prompt here", text: prompt)
+        .padding()
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .onSubmit { action() }
+
+      Button("Generate Response", action: action)
+        .disabled(prompt.wrappedValue.isEmpty || status == .generating)
+
+      Text("Status: \(status.modelStatusText)")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+
+      if !output.isEmpty {
+        Text("Output:")
+          .font(.subheadline)
+          .bold()
+        Text(output)
+          .padding()
+          .glassEffect(in: .rect(cornerRadius: 8))
+          .intelligence(in: .rect(cornerRadius: 8))
       }
-      generators[idx].status = .completed
+    }
+    .padding()
+    .background(Color.blue.opacity(0.05))
+    .cornerRadius(10)
+  }
+
+  private func generateResponse(for session: FoundationModelSession,
+                                prompt: String,
+                                setOutput: @escaping (String) -> Void) async {
+    // Clear previous output
+    setOutput("")
+
+    do {
+      let response = try await foundationModelsService.respond(from: session, to: prompt, options: nil)
+      withAnimation(.bouncy) {
+        setOutput(response.content)
+      }
     } catch {
-      generators[idx].status = .completed
-      generators[idx].output = "Error: \(error.localizedDescription)"
+      setOutput("Error: \(error.localizedDescription)")
     }
   }
 }
-

@@ -130,6 +130,7 @@ struct WhatIsAILesson2: View {
           llmOutput = chunk.content
         }
       }
+      foundationModelsService.completeStream(for: session)
     } catch {
       print("Error generating output: \(error)")
       #if DEBUG

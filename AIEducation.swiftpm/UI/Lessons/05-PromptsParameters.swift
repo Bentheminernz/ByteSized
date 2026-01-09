@@ -25,7 +25,6 @@ struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
   @State private var prompt: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
-  @State private var generationStatus: GenerationState = .idle
   
   @Environment(FoundationModelsService.self) private var foundationModelsService
   let session: FoundationModelSession = .custom("PromptsAndParameters2")
@@ -44,9 +43,11 @@ struct PromptsAndParameters2: View {
       
       Text(prompt)
       
-      Text(generationStatus.modelStatusText)
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+      if let status = foundationModelsService.statuses[session]?.modelStatusText {
+        Text(status)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
 
       Text(modelOutput)
         .padding()
@@ -55,7 +56,7 @@ struct PromptsAndParameters2: View {
     .padding()
     .animation(.bouncy, value: temperature)
     .onChange(of: temperature) {
-      if generationStatus != .generating && generationStatus != .requested {
+      if foundationModelsService.statuses[session] != .generating && foundationModelsService.statuses[session] != .requested {
         modelOutput = ""
         Task {
           await generateResponse()
@@ -65,7 +66,6 @@ struct PromptsAndParameters2: View {
   }
   
   private func generateResponse() async {
-    generationStatus = .requested
     do {
       let options: GenerationOptions = GenerationOptions(
         temperature: temperature,
@@ -77,17 +77,15 @@ struct PromptsAndParameters2: View {
         to: prompt,
         options: options
       )
-      generationStatus = .generating
       
       for try await content in response {
         withAnimation(.bouncy) {
           modelOutput = content.content
         }
       }
-      generationStatus = .completed
+      foundationModelsService.completeStream(for: session)
     } catch {
       modelOutput = "Failed to generate response: \(error.localizedDescription)"
-      generationStatus = .completed
     }
   }
 }
