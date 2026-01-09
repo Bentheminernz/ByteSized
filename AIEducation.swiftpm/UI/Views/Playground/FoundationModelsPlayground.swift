@@ -204,12 +204,13 @@ struct FoundationModelsPlayground: View {
       switch generationMode {
       case .stream:
         let response = foundationModelsService.streamResponse(
-          to: userInput,
           options: GenerationOptions(
             temperature: temperature,
             maximumResponseTokens: maxTokens
           )
-        )
+        ) {
+          userInput
+        }
         
         for try await content in response {
           withAnimation(.bouncy) {
@@ -218,12 +219,13 @@ struct FoundationModelsPlayground: View {
         }
       case .respondTo:
         let response = try await foundationModelsService.respond(
-          to: userInput,
           options: GenerationOptions(
             temperature: temperature,
             maximumResponseTokens: maxTokens
           )
-        )
+        ) {
+          userInput
+        }
         
         withAnimation(.bouncy) {
           modelOutput = response.content

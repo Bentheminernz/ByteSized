@@ -123,8 +123,10 @@ struct WhatIsAILesson2: View {
     do {
       let stream = foundationModelsService.streamResponse(
         from: session,
-        to: "Tell me a super short story about a magical cat. Make it a maximum of 150 words."
-      )
+      ) {
+        "Tell me a super short story about a magical cat. Make it a maximum of 150 words."
+      }
+      
       for try await chunk in stream {
         withAnimation(.bouncy) {
           llmOutput = chunk.content

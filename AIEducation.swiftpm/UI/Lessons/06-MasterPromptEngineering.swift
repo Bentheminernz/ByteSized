@@ -68,11 +68,12 @@ struct MasterPromptEngineering1: View {
   
   private func generateResponses() async {
     do {
-      let poorPrompt = "write very about dogs in apartments"
       let poorResponse = foundationModelsService.streamResponse(
         from: session1,
-        to: poorPrompt
-      )
+      ) {
+        "write about dogs in apartments"
+      }
+      
       for try await content in poorResponse {
         withAnimation(.bouncy) {
           poorOutput = content.content
@@ -80,20 +81,24 @@ struct MasterPromptEngineering1: View {
       }
       foundationModelsService.completeStream(for: session1)
       
-      let session2 = LanguageModelSession(instructions: "You are an expert dog trainer and pet care advisor specializing in apartment living. When producing your output avoid using #'s for markdown titles.")
-      let goodPrompt = """
-      write a guide for first-time dog owners who live in apartments. Can you explain the top 5 factors to consider when choosing a dog breed for apartment living? For each factor, include:
-
-      Why it matters in an apartment setting
-      A specific example of a breed that does well/poorly with this factor
-      One practical tip for managing this aspect
-      """
-      let goodResponse = session2.streamResponse(to: goodPrompt)
+      let goodResponse = foundationModelsService.streamResponse(
+        from: session2,
+      ) {
+        """
+        write a guide for first-time dog owners who live in apartments. Can you explain the top 5 factors to consider when choosing a dog breed for apartment living? For each factor, include:
+        
+        Why it matters in an apartment setting
+        A specific example of a breed that does well/poorly with this factor
+        One practical tip for managing this aspect
+        """
+      }
+      
       for try await content in goodResponse {
         withAnimation(.bouncy) {
           goodOutput = content.content
         }
       }
+      foundationModelsService.completeStream(for: session2)
     } catch {
       poorOutput = "Error: \(error.localizedDescription)"
       goodOutput = "Error: \(error.localizedDescription)"
@@ -180,7 +185,9 @@ struct MasterPromptEngineering2: View {
     setOutput("")
 
     do {
-      let response = try await foundationModelsService.respond(from: session, to: prompt, options: nil)
+      let response = try await foundationModelsService.respond(from: session) {
+        prompt
+      }
       withAnimation(.bouncy) {
         setOutput(response.content)
       }

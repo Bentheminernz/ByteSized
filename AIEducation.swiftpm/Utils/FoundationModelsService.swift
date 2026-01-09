@@ -39,45 +39,102 @@ final class FoundationModelsService {
     return statuses[session] ?? .idle
   }
   
-  // TODO: - Add Schema support
+  /// Produces a generated response as a string.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - options: Optional generation options to customize the response.
+  ///   - prompt: A PromptBuilder closure providing the prompt content.
+  /// - Returns: A response containing the generated string.
   func respond(
     from session: FoundationModelSession = .shared,
-    to prompt: String,
-    options: GenerationOptions? = nil
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () throws -> Prompt
   ) async throws -> LanguageModelSession.Response<String> {
     let sessionObj: LanguageModelSession = getSession(for: session)
     
     statuses[session] = .generating
     defer { statuses[session] = .idle }
     
-    if let options {
-      return try await sessionObj.respond(
-        to: prompt,
-        options: options
-      )
-    } else {
-      return try await sessionObj.respond(to: prompt)
-    }
+    return try await sessionObj.respond(
+      options: options,
+      prompt: prompt,
+    )
   }
   
+  /// Produces a generated typed response for any Generable content type.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - type: The Generable type to generate.
+  ///   - includeSchemaInPrompt: Whether to include the schema in the prompt.
+  ///   - options: Generation options to customize the response.
+  ///   - prompt: A PromptBuilder closure providing the prompt content.
+  /// - Returns: A typed response containing the generated content.
+  func respond<Content: Generable>(
+    from session: FoundationModelSession = .shared,
+    generating type: Content.Type = Content.self,
+    includeSchemaInPrompt: Bool = true,
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () throws -> Prompt
+  ) async throws -> LanguageModelSession.Response<Content> {
+    let sessionObj: LanguageModelSession = getSession(for: session)
+
+    statuses[session] = .generating
+    defer { statuses[session] = .idle }
+
+    return try await sessionObj.respond(
+      generating: type,
+      includeSchemaInPrompt: includeSchemaInPrompt,
+      options: options,
+      prompt: prompt
+    )
+  }
+  
+  /// Streams a generated response as a string.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - prompt: The input prompt for the language model.
+  ///   - options: Optional generation options to customize the response.
+  /// - Returns: A response stream producing the generated string in chunks.
   func streamResponse(
     from session: FoundationModelSession = .shared,
-    to prompt: String,
-    options: GenerationOptions? = nil
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () -> Prompt
   ) -> LanguageModelSession.ResponseStream<String> {
     let sessionObj: LanguageModelSession = getSession(for: session)
     
-    // Set status to generating when stream starts
     statuses[session] = .generating
     
-    if let options {
-      return sessionObj.streamResponse(
-        to: prompt,
-        options: options
-      )
-    } else {
-      return sessionObj.streamResponse(to: prompt)
-    }
+    return sessionObj.streamResponse(
+      options: options,
+      prompt: prompt
+    )
+  }
+  
+  /// Streams a generated typed response for any Generable content type.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - type: The Generable type to generate.
+  ///   - includeSchemaInPrompt: Whether to include the schema in the prompt.
+  ///   - options: Generation options to customize the response.
+  ///   - prompt: A PromptBuilder closure providing the prompt content.
+  /// - Returns: A typed response stream producing the generated content in chunks.
+  func streamResponse<Content: Generable>(
+    from session: FoundationModelSession = .shared,
+    generating type: Content.Type = Content.self,
+    includeSchemaInPrompt: Bool = true,
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () -> Prompt
+  ) -> LanguageModelSession.ResponseStream<Content> {
+    let sessionObj: LanguageModelSession = getSession(for: session)
+    
+    statuses[session] = .generating
+    
+    return sessionObj.streamResponse(
+      generating: type,
+      includeSchemaInPrompt: includeSchemaInPrompt,
+      options: options,
+      prompt: prompt
+    )
   }
   
   /// Marks a streaming session as complete

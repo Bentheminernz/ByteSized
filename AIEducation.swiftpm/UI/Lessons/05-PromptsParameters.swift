@@ -74,9 +74,10 @@ struct PromptsAndParameters2: View {
       
       let response = foundationModelsService.streamResponse(
         from: session,
-        to: prompt,
         options: options
-      )
+      ) {
+        prompt
+      }
       
       for try await content in response {
         withAnimation(.bouncy) {

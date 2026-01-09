@@ -135,15 +135,22 @@ struct LessonCourses {
         Lesson(
           id: 3,
           icon: "book.fill",
-          title: "How does AI think?",
-          description: "Understand the concepts behind neural networks and how they mimic human brain functions.",
+          title: "Tokens & Context",
+          description: "Learn about tokens, context windows, and how they impact AI performance.",
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
+              title: "Tokens",
               icon: "book.fill",
             ) {
-              Text("AI")
+              TokenContextLesson1()
+            },
+            Slide(
+              id: 2,
+              title: "Context Windows",
+              icon: "book.fill",
+            ) {
+              TokenContextLesson2()
             }
           ],
           questions: [
@@ -180,22 +187,15 @@ struct LessonCourses {
         Lesson(
           id: 4,
           icon: "book.fill",
-          title: "Tokens & Context",
-          description: "Learn about tokens, context windows, and how they impact LLM performance.",
+          title: "Guided Generation",
+          description: "Understand guided generation techniques to control AI outputs effectively.",
           slides: [
             Slide(
               id: 1,
-              title: "Tokens",
+              title: "How do machines learn?",
               icon: "book.fill",
             ) {
-              TokenContextLesson1()
-            },
-            Slide(
-              id: 2,
-              title: "Context Windows",
-              icon: "book.fill",
-            ) {
-              TokenContextLesson2()
+              GuidedGeneration1()
             }
           ],
           questions: [
