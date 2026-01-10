@@ -12,16 +12,10 @@ struct MyApp: App {
   
   var body: some Scene {
     WindowGroup {
-      Group {
-        #if !DEBUG
-        RootView()
-        #else
-        SchemaBuilderView()
-        #endif
-      }
-      .environment(confettiManager)
-      .environment(imageCreatorService)
-      .environment(foundationModelsService)
+      RootView()
+        .environment(confettiManager)
+        .environment(imageCreatorService)
+        .environment(foundationModelsService)
     }
     .modelContainer(for: [CompletedLesson.self])
   }
@@ -44,11 +38,17 @@ struct RootView: View {
   enum Tabs: CaseIterable, Hashable {
     case lessons
     case playground
+    #if DEBUG
+    case schema
+    #endif
     
     var name: String {
       switch self {
       case .lessons: return "Lessons"
       case .playground: return "Playground"
+      #if DEBUG
+      case .schema: return "Schema"
+      #endif
       }
     }
     
@@ -56,6 +56,9 @@ struct RootView: View {
       switch self {
       case .lessons: return "book.closed"
       case .playground: return "wand.and.stars.inverse"
+      #if DEBUG
+      case .schema: return "puzzlepiece.extension"
+      #endif
       }
     }
     
@@ -66,6 +69,10 @@ struct RootView: View {
         NavigationStack { MainView() }
       case .playground:
         NavigationStack { PlaygroundView() }
+      #if DEBUG
+      case .schema:
+        NavigationStack { SchemaBuilderView() }
+      #endif
       }
     }
   }

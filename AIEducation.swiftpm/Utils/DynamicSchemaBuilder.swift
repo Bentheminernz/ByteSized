@@ -27,12 +27,12 @@ struct SchemaField: Identifiable, Codable {
   var arrayCount: Int?
   
   enum FieldType: String, CaseIterable, Codable {
-    case string = "String"
-    case int = "Int"
-    case double = "Double"
-    case bool = "Bool"
-    case stringArray = "[String]"
-    case intArray = "[Int]"
+    case string = "String (Text)"
+    case int = "Integer (A whole number)"
+    case double = "Double (A decimal number)"
+    case bool = "Bool (True/False)"
+    case stringArray = "[String] (A collection of text values)"
+    case intArray = "[Int] (A collection of whole numbers)"
   }
 }
 
@@ -134,7 +134,6 @@ extension DynamicSchemaBuilder {
  */
 
 // MARK: - UI Components
-
 struct SchemaBuilderView: View {
   @State private var schemaName = "CustomSchema"
   @State private var schemaDescription = ""
@@ -249,9 +248,7 @@ struct SchemaBuilderView: View {
       let schema = try builder.makeGenerationSchema()
       
       // Create session with system prompt
-      let session = LanguageModelSession {
-        systemPrompt
-      }
+      let session = LanguageModelSession(instructions: systemPrompt)
       
       // Generate response
       let response = try await session.respond(

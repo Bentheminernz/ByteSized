@@ -22,6 +22,12 @@ struct FoundationModelsPlayground: View {
   
   @State private var swiftCodeOutput: String?
   
+  // Schema support
+  @State private var outputMode: OutputMode = .string
+  @State private var schemaFields: [SchemaField] = []
+  @State private var showingSchemaBuilder = false
+  @State private var schemaResult: [String: Any]?
+  
   // Generation options
   @State private var temperature: Double = 0.5
   @State private var maxTokens: Int = 2000
@@ -29,6 +35,11 @@ struct FoundationModelsPlayground: View {
   enum GenerationMode {
     case stream
     case respondTo
+  }
+  
+  enum OutputMode {
+    case string
+    case schema
   }
   
   @Environment(\.colorScheme) private var colorScheme: ColorScheme
@@ -46,27 +57,131 @@ struct FoundationModelsPlayground: View {
       maximumResponseTokens: \(maxTokens)
     )
     
-    // Calls the model to generate a response
-    
-    """
-    let callPrefix = generationMode == .stream
-    ? "let response = model.streamResponse(\n"
-    : "let response = try await model.respond(\n"
-    let body = """
-      to: \"\"\"
-          \(userInput)
-          \"\"\",
-      options: generationOptions
-    )
-    
-    \(generationMode == .stream ? "// Streams the response content\n" : "// Gets the full response content at once\n")
     """
     
-    let prefex = generationMode == .stream
-    ? "for try await content in response {\n    print(content.content)\n}"
-    : "print(response.content)"
+    if outputMode == .schema && !schemaFields.isEmpty {
+      let schemaCode = generateSchemaCode()
+      let callCode = """
+      
+      // Calls the model to generate a response with schema
+      let response = try await model.respond(
+        to: \"\"\"
+            \(userInput)
+            \"\"\",
+        generating: CustomSchema.self,
+        options: generationOptions
+      )
+      
+      // Access the generated values
+      \(generateExtractionCode())
+      """
+      return header + schemaCode + callCode
+    } else {
+      let callPrefix = generationMode == .stream
+      ? "let response = model.streamResponse(\n"
+      : "let response = try await model.respond(\n"
+      let body = """
+        to: \"\"\"
+            \(userInput)
+            \"\"\",
+        options: generationOptions
+      )
+      
+      \(generationMode == .stream ? "// Streams the response content\n" : "// Gets the full response content at once\n")
+      """
+      
+      let suffix = generationMode == .stream
+      ? "for try await content in response {\n    print(content.content)\n}"
+      : "print(response.content)"
+      
+      return header + callPrefix + body + suffix
+    }
+  }
+  
+  private func generateSchemaCode() -> String {
+    let properties = schemaFields.map { field -> String in
+      let guideAttribute: String
+      let propertyType: String
+      
+      switch field.type {
+      case .string:
+        propertyType = "String"
+        if field.description.isEmpty {
+          guideAttribute = ""
+        } else {
+          guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+        }
+      case .int:
+        propertyType = "Int"
+        if field.description.isEmpty {
+          guideAttribute = ""
+        } else {
+          guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+        }
+      case .double:
+        propertyType = "Double"
+        if field.description.isEmpty {
+          guideAttribute = ""
+        } else {
+          guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+        }
+      case .bool:
+        propertyType = "Bool"
+        if field.description.isEmpty {
+          guideAttribute = ""
+        } else {
+          guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+        }
+      case .stringArray:
+        propertyType = "[String]"
+        if let count = field.arrayCount {
+          if field.description.isEmpty {
+            guideAttribute = "  @Guide(.count(\(count)))\n"
+          } else {
+            guideAttribute = "  @Guide(description: \"\(field.description)\", .count(\(count)))\n"
+          }
+        } else {
+          if field.description.isEmpty {
+            guideAttribute = ""
+          } else {
+            guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+          }
+        }
+      case .intArray:
+        propertyType = "[Int]"
+        if let count = field.arrayCount {
+          if field.description.isEmpty {
+            guideAttribute = "  @Guide(.count(\(count)))\n"
+          } else {
+            guideAttribute = "  @Guide(description: \"\(field.description)\", .count(\(count)))\n"
+          }
+        } else {
+          if field.description.isEmpty {
+            guideAttribute = ""
+          } else {
+            guideAttribute = "  @Guide(description: \"\(field.description)\")\n"
+          }
+        }
+      }
+      
+      return "\(guideAttribute)  var \(field.name.replacingOccurrences(of: " ", with: "")): \(propertyType)"
+    }.joined(separator: "\n\n")
     
-    return header + callPrefix + body + prefex
+    return """
+    // Define the schema
+    @Generable
+    struct CustomSchema {
+    \(properties)
+    }
+    """
+  }
+  
+  private func generateExtractionCode() -> String {
+    """
+    print(response)
+    // Or access individual properties:
+    \(schemaFields.map { "// print(response.content.\($0.name.replacingOccurrences(of: " ", with: "")))" }.joined(separator: "\n"))
+    """
   }
   
   @Environment(FoundationModelsService.self) private var foundationModelsService
@@ -107,9 +222,73 @@ struct FoundationModelsPlayground: View {
                 Text("4090")
               }
               
-              Picker("Generation Mode", selection: $generationMode) {
-                Text("Stream").tag(GenerationMode.stream)
-                Text("Respond To").tag(GenerationMode.respondTo)
+              VStack(alignment: .leading) {
+                Text("Output Mode")
+                  .font(.subheadline)
+                  .foregroundStyle(.secondary)
+                
+                Picker("", selection: $outputMode) {
+                  Text("String Output").tag(OutputMode.string)
+                  Text("Schema Output").tag(OutputMode.schema)
+                }
+                .pickerStyle(.segmented)
+              }
+              .padding(.top)
+              
+              if outputMode == .string {
+                VStack(alignment: .leading) {
+                  Text("Generation Mode")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                  
+                  Picker("", selection: $generationMode) {
+                    Text("Stream Response").tag(GenerationMode.stream)
+                    Text("Full Response").tag(GenerationMode.respondTo)
+                  }
+                  .pickerStyle(.segmented)
+                }
+                .padding(.top)
+              }
+              
+              if outputMode == .schema {
+                VStack(alignment: .leading, spacing: 8) {
+                  HStack {
+                    Text("Schema Fields")
+                      .font(.subheadline)
+                      .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Button("Edit Schema", systemImage: "slider.horizontal.3") {
+                      showingSchemaBuilder = true
+                    }
+                    .buttonStyle(.glassProminent)
+                    .labelStyle(.iconOnly)
+                  }
+                  
+                  if schemaFields.isEmpty {
+                    Text("No fields defined")
+                      .font(.caption)
+                      .foregroundStyle(.secondary)
+                      .padding(.vertical, 8)
+                  } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                      ForEach(schemaFields) { field in
+                        HStack {
+                          Text(field.name)
+                            .font(.caption)
+                          Spacer()
+                          Text(field.type.rawValue)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        }
+                      }
+                    }
+                    .padding(8)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 6))
+                  }
+                }
+                .padding(.top)
               }
             }
             .padding(.bottom, 4)
@@ -142,6 +321,7 @@ struct FoundationModelsPlayground: View {
             }
             .tint(Color.green.gradient)
             .buttonStyle(.glassProminent)
+            .disabled(outputMode == .schema && schemaFields.isEmpty)
           }
           .padding()
           .frame(width: geometry.size.width * 0.4)
@@ -165,12 +345,31 @@ struct FoundationModelsPlayground: View {
               .font(.subheadline)
               .foregroundStyle(.secondary)
             
-            if modelOutput != "" {
+            if outputMode == .string && modelOutput != "" {
               Text(modelOutput)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .glassEffect(in: .rect(cornerRadius: 10))
                 .intelligence(in: .rect(cornerRadius: 10))
+            }
+            
+            if outputMode == .schema, let result = schemaResult {
+              VStack(alignment: .leading, spacing: 8) {
+                ForEach(schemaFields, id: \.id) { field in
+                  if let value = result[field.name] {
+                    VStack(alignment: .leading, spacing: 4) {
+                      Text(field.name)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                      Text(formatValue(value))
+                        .font(.body)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .glassEffect(in: .rect(cornerRadius: 8))
+                  }
+                }
+              }
             }
             
             HStack {
@@ -197,38 +396,96 @@ struct FoundationModelsPlayground: View {
       }
     }
     .ignoresSafeArea(edges: .bottom)
+    .sheet(isPresented: $showingSchemaBuilder) {
+      SchemaBuilderSheet(fields: $schemaFields)
+    }
+  }
+  
+  private func formatValue(_ value: Any) -> String {
+    if let array = value as? [Any] {
+      return array.map { "\($0)" }.joined(separator: ", ")
+    }
+    return "\(value)"
   }
   
   private func generateResponse() async {
     do {
-      switch generationMode {
-      case .stream:
-        let response = foundationModelsService.streamResponse(
+      if outputMode == .schema {
+        // generate the schema
+        let builder = DynamicSchemaBuilder(
+          schemaName: "CustomSchema",
+          schemaDescription: "Generated schema",
+          fields: schemaFields
+        )
+        
+        let schema = try builder.makeGenerationSchema()
+        
+        let response = try await foundationModelsService.respond(
+          generating: schema,
           options: GenerationOptions(
             temperature: temperature,
             maximumResponseTokens: maxTokens
-          )
+          ),
         ) {
           userInput
         }
         
-        for try await content in response {
-          withAnimation(.bouncy) {
-            modelOutput = content.content
+        // parses the response into a dictionary
+        var result: [String: Any] = [:]
+        for field in schemaFields {
+          switch field.type {
+          case .string:
+            result[field.name] = try response.content.value(String.self, forProperty: field.name)
+          case .int:
+            result[field.name] = try response.content.value(Int.self, forProperty: field.name)
+          case .double:
+            result[field.name] = try response.content.value(Double.self, forProperty: field.name)
+          case .bool:
+            result[field.name] = try response.content.value(Bool.self, forProperty: field.name)
+          case .stringArray:
+            result[field.name] = try response.content.value([String].self, forProperty: field.name)
+          case .intArray:
+            result[field.name] = try response.content.value([Int].self, forProperty: field.name)
           }
-        }
-      case .respondTo:
-        let response = try await foundationModelsService.respond(
-          options: GenerationOptions(
-            temperature: temperature,
-            maximumResponseTokens: maxTokens
-          )
-        ) {
-          userInput
         }
         
         withAnimation(.bouncy) {
-          modelOutput = response.content
+          schemaResult = result
+          modelOutput = ""
+        }
+        
+      } else {
+        schemaResult = nil
+        
+        switch generationMode {
+        case .stream:
+          let response = foundationModelsService.streamResponse(
+            options: GenerationOptions(
+              temperature: temperature,
+              maximumResponseTokens: maxTokens
+            )
+          ) {
+            userInput
+          }
+          
+          for try await content in response {
+            withAnimation(.bouncy) {
+              modelOutput = content.content
+            }
+          }
+        case .respondTo:
+          let response = try await foundationModelsService.respond(
+            options: GenerationOptions(
+              temperature: temperature,
+              maximumResponseTokens: maxTokens
+            )
+          ) {
+            userInput
+          }
+          
+          withAnimation(.bouncy) {
+            modelOutput = response.content
+          }
         }
       }
     } catch {
@@ -238,3 +495,87 @@ struct FoundationModelsPlayground: View {
   }
 }
 
+// MARK: - Schema Builder Sheet
+struct SchemaBuilderSheet: View {
+  @Environment(\.dismiss) private var dismiss
+  @Binding var fields: [SchemaField]
+  
+  @State private var localFields: [SchemaField]
+  @State private var showingAddField = false
+  @State private var editingField: SchemaField?
+  
+  init(fields: Binding<[SchemaField]>) {
+    _fields = fields
+    _localFields = State(initialValue: fields.wrappedValue)
+  }
+  
+  var body: some View {
+    NavigationStack {
+      List {
+        Section("Schema Fields") {
+          ForEach(localFields) { field in
+            VStack(alignment: .leading, spacing: 4) {
+              HStack {
+                Text(field.name)
+                  .font(.headline)
+                Spacer()
+                Text(field.type.rawValue)
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
+              
+              if !field.description.isEmpty {
+                Text(field.description)
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+              editingField = field
+            }
+          }
+          .onDelete { indexSet in
+            localFields.remove(atOffsets: indexSet)
+          }
+          
+          Button {
+            showingAddField = true
+          } label: {
+            Label("Add Field", systemImage: "plus.circle.fill")
+          }
+        }
+      }
+      .navigationTitle("Edit Schema")
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button("Cancel") { dismiss() }
+        }
+        ToolbarItem(placement: .confirmationAction) {
+          Button("Done") {
+            fields = localFields
+            dismiss()
+          }
+        }
+      }
+      .sheet(isPresented: $showingAddField) {
+        AddFieldView { field in
+          localFields.append(field)
+        }
+      }
+      .sheet(item: $editingField) { field in
+        EditFieldView(field: field) { updatedField in
+          if let index = localFields.firstIndex(where: { $0.id == field.id }) {
+            localFields[index] = updatedField
+          }
+        }
+      }
+    }
+  }
+}
+
+#Preview(traits: .landscapeRight) {
+  FoundationModelsPlayground()
+    .environment(FoundationModelsService.shared)
+}

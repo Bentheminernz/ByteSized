@@ -89,6 +89,33 @@ final class FoundationModelsService {
     )
   }
   
+  /// Produces a generated typed response for a GenerationSchema content type.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - schema: The GenerationSchema type to generate.
+  ///   - options: Generation options to customize the response.
+  ///   - prompt: A PromptBuilder closure providing the prompt content.
+  /// - Returns: A typed response containing the generated content.
+  func respond(
+    from session: FoundationModelSession = .shared,
+    generating schema: GenerationSchema,
+    includeSchemaInPrompt: Bool = true,
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () throws -> Prompt
+  ) async throws -> LanguageModelSession.Response<GeneratedContent> {
+    let sessionObj: LanguageModelSession = getSession(for: session)
+
+    statuses[session] = .generating
+    defer { statuses[session] = .idle }
+
+    return try await sessionObj.respond(
+      schema: schema,
+      includeSchemaInPrompt: includeSchemaInPrompt,
+      options: options,
+      prompt: prompt
+    )
+  }
+  
   /// Streams a generated response as a string.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -158,6 +185,12 @@ final class FoundationModelsService {
     sessions[context] = newSession
     statuses[context] = .idle
     return newSession
+  }
+  
+  /// Resets the context of a session by creating a new one.
+  func resetContext(for session: FoundationModelSession) {
+    clearSession(for: session)
+    _ = getSession(for: session)
   }
   
   func createSession(
