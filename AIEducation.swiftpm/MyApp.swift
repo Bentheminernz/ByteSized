@@ -12,10 +12,16 @@ struct MyApp: App {
   
   var body: some Scene {
     WindowGroup {
-      RootView()
-        .environment(confettiManager)
-        .environment(imageCreatorService)
-        .environment(foundationModelsService)
+      Group {
+        #if !DEBUG
+        RootView()
+        #else
+        SchemaBuilderView()
+        #endif
+      }
+      .environment(confettiManager)
+      .environment(imageCreatorService)
+      .environment(foundationModelsService)
     }
     .modelContainer(for: [CompletedLesson.self])
   }
