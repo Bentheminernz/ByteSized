@@ -8,13 +8,13 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "AIEducation",
+    name: "ByteSized",
     platforms: [
         .iOS("26.0")
     ],
     products: [
         .iOSApplication(
-            name: "AIEducation",
+            name: "ByteSized",
             targets: ["AppModule"],
             bundleIdentifier: "com.benlawrence.AIEducation",
             teamIdentifier: "4TD3JXVDW7",
@@ -34,7 +34,8 @@ let package = Package(
             ],
             capabilities: [
                 .photoLibraryAdd(purposeString: "AI Education needs access in order to save images."),
-                .contacts(purposeString: "Let the AI Model access your contacts.")
+                .contacts(purposeString: "ByteSized needs access to your contacts so the LLM can access it. Data is processed on device"),
+                .calendars(purposeString: "ByteSized needs access to your calendar so the LLM can access it. Data is processed on device")
             ],
             appCategory: .education
         )
