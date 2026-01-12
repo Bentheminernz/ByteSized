@@ -14,33 +14,123 @@ struct Book: Identifiable {
   let author: String
   let icon: String
   let color: Color
-  
+
   static let books: [Book] = [
-    Book(title: "To Kill a Mockingbird", author: "Harper Lee", icon: "bird", color: .blue),
+    Book(
+      title: "To Kill a Mockingbird",
+      author: "Harper Lee",
+      icon: "bird",
+      color: .blue
+    ),
     Book(title: "1984", author: "George Orwell", icon: "eye", color: .red),
-    Book(title: "The Great Gatsby", author: "F. Scott Fitzgerald", icon: "star.fill", color: .yellow),
-    Book(title: "Pride and Prejudice", author: "Jane Austen", icon: "heart.fill", color: .pink),
-    Book(title: "The Catcher in the Rye", author: "J.D. Salinger", icon: "figure.walk", color: .orange),
-    Book(title: "The Lord of the Rings", author: "J.R.R. Tolkien", icon: "crown.fill", color: .yellow),
-    Book(title: "Animal Farm", author: "George Orwell", icon: "pawprint.fill", color: .brown),
-    Book(title: "The Hobbit", author: "J.R.R. Tolkien", icon: "mountain.2.fill", color: .green),
-    Book(title: "Fahrenheit 451", author: "Ray Bradbury", icon: "flame.fill", color: .orange),
-    Book(title: "Brave New World", author: "Aldous Huxley", icon: "globe", color: .cyan),
-    Book(title: "The Chronicles of Narnia", author: "C.S. Lewis", icon: "snow", color: .mint),
-    Book(title: "Moby-Dick", author: "Herman Melville", icon: "water.waves", color: .blue),
-    Book(title: "War and Peace", author: "Leo Tolstoy", icon: "flag.fill", color: .red),
-    Book(title: "The Odyssey", author: "Homer", icon: "sailboat.fill", color: .teal),
-    Book(title: "Frankenstein", author: "Mary Shelley", icon: "bolt.fill", color: .indigo),
-    Book(title: "The Divine Comedy", author: "Dante Alighieri", icon: "sparkles", color: .yellow),
-    Book(title: "Alice's Adventures in Wonderland", author: "Lewis Carroll", icon: "hare.fill", color: .purple),
-    Book(title: "The Little Prince", author: "Antoine de Saint-Exupéry", icon: "moon.stars.fill", color: .yellow),
-    Book(title: "Don Quixote", author: "Miguel de Cervantes", icon: "shield.fill", color: .brown)
+    Book(
+      title: "The Great Gatsby",
+      author: "F. Scott Fitzgerald",
+      icon: "star.fill",
+      color: .yellow
+    ),
+    Book(
+      title: "Pride and Prejudice",
+      author: "Jane Austen",
+      icon: "heart.fill",
+      color: .pink
+    ),
+    Book(
+      title: "The Catcher in the Rye",
+      author: "J.D. Salinger",
+      icon: "figure.walk",
+      color: .orange
+    ),
+    Book(
+      title: "The Lord of the Rings",
+      author: "J.R.R. Tolkien",
+      icon: "crown.fill",
+      color: .yellow
+    ),
+    Book(
+      title: "Animal Farm",
+      author: "George Orwell",
+      icon: "pawprint.fill",
+      color: .brown
+    ),
+    Book(
+      title: "The Hobbit",
+      author: "J.R.R. Tolkien",
+      icon: "mountain.2.fill",
+      color: .green
+    ),
+    Book(
+      title: "Fahrenheit 451",
+      author: "Ray Bradbury",
+      icon: "flame.fill",
+      color: .orange
+    ),
+    Book(
+      title: "Brave New World",
+      author: "Aldous Huxley",
+      icon: "globe",
+      color: .cyan
+    ),
+    Book(
+      title: "The Chronicles of Narnia",
+      author: "C.S. Lewis",
+      icon: "snow",
+      color: .mint
+    ),
+    Book(
+      title: "Moby-Dick",
+      author: "Herman Melville",
+      icon: "water.waves",
+      color: .blue
+    ),
+    Book(
+      title: "War and Peace",
+      author: "Leo Tolstoy",
+      icon: "flag.fill",
+      color: .red
+    ),
+    Book(
+      title: "The Odyssey",
+      author: "Homer",
+      icon: "sailboat.fill",
+      color: .teal
+    ),
+    Book(
+      title: "Frankenstein",
+      author: "Mary Shelley",
+      icon: "bolt.fill",
+      color: .indigo
+    ),
+    Book(
+      title: "The Divine Comedy",
+      author: "Dante Alighieri",
+      icon: "sparkles",
+      color: .yellow
+    ),
+    Book(
+      title: "Alice's Adventures in Wonderland",
+      author: "Lewis Carroll",
+      icon: "hare.fill",
+      color: .purple
+    ),
+    Book(
+      title: "The Little Prince",
+      author: "Antoine de Saint-Exupéry",
+      icon: "moon.stars.fill",
+      color: .yellow
+    ),
+    Book(
+      title: "Don Quixote",
+      author: "Miguel de Cervantes",
+      icon: "shield.fill",
+      color: .brown
+    ),
   ]
 }
 
 struct BookView: View {
   let book: Book
-  
+
   var body: some View {
     VStack {
       RoundedRectangle(cornerRadius: 12)
@@ -53,9 +143,9 @@ struct BookView: View {
               .scaledToFit()
               .frame(width: 50, height: 50)
               .foregroundStyle(.white)
-            
+
             Spacer()
-            
+
             Text(book.title)
               .font(.headline)
               .fontDesign(.rounded)
@@ -64,7 +154,7 @@ struct BookView: View {
               .font(.subheadline)
               .fontDesign(.rounded)
               .foregroundStyle(.white)
-            
+
             Spacer()
           }
           .padding(.vertical)
@@ -75,17 +165,19 @@ struct BookView: View {
 
 struct HowDoMachinesLearn1: View {
   @State private var imageCache: [String: UIImage] = [:]
-  
+
   private var mixedContent: [FallingContent] {
     let books = Book.books.map { FallingContent.book($0) }
-    let images = FallingImage.natureImageFilenames.map { FallingContent.image($0) }
+    let images = FallingImage.natureImageFilenames.map {
+      FallingContent.image($0)
+    }
     return books + images
   }
-  
+
   enum FallingContent: Identifiable {
     case book(Book)
     case image(String)
-    
+
     var id: String {
       switch self {
       case .book(let book):
@@ -95,7 +187,7 @@ struct HowDoMachinesLearn1: View {
       }
     }
   }
-  
+
   var body: some View {
     VStack {
       FallingItemsView(
@@ -107,7 +199,7 @@ struct HowDoMachinesLearn1: View {
         switch content {
         case .book(let book):
           BookView(book: book)
-          
+
         case .image(let filename):
           if let uiImage = imageCache[filename] {
             Image(uiImage: uiImage)
@@ -124,25 +216,29 @@ struct HowDoMachinesLearn1: View {
             .font(.largeTitle)
             .fontWeight(.bold)
             .foregroundStyle(.primary)
-          
-          Text("Just like humans, machines learn by being exposed to many examples. The more diverse and comprehensive the examples, the better the learning.")
-            .multilineTextAlignment(.center)
-            .foregroundStyle(.secondary)
+
+          Text(
+            "Just like humans, machines learn by being exposed to many examples. The more diverse and comprehensive the examples, the better the learning."
+          )
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
         }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
       )
     }
     .onAppear {
       preloadImages()
     }
   }
-  
+
   func preloadImages() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let loadedImages = FallingImage.natureImageFilenames.compactMap { filename -> (String, UIImage)? in
+      let loadedImages = FallingImage.natureImageFilenames.compactMap {
+        filename -> (String, UIImage)? in
         guard let path = Bundle.main.path(forResource: filename, ofType: nil),
-              let image = UIImage(contentsOfFile: path) else {
+          let image = UIImage(contentsOfFile: path)
+        else {
           return nil
         }
         let size = CGSize(width: 80, height: 80)
@@ -155,7 +251,7 @@ struct HowDoMachinesLearn1: View {
         }
         return (filename, resizedImage)
       }
-      
+
       DispatchQueue.main.async {
         self.imageCache = Dictionary(uniqueKeysWithValues: loadedImages)
       }
@@ -204,7 +300,8 @@ struct TrainingVisualizerView: View {
   @State private var modelParams = ModelParams(a: 0.0, b: 0.0, c: 0.0)
 
   private let maxEpochs = 300
-  private let timer = Timer.publish(every: 1.0/30.0, on: .main, in: .common).autoconnect()
+  private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common)
+    .autoconnect()
 
   var body: some View {
     VStack(spacing: 16) {
@@ -222,7 +319,9 @@ struct TrainingVisualizerView: View {
       }
       .frame(height: 260)
       .clipShape(RoundedRectangle(cornerRadius: 12))
-      .overlay(RoundedRectangle(cornerRadius: 12).stroke(.secondary.opacity(0.15)))
+      .overlay(
+        RoundedRectangle(cornerRadius: 12).stroke(.secondary.opacity(0.15))
+      )
 
       VStack(spacing: 8) {
         HStack {
@@ -233,7 +332,9 @@ struct TrainingVisualizerView: View {
         LossSparkline(lossHistory: lossHistory)
           .frame(height: 60)
           .clipShape(RoundedRectangle(cornerRadius: 8))
-          .overlay(RoundedRectangle(cornerRadius: 8).stroke(.secondary.opacity(0.2)))
+          .overlay(
+            RoundedRectangle(cornerRadius: 8).stroke(.secondary.opacity(0.2))
+          )
 
         ProgressView(value: min(Double(epochs) / Double(maxEpochs), 1.0))
           .tint(.blue)
@@ -242,8 +343,10 @@ struct TrainingVisualizerView: View {
       VStack(spacing: 8) {
         HStack {
           Label("Noise", systemImage: "waveform.path")
-          Slider(value: $noise, in: 0.0...0.6) { _ in regenerateData(resetModel: true) }
-            .animation(.bouncy, value: noise)
+          Slider(value: $noise, in: 0.0...0.6) { _ in
+            regenerateData(resetModel: true)
+          }
+          .animation(.bouncy, value: noise)
         }
         HStack {
           Label("Speed", systemImage: "speedometer")
@@ -304,7 +407,7 @@ struct TrainingVisualizerView: View {
   // MARK: - Data + math
   private func makeSyntheticData(count: Int, noise: CGFloat) -> [CGPoint] {
     let target = ModelParams(a: 0.8, b: -0.2, c: 0.1)
-    let xs = (0..<count).map { CGFloat($0) / CGFloat(max(count-1, 1)) }
+    let xs = (0..<count).map { CGFloat($0) / CGFloat(max(count - 1, 1)) }
     return xs.map { x in
       let yTrue = target.a * x * x + target.b * x + target.c
       let n = (CGFloat.random(in: -1...1)) * noise
@@ -322,7 +425,8 @@ struct TrainingVisualizerView: View {
     return err.reduce(0, +) / Double(data.count)
   }
 
-  private func gradient(params: ModelParams, target: ModelParams) -> ModelParams {
+  private func gradient(params: ModelParams, target: ModelParams) -> ModelParams
+  {
     ModelParams(
       a: target.a - params.a,
       b: target.b - params.b,
@@ -331,7 +435,9 @@ struct TrainingVisualizerView: View {
   }
 
   private func normalized(_ pts: [CGPoint]) -> [CGPoint] { pts }
-  private func clamp(_ v: CGFloat, _ lo: CGFloat, _ hi: CGFloat) -> CGFloat { min(max(v, lo), hi) }
+  private func clamp(_ v: CGFloat, _ lo: CGFloat, _ hi: CGFloat) -> CGFloat {
+    min(max(v, lo), hi)
+  }
 }
 
 // MARK: - Drawing helpers
@@ -379,8 +485,11 @@ struct CurveView: Shape {
       let y = params.a * x * x + params.b * x + params.c
       let px = x * rect.width
       let py = (1 - y) * rect.height
-      if i == 0 { path.move(to: CGPoint(x: px, y: py)) }
-      else { path.addLine(to: CGPoint(x: px, y: py)) }
+      if i == 0 {
+        path.move(to: CGPoint(x: px, y: py))
+      } else {
+        path.addLine(to: CGPoint(x: px, y: py))
+      }
     }
     return path
   }
@@ -412,10 +521,14 @@ struct LossSparkline: View {
         let maxL = max(lossHistory.max() ?? 1, 0.001)
         var path = Path()
         for i in lossHistory.indices {
-          let x = CGFloat(i) / CGFloat(max(lossHistory.count - 1, 1)) * rect.width
+          let x =
+            CGFloat(i) / CGFloat(max(lossHistory.count - 1, 1)) * rect.width
           let y = CGFloat(1.0 - (lossHistory[i] / maxL)) * rect.height
-          if i == lossHistory.startIndex { path.move(to: CGPoint(x: x, y: y)) }
-          else { path.addLine(to: CGPoint(x: x, y: y)) }
+          if i == lossHistory.startIndex {
+            path.move(to: CGPoint(x: x, y: y))
+          } else {
+            path.addLine(to: CGPoint(x: x, y: y))
+          }
         }
         ctx.stroke(path, with: .color(.pink), lineWidth: 2)
         var fill = path

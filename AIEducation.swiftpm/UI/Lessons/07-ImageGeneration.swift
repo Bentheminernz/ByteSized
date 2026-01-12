@@ -5,9 +5,9 @@
 //  Created by Ben Lawrence on 05/11/2025.
 //
 
-import SwiftUI
 import FoundationModels
 import ImagePlayground
+import SwiftUI
 import UIKit
 
 // MARK: - WIP
@@ -19,7 +19,7 @@ struct FallingImage: Identifiable {
   let delay: Double
   let duration: Double
   let cachedImage: UIImage?
-  
+
   static let natureImageFilenames: [String] = [
     "3D3F56CC-E856-42F6-A5B3-C50C638DB5AF.jpeg",
     "3EC1B106-EEF1-4A1B-8C6F-AEE9CD93B36D.jpeg",
@@ -41,13 +41,13 @@ struct FallingImage: Identifiable {
     "E556841E-0E3E-40A6-AF62-ABD6DFE36859.jpeg",
     "ED59E484-1801-418F-83AB-B18A725EDDBD.jpeg",
     "F9C5FC3D-D113-491D-97F6-180FE534894D.jpeg",
-    "F1394BA7-8566-4E5D-A86F-F0C4EB49697F.jpeg"
+    "F1394BA7-8566-4E5D-A86F-F0C4EB49697F.jpeg",
   ]
 }
 
 struct CascadingImagesView: View {
   @State private var imageCache: [String: UIImage] = [:]
-  
+
   var body: some View {
     FallingItemsView(items: FallingImage.natureImageFilenames) { filename in
       if let uiImage = imageCache[filename] {
@@ -63,12 +63,14 @@ struct CascadingImagesView: View {
       preloadImages()
     }
   }
-  
+
   func preloadImages() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let loadedImages = FallingImage.natureImageFilenames.compactMap { filename -> (String, UIImage)? in
+      let loadedImages = FallingImage.natureImageFilenames.compactMap {
+        filename -> (String, UIImage)? in
         guard let path = Bundle.main.path(forResource: filename, ofType: nil),
-              let image = UIImage(contentsOfFile: path) else {
+          let image = UIImage(contentsOfFile: path)
+        else {
           return nil
         }
         let size = CGSize(width: 80, height: 80)
@@ -81,7 +83,7 @@ struct CascadingImagesView: View {
         }
         return (filename, resizedImage)
       }
-      
+
       DispatchQueue.main.async {
         self.imageCache = Dictionary(uniqueKeysWithValues: loadedImages)
       }
@@ -104,13 +106,15 @@ struct TrainingData: View {
     ZStack {
       CascadingImagesView()
         .ignoresSafeArea()
-      
+
       VStack {
         Text("How does an image generator work?")
           .font(.largeTitle)
           .bold()
-          
-        Text("A crucial part in generating AI images is the use of training data. The AI model is trained on a vast dataset of images, like the ones falling in the background. By analyzing these images, the model learns to recognize patterns, shapes, colors, and textures. When you provide a text prompt, the model uses this learned information to create new images that match the description. The more diverse and extensive the training data, the better the model can generate high-quality and varied images.")
+
+        Text(
+          "A crucial part in generating AI images is the use of training data. The AI model is trained on a vast dataset of images, like the ones falling in the background. By analyzing these images, the model learns to recognize patterns, shapes, colors, and textures. When you provide a text prompt, the model uses this learned information to create new images that match the description. The more diverse and extensive the training data, the better the model can generate high-quality and varied images."
+        )
       }
       .padding()
       .glassEffect(.clear, in: .rect(cornerRadius: 15))
@@ -120,9 +124,12 @@ struct TrainingData: View {
 }
 
 struct DemoView: View {
-  @State private var generatedImages: [CGImage?] = Array(repeating: nil, count: 3)
+  @State private var generatedImages: [CGImage?] = Array(
+    repeating: nil,
+    count: 3
+  )
   @State private var imageStyle: ImagePlaygroundStyle = .animation
-  
+
   var body: some View {
     VStack {
       Picker("Image Style", selection: $imageStyle) {
@@ -130,7 +137,7 @@ struct DemoView: View {
         Text("Sketch").tag(ImagePlaygroundStyle.sketch)
         Text("Illustration").tag(ImagePlaygroundStyle.illustration)
       }
-      
+
       ScrollView(.horizontal) {
         HStack(spacing: 16) {
           ForEach(generatedImages.indices, id: \.self) { idx in
@@ -178,12 +185,16 @@ struct DemoView: View {
       }
     }
   }
-  
+
   private func generateImages() async {
     do {
       let imageCreator = try await ImageCreator()
       let imageSequence = imageCreator.images(
-        for: [.text("A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze")],
+        for: [
+          .text(
+            "A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze"
+          )
+        ],
         style: imageStyle,
         limit: 3
       )
@@ -199,4 +210,3 @@ struct DemoView: View {
     }
   }
 }
-

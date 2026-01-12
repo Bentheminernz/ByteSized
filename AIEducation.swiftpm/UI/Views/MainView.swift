@@ -4,9 +4,9 @@
 //  Created by Ben Lawrence on 06/11/2025.
 //
 
-import SwiftUI
-import SwiftData
 import Confetti
+import SwiftData
+import SwiftUI
 
 struct MainView: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -15,16 +15,16 @@ struct MainView: View {
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
-//  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first
-  @State private var selectedLesson: Lesson?
+    //  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first
+    @State private var selectedLesson: Lesson?
   #else
-  @State private var selectedLesson: Lesson?
+    @State private var selectedLesson: Lesson?
   #endif
-  
+
   @Environment(\.modelContext) private var modelContext
-  
+
   @State private var confettiManager: ConfettiManager = .shared
-  
+
   private var nextUncompletedLessonID: Int? {
     // Flatten all lessons in order and find the first that is not completed
     let completedIDs = Set(completedLessons.map { $0.lessonID })
@@ -37,7 +37,7 @@ struct MainView: View {
     }
     return nil
   }
-  
+
   var body: some View {
     Group {
       if horizontalSizeClass == .regular {
@@ -49,37 +49,49 @@ struct MainView: View {
                 VStack(alignment: .leading) {
                   Text(course.title)
                     .font(.title2).bold()
-                  
+
                   Text(course.description)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                   LazyHStack(spacing: 16) {
                     ForEach(course.lessons) { lesson in
-                      LessonCard(lesson, isNext: nextUncompletedLessonID == lesson.id)
-#if DEBUG
+                      LessonCard(
+                        lesson,
+                        isNext: nextUncompletedLessonID == lesson.id
+                      )
+                      #if DEBUG
                         .contextMenu {
                           Button("Mark as completed") {
-                            CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+                            CompletedLesson.markLessonAsCompleted(
+                              lessonID: lesson.id,
+                              in: modelContext
+                            )
                           }
                           Button("Unmark as completed") {
-                            if let completedLesson = completedLessons.first(where: { $0.lessonID == lesson.id }) {
+                            if let completedLesson = completedLessons.first(
+                              where: { $0.lessonID == lesson.id })
+                            {
                               modelContext.delete(completedLesson)
                               try? modelContext.save()
                             }
                           }
                         }
-#endif
-                        .frame(width: expandedCardId == lesson.id ? 520 : 400, height: expandedCardId == lesson.id ? 180 : 120)
-                        .onTapGesture {
-                          withAnimation(.bouncy(duration: 0.3)) {
-                            expandedCardId = (expandedCardId == lesson.id) ? nil : lesson.id
-                          }
+                      #endif
+                      .frame(
+                        width: expandedCardId == lesson.id ? 520 : 400,
+                        height: expandedCardId == lesson.id ? 180 : 120
+                      )
+                      .onTapGesture {
+                        withAnimation(.bouncy(duration: 0.3)) {
+                          expandedCardId =
+                            (expandedCardId == lesson.id) ? nil : lesson.id
                         }
-                        .matchedTransitionSource(id: lesson.id, in: animation)
+                      }
+                      .matchedTransitionSource(id: lesson.id, in: animation)
                     }
                   }
                   .padding()
@@ -93,37 +105,42 @@ struct MainView: View {
               }
             }
           }
-#if DEBUG
-          Text("All Completed Lesson instances:")
-          ForEach(completedLessons, id: \.lessonID) { completedLesson in
-            Text("Lesson ID: \(completedLesson.lessonID)")
-              .contextMenu {
-                Button("Delete") {
-                  modelContext.delete(completedLesson)
-                  try? modelContext.save()
+          #if DEBUG
+            Text("All Completed Lesson instances:")
+            ForEach(completedLessons, id: \.lessonID) { completedLesson in
+              Text("Lesson ID: \(completedLesson.lessonID)")
+                .contextMenu {
+                  Button("Delete") {
+                    modelContext.delete(completedLesson)
+                    try? modelContext.save()
+                  }
                 }
-              }
-          }
-          
-          HStack {
-            Button("Mark all as completed") {
-              for course in LessonCourses.allCourses {
-                for lesson in course.lessons {
-                  if !completedLessons.contains(where: { $0.lessonID == lesson.id }) {
-                    CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+            }
+
+            HStack {
+              Button("Mark all as completed") {
+                for course in LessonCourses.allCourses {
+                  for lesson in course.lessons {
+                    if !completedLessons.contains(where: {
+                      $0.lessonID == lesson.id
+                    }) {
+                      CompletedLesson.markLessonAsCompleted(
+                        lessonID: lesson.id,
+                        in: modelContext
+                      )
+                    }
                   }
                 }
               }
-            }
-            
-            Button("Unmark all as completed") {
-              for completedLesson in completedLessons {
-                modelContext.delete(completedLesson)
+
+              Button("Unmark all as completed") {
+                for completedLesson in completedLessons {
+                  modelContext.delete(completedLesson)
+                }
+                try? modelContext.save()
               }
-              try? modelContext.save()
             }
-          }
-#endif
+          #endif
         }
       } else {
         // iPhone layout: vertical list, full-width cards, no horizontal scrolls
@@ -139,15 +156,18 @@ struct MainView: View {
                     .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
-                
+
                 LazyVStack(spacing: 12) {
                   ForEach(course.lessons) { lesson in
-                    LessonCardPhone(lesson, isNext: nextUncompletedLessonID == lesson.id)
-                      .onTapGesture {
-                        selectedLesson = lesson
-                        expandedCardId = nil
-                      }
-                      .padding(.horizontal)
+                    LessonCardPhone(
+                      lesson,
+                      isNext: nextUncompletedLessonID == lesson.id
+                    )
+                    .onTapGesture {
+                      selectedLesson = lesson
+                      expandedCardId = nil
+                    }
+                    .padding(.horizontal)
                   }
                 }
               }
@@ -160,7 +180,9 @@ struct MainView: View {
     .navigationTitle("AI Education")
     .background(
       LinearGradient(
-        gradient: Gradient(colors: [Colours.Icterine.opacity(0.5), Colours.LightGreen.opacity(0.5)]),
+        gradient: Gradient(colors: [
+          Colours.Icterine.opacity(0.5), Colours.LightGreen.opacity(0.5),
+        ]),
         startPoint: .topLeading,
         endPoint: .bottomTrailing
       )
@@ -171,17 +193,22 @@ struct MainView: View {
         animation: animation,
         onClose: {
           selectedLesson = nil
-          CompletedLesson.markLessonAsCompleted(lessonID: lesson.id, in: modelContext)
+          CompletedLesson.markLessonAsCompleted(
+            lessonID: lesson.id,
+            in: modelContext
+          )
         }
       )
-      .confettiOverlay(isPresented: Binding(
-        get: {
-          confettiManager.isShowingConfetti
-        },
-        set: { newValue in
-          confettiManager.isShowingConfetti = newValue
-        }
-      )) {
+      .confettiOverlay(
+        isPresented: Binding(
+          get: {
+            confettiManager.isShowingConfetti
+          },
+          set: { newValue in
+            confettiManager.isShowingConfetti = newValue
+          }
+        )
+      ) {
         ConfettiView(
           emissionDuration: confettiManager.emissionDuration
         )
@@ -189,10 +216,14 @@ struct MainView: View {
       .interactiveDismissDisabled()
     }
   }
-  
+
   @ViewBuilder
-  private func LessonCardPhone(_ lesson: Lesson, isNext: Bool = false) -> some View {
-    let isCompleted = completedLessons.contains(where: { $0.lessonID == lesson.id })
+  private func LessonCardPhone(_ lesson: Lesson, isNext: Bool = false)
+    -> some View
+  {
+    let isCompleted = completedLessons.contains(where: {
+      $0.lessonID == lesson.id
+    })
     HStack(alignment: .center, spacing: 12) {
       Image(systemName: "\(lesson.icon, default: "book")")
         .resizable()
@@ -228,19 +259,21 @@ struct MainView: View {
       }
     )
   }
-  
+
   @ViewBuilder
   private func LessonCard(_ lesson: Lesson, isNext: Bool = false) -> some View {
-    let isCompleted = completedLessons.contains(where: { $0.lessonID == lesson.id })
+    let isCompleted = completedLessons.contains(where: {
+      $0.lessonID == lesson.id
+    })
     VStack(alignment: .leading) {
       HStack {
         Image(systemName: "\(lesson.icon, default: "book")")
           .resizable()
           .scaledToFit()
           .frame(width: 40, height: 40)
-//          .foregroundStyle(.accentColor)
+          //          .foregroundStyle(.accentColor)
           .symbolColorRenderingMode(.gradient)
-        
+
         VStack(alignment: .leading) {
           Text(lesson.title)
             .font(.headline)
@@ -248,7 +281,7 @@ struct MainView: View {
           Text(lesson.description)
             .font(.subheadline)
             .foregroundStyle(.secondary)
-          
+
           if isCompleted {
             Image(systemName: "checkmark.seal.fill")
               .foregroundStyle(.green)
@@ -256,7 +289,7 @@ struct MainView: View {
         }
       }
       Spacer()
-      
+
       if expandedCardId == lesson.id {
         Button(action: {
           selectedLesson = lesson
@@ -283,7 +316,7 @@ struct MainView: View {
       }
     )
   }
-  
+
   private func nextLesson(after lesson: Lesson) -> Int? {
     for course in LessonCourses.allCourses {
       if let index = course.lessons.firstIndex(where: { $0.id == lesson.id }) {
@@ -299,10 +332,10 @@ struct MainView: View {
 
 struct Colours {
   static let Icterine = Color(red: 0.38, green: 0.949, blue: 0.761)
-  static let GreenYellow = Color(red: 0.761, green: 0.949, blue: 0.38) // #c2f261
-  static let LightGreen = Color(red: 0.569, green: 0.949, blue: 0.569) // #91f291
-  static let Aquamarine = Color(red: 0.38, green: 0.949, blue: 0.761) // #61f2c2
-  static let FlourescantCyan = Color(red: 0.188, green: 0.949, blue: 0.949) // #30f2f2
+  static let GreenYellow = Color(red: 0.761, green: 0.949, blue: 0.38)  // #c2f261
+  static let LightGreen = Color(red: 0.569, green: 0.949, blue: 0.569)  // #91f291
+  static let Aquamarine = Color(red: 0.38, green: 0.949, blue: 0.761)  // #61f2c2
+  static let FlourescantCyan = Color(red: 0.188, green: 0.949, blue: 0.949)  // #30f2f2
 }
 
 #Preview(traits: .landscapeLeft) {

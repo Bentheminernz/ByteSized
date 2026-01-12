@@ -13,7 +13,7 @@ struct AdaptiveModal<Modal: View>: ViewModifier {
   @Binding var isPresented: Bool
   let interactiveDismissDisabled: Bool
   let modal: () -> Modal
-  
+
   func body(content: Content) -> some View {
     if hSize == .regular {
       content
@@ -44,6 +44,12 @@ extension View {
     interactiveDismissDisabled: Bool = false,
     @ViewBuilder content: @escaping () -> Content
   ) -> some View {
-    self.modifier(AdaptiveModal(isPresented: isPresented, interactiveDismissDisabled: interactiveDismissDisabled, modal: content))
+    self.modifier(
+      AdaptiveModal(
+        isPresented: isPresented,
+        interactiveDismissDisabled: interactiveDismissDisabled,
+        modal: content
+      )
+    )
   }
 }

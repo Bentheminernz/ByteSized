@@ -5,16 +5,16 @@
 //  Created by Ben Lawrence on 23/11/2025.
 //
 
-import SwiftUI
 import HighlightSwift
+import SwiftUI
 
 struct CodeViewer: View {
   let code: String
   let language: String
-  
+
   @Environment(\.colorScheme) private var colorScheme
   @State private var highlighted: AttributedString?
-  
+
   var body: some View {
     HStack(alignment: .top, spacing: 0) {
       VStack(alignment: .trailing, spacing: 0) {
@@ -28,7 +28,7 @@ struct CodeViewer: View {
       }
       .padding(.vertical, 8)
       .background(.ultraThinMaterial)
-      
+
       VStack(alignment: .leading, spacing: 0) {
         if highlighted != nil {
           ForEach(Array(highlightedLines.enumerated()), id: \.0) { _, line in
@@ -59,19 +59,30 @@ struct CodeViewer: View {
       Task { await highlightNow() }
     }
   }
-  
-  private var taskID: String { "\(language)|\(colorScheme == .dark ? "dark" : "light")|\(code.hashValue)" }
+
+  private var taskID: String {
+    "\(language)|\(colorScheme == .dark ? "dark" : "light")|\(code.hashValue)"
+  }
   private var lineHeight: CGFloat { 22 }
-  private var plainLines: [String] { code.split(separator: "\n", omittingEmptySubsequences: false).map(String.init) }
-  private var lineCount: Int { highlighted != nil ? highlightedLines.count : plainLines.count }
-  
+  private var plainLines: [String] {
+    code.split(separator: "\n", omittingEmptySubsequences: false).map(
+      String.init
+    )
+  }
+  private var lineCount: Int {
+    highlighted != nil ? highlightedLines.count : plainLines.count
+  }
+
   private var highlightedLines: [AttributedString] {
     guard let highlighted else { return [] }
     var result: [AttributedString] = []
     var current = AttributedString()
     for run in highlighted.runs {
       let substring = highlighted[run.range]
-      let pieces = String(substring.characters).split(separator: "\n", omittingEmptySubsequences: false)
+      let pieces = String(substring.characters).split(
+        separator: "\n",
+        omittingEmptySubsequences: false
+      )
       if pieces.count <= 1 {
         current += substring
       } else {
@@ -89,7 +100,7 @@ struct CodeViewer: View {
     result.append(current)
     return result
   }
-  
+
   private func highlightNow() async {
     do {
       let highlighter = Highlight()
@@ -105,4 +116,3 @@ struct CodeViewer: View {
     }
   }
 }
-

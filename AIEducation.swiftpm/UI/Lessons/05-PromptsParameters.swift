@@ -5,18 +5,19 @@
 //  Created by Ben Lawrence on 06/11/2025.
 //
 
-import SwiftUI
 import FoundationModels
+import SwiftUI
 
 // MARK: - WIP
 
 struct PromptsAndParameters1: View {
   var body: some View {
     VStack {
-      Text("The output from your AI model differs severely based on the prompts and parameters you provide. Experiment with different prompts and parameters to see how the output changes.")
-        .padding()
-      
-      
+      Text(
+        "The output from your AI model differs severely based on the prompts and parameters you provide. Experiment with different prompts and parameters to see how the output changes."
+      )
+      .padding()
+
     }
   }
 }
@@ -25,10 +26,10 @@ struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
   @State private var prompt: String = "Hello there! Can you tell me a joke?"
   @State private var modelOutput: String = ""
-  
+
   @Environment(FoundationModelsService.self) private var foundationModelsService
   let session: FoundationModelSession = .custom("PromptsAndParameters2")
-  
+
   var body: some View {
     VStack {
       Text("Temperature: \(String(format: "%.1f", temperature))")
@@ -40,10 +41,11 @@ struct PromptsAndParameters2: View {
       } maximumValueLabel: {
         Text("1.0")
       }
-      
+
       Text(prompt)
-      
-      if let status = foundationModelsService.statuses[session]?.modelStatusText {
+
+      if let status = foundationModelsService.statuses[session]?.modelStatusText
+      {
         Text(status)
           .font(.subheadline)
           .foregroundStyle(.secondary)
@@ -56,7 +58,9 @@ struct PromptsAndParameters2: View {
     .padding()
     .animation(.bouncy, value: temperature)
     .onChange(of: temperature) {
-      if foundationModelsService.statuses[session] != .generating && foundationModelsService.statuses[session] != .requested {
+      if foundationModelsService.statuses[session] != .generating
+        && foundationModelsService.statuses[session] != .requested
+      {
         modelOutput = ""
         Task {
           await generateResponse()
@@ -64,21 +68,21 @@ struct PromptsAndParameters2: View {
       }
     }
   }
-  
+
   private func generateResponse() async {
     do {
       let options: GenerationOptions = GenerationOptions(
         temperature: temperature,
         maximumResponseTokens: 150
       )
-      
+
       let response = foundationModelsService.streamResponse(
         from: session,
         options: options
       ) {
         prompt
       }
-      
+
       for try await content in response {
         withAnimation(.bouncy) {
           modelOutput = content.content

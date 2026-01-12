@@ -11,7 +11,7 @@ import FoundationModels
 enum FoundationModelSession: Hashable {
   /// The shared foundation model session.
   case shared
-  
+
   /// A custom foundation model session identified by a unique string.
   /// Can be used in views where a separate session is needed.
   case custom(_ session: String)
@@ -19,26 +19,25 @@ enum FoundationModelSession: Hashable {
 
 typealias FoundationModelsSessionStatus = GenerationState
 
-
 @MainActor
 @Observable
 final class FoundationModelsService {
   static let shared = FoundationModelsService()
-  
+
   private var sessions: [FoundationModelSession: LanguageModelSession] = [:]
   private(set) var statuses: [FoundationModelSession: GenerationState] = [:]
-  
+
   private init() {
     sessions[.shared] = LanguageModelSession()
     sessions[.shared]?.prewarm()
     statuses[.shared] = .idle
   }
-  
+
   /// Get the generation status for a specific session
   func status(for session: FoundationModelSession) -> GenerationState {
     return statuses[session] ?? .idle
   }
-  
+
   /// Produces a generated response as a string.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -51,16 +50,16 @@ final class FoundationModelsService {
     @PromptBuilder _ prompt: @escaping () throws -> Prompt
   ) async throws -> LanguageModelSession.Response<String> {
     let sessionObj: LanguageModelSession = getSession(for: session)
-    
+
     statuses[session] = .generating
     defer { statuses[session] = .idle }
-    
+
     return try await sessionObj.respond(
       options: options,
       prompt: prompt,
     )
   }
-  
+
   /// Produces a generated typed response for any Generable content type.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -88,7 +87,7 @@ final class FoundationModelsService {
       prompt: prompt
     )
   }
-  
+
   /// Produces a generated typed response for a GenerationSchema content type.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -115,7 +114,7 @@ final class FoundationModelsService {
       prompt: prompt
     )
   }
-  
+
   /// Streams a generated response as a string.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -128,15 +127,15 @@ final class FoundationModelsService {
     @PromptBuilder _ prompt: @escaping () -> Prompt
   ) -> LanguageModelSession.ResponseStream<String> {
     let sessionObj: LanguageModelSession = getSession(for: session)
-    
+
     statuses[session] = .generating
-    
+
     return sessionObj.streamResponse(
       options: options,
       prompt: prompt
     )
   }
-  
+
   /// Streams a generated typed response for any Generable content type.
   /// - Parameters:
   ///   - session: The foundation model session to use.
@@ -153,9 +152,9 @@ final class FoundationModelsService {
     @PromptBuilder _ prompt: @escaping () -> Prompt
   ) -> LanguageModelSession.ResponseStream<Content> {
     let sessionObj: LanguageModelSession = getSession(for: session)
-    
+
     statuses[session] = .generating
-    
+
     return sessionObj.streamResponse(
       generating: type,
       includeSchemaInPrompt: includeSchemaInPrompt,
@@ -163,12 +162,12 @@ final class FoundationModelsService {
       prompt: prompt
     )
   }
-  
+
   /// Marks a streaming session as complete
   func completeStream(for session: FoundationModelSession) {
     statuses[session] = .idle
   }
-  
+
   /// Get or create a LanguageModelSession for the given context.
   private func getSession(
     for context: FoundationModelSession,
@@ -177,22 +176,23 @@ final class FoundationModelsService {
     if let existingSession = sessions[context] {
       return existingSession
     }
-    
-    let newSession = instructions != nil
+
+    let newSession =
+      instructions != nil
       ? LanguageModelSession(instructions: instructions!)
       : LanguageModelSession()
-    
+
     sessions[context] = newSession
     statuses[context] = .idle
     return newSession
   }
-  
+
   /// Resets the context of a session by creating a new one.
   func resetContext(for session: FoundationModelSession) {
     clearSession(for: session)
     _ = getSession(for: session)
   }
-  
+
   func createSession(
     for context: FoundationModelSession,
     instructions: String? = nil
@@ -200,7 +200,7 @@ final class FoundationModelsService {
     let session = getSession(for: context, instructions: instructions)
     session.prewarm()
   }
-  
+
   func createSession(
     for contexts: [FoundationModelSession],
   ) {
@@ -208,14 +208,14 @@ final class FoundationModelsService {
       createSession(for: context)
     }
   }
-  
+
   func clearSession(
     for context: FoundationModelSession
   ) {
     sessions.removeValue(forKey: context)
     statuses.removeValue(forKey: context)
   }
-  
+
   func clearSession(
     for contexts: [FoundationModelSession]
   ) {
@@ -224,4 +224,3 @@ final class FoundationModelsService {
     }
   }
 }
-

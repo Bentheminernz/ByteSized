@@ -5,23 +5,30 @@
 //  Created by Ben Lawrence on 06/12/2025.
 //
 
-import SwiftUI
 import Confetti
+import SwiftUI
 
 struct AllLessonsCompleteModal: View {
   @Binding var selectedTab: RootView.Tabs
   @Binding var hasSeenCompletedAllLessons: Bool
   @State var confettiManager: ConfettiManager = .shared
   @Environment(\.dismiss) private var dismiss: DismissAction
-  
+
   var body: some View {
     VStack {
-      WelcomeComponents.WelcomePageHeader(title: "Congratulations!", subtitle: "You've completed all lessons.", imageName: "trophy.fill", imageColor: .yellow)
-      
-      Text("Since you've completed all the lessons, you now have access to the AI Playground where you can experiment with prompts and parameters!")
-      
+      WelcomeComponents.WelcomePageHeader(
+        title: "Congratulations!",
+        subtitle: "You've completed all lessons.",
+        imageName: "trophy.fill",
+        imageColor: .yellow
+      )
+
+      Text(
+        "Since you've completed all the lessons, you now have access to the AI Playground where you can experiment with prompts and parameters!"
+      )
+
       Spacer()
-      
+
       Button(action: {
         selectedTab = .playground
         hasSeenCompletedAllLessons = true
@@ -34,7 +41,7 @@ struct AllLessonsCompleteModal: View {
       .buttonStyle(.glassProminent)
       .buttonSizing(.flexible)
       .padding(.bottom)
-      
+
       Button("Maybe later") {
         hasSeenCompletedAllLessons = true
         dismiss()

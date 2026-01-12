@@ -11,7 +11,7 @@ struct LessonSheet: View {
   let lesson: Lesson
   let animation: Namespace.ID
   let onClose: () -> Void
-  
+
   @State private var currentIndex: Int = 0
   @State private var quizIndex: Int = 0
   @State private var selectedAnswerID: Int? = nil
@@ -26,10 +26,12 @@ struct LessonSheet: View {
 
     return Group {
       if showCompletion {
-        LessonCompletionView(lesson: lesson,
-                             correct: answersCorrect,
-                             total: lesson.questions.count,
-                             onClose: onClose)
+        LessonCompletionView(
+          lesson: lesson,
+          correct: answersCorrect,
+          total: lesson.questions.count,
+          onClose: onClose
+        )
       } else {
         VStack(alignment: .leading, spacing: 16) {
           if showingSlides {
@@ -41,8 +43,18 @@ struct LessonSheet: View {
             Group {
               lesson.slides[currentIndex].content
             }
-            .transition(isAdvancing ? .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)) : .asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
-//            .animation(.bouncy, value: currentIndex)
+            .transition(
+              isAdvancing
+                ? .asymmetric(
+                  insertion: .move(edge: .trailing),
+                  removal: .move(edge: .leading)
+                )
+                : .asymmetric(
+                  insertion: .move(edge: .leading),
+                  removal: .move(edge: .trailing)
+                )
+            )
+            //            .animation(.bouncy, value: currentIndex)
             .frame(maxHeight: .infinity)
 
             Spacer()
@@ -50,7 +62,7 @@ struct LessonSheet: View {
             HStack {
               Button("Previous") {
                 isAdvancing = false
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                   withAnimation(.smooth) {
                     currentIndex = max(currentIndex - 1, 0)
@@ -65,10 +77,13 @@ struct LessonSheet: View {
               HStack {
                 ForEach(0..<lesson.slides.count, id: \.self) { idx in
                   Capsule()
-                    .fill(idx == currentIndex ? Color.green : Color.gray.opacity(0.5))
+                    .fill(
+                      idx == currentIndex
+                        ? Color.green : Color.gray.opacity(0.5)
+                    )
                     .frame(width: idx == currentIndex ? 40 : 15, height: 15)
                 }
-                
+
                 Capsule()
                   .fill(Color.gray.opacity(0.5))
                   .frame(width: 15, height: 15)
@@ -85,7 +100,7 @@ struct LessonSheet: View {
 
               Button("Next") {
                 isAdvancing = true
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                   withAnimation(.smooth) {
                     currentIndex = min(currentIndex + 1, lesson.slides.count)
@@ -93,7 +108,10 @@ struct LessonSheet: View {
                       quizIndex = 0
                       selectedAnswerID = nil
                       hasSubmitted = false
-                      selectedAnswerIDsByQuestion = Array(repeating: nil, count: lesson.questions.count)
+                      selectedAnswerIDsByQuestion = Array(
+                        repeating: nil,
+                        count: lesson.questions.count
+                      )
                     }
                   }
                 }
@@ -118,7 +136,9 @@ struct LessonSheet: View {
               .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
 
               let question = lesson.questions[quizIndex]
-              let correctAnswerID = question.answers.first(where: { $0.isCorrect })?.id
+              let correctAnswerID = question.answers.first(where: {
+                $0.isCorrect
+              })?.id
 
               VStack(alignment: .leading, spacing: 12) {
                 Text(question.question)
@@ -128,24 +148,34 @@ struct LessonSheet: View {
                   HStack {
                     if hasSubmitted {
                       if answer.id == correctAnswerID {
-                        Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                      } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
-                        Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
+                        Image(systemName: "checkmark.circle.fill")
+                          .foregroundStyle(.green)
+                      } else if selectedAnswerID == answer.id
+                        && selectedAnswerID != correctAnswerID
+                      {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(
+                          .red
+                        )
                       } else {
                         Image(systemName: "circle")
                       }
                     } else {
-                      Image(systemName: selectedAnswerID == answer.id ? "largecircle.fill.circle" : "circle")
+                      Image(
+                        systemName: selectedAnswerID == answer.id
+                          ? "largecircle.fill.circle" : "circle"
+                      )
                     }
                     Text(answer.answer)
                     Spacer()
-                    
+
                     if hasSubmitted {
                       if answer.id == correctAnswerID {
                         Text("Correct Answer")
                           .font(.caption)
                           .foregroundStyle(.green)
-                      } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                      } else if selectedAnswerID == answer.id
+                        && selectedAnswerID != correctAnswerID
+                      {
                         Text("Your Answer")
                           .font(.caption)
                           .foregroundStyle(.red)
@@ -159,17 +189,26 @@ struct LessonSheet: View {
                       if hasSubmitted {
                         if answer.id == correctAnswerID {
                           return Color.green.opacity(0.2)
-                        } else if selectedAnswerID == answer.id && selectedAnswerID != correctAnswerID {
+                        } else if selectedAnswerID == answer.id
+                          && selectedAnswerID != correctAnswerID
+                        {
                           return Color.red.opacity(0.2)
                         } else {
                           return Color.gray.opacity(0.08)
                         }
                       } else {
-                        return (selectedAnswerID == answer.id ? Color.green.opacity(0.15) : Color.gray.opacity(0.08))
+                        return
+                          (selectedAnswerID == answer.id
+                          ? Color.green.opacity(0.15)
+                          : Color.gray.opacity(0.08))
                       }
-                    }(), in: RoundedRectangle(cornerRadius: 12)
+                    }(),
+                    in: RoundedRectangle(cornerRadius: 12)
                   )
-                  .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 12))
+                  .glassEffect(
+                    .regular.interactive(),
+                    in: .rect(cornerRadius: 12)
+                  )
                   .onTapGesture {
                     guard !hasSubmitted else { return }
                     withAnimation(.linear) {
@@ -185,7 +224,12 @@ struct LessonSheet: View {
               .background(
                 RoundedRectangle(cornerRadius: 15)
                   .fill(Color(.systemBackground).opacity(0.8))
-                  .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+                  .shadow(
+                    color: Color.black.opacity(0.1),
+                    radius: 5,
+                    x: 0,
+                    y: 2
+                  )
               )
 
               Spacer()
@@ -196,7 +240,7 @@ struct LessonSheet: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                       isAdvancing = false
                     }
-                    
+
                     if quizIndex == 0 {
                       currentIndex = max(lesson.slides.count - 1, 0)
                     } else {
@@ -204,7 +248,8 @@ struct LessonSheet: View {
                       selectedAnswerID = nil
                       hasSubmitted = false
                       if quizIndex < selectedAnswerIDsByQuestion.count {
-                        selectedAnswerID = selectedAnswerIDsByQuestion[quizIndex]
+                        selectedAnswerID =
+                          selectedAnswerIDsByQuestion[quizIndex]
                       }
                     }
                   }
@@ -216,7 +261,9 @@ struct LessonSheet: View {
                 HStack {
                   ForEach(0..<lesson.questions.count, id: \.self) { idx in
                     Capsule()
-                      .fill(idx == quizIndex ? Color.green : Color.gray.opacity(0.5))
+                      .fill(
+                        idx == quizIndex ? Color.green : Color.gray.opacity(0.5)
+                      )
                       .frame(width: idx == quizIndex ? 40 : 15, height: 15)
                       .onTapGesture {
                         withAnimation(.bouncy) {
@@ -224,7 +271,9 @@ struct LessonSheet: View {
                           quizIndex = idx
                           selectedAnswerID = nil
                           hasSubmitted = false
-                          if idx < selectedAnswerIDsByQuestion.count { selectedAnswerID = selectedAnswerIDsByQuestion[idx] }
+                          if idx < selectedAnswerIDsByQuestion.count {
+                            selectedAnswerID = selectedAnswerIDsByQuestion[idx]
+                          }
                         }
                       }
                   }
@@ -245,17 +294,25 @@ struct LessonSheet: View {
                 } else if quizIndex == lesson.questions.count - 1 {
                   Button("Finish") {
                     withAnimation(.smooth) {
-                      let correctIDs = lesson.questions.map { q in q.answers.first(where: { $0.isCorrect })?.id }
+                      let correctIDs = lesson.questions.map { q in
+                        q.answers.first(where: { $0.isCorrect })?.id
+                      }
                       var score = 0
                       for (i, sel) in selectedAnswerIDsByQuestion.enumerated() {
-                        if i < correctIDs.count, let sel, let correct = correctIDs[i], sel == correct { score += 1 }
+                        if i < correctIDs.count, let sel,
+                          let correct = correctIDs[i], sel == correct
+                        {
+                          score += 1
+                        }
                       }
                       answersCorrect = score
                       showCompletion = true
                     }
                   }
                   .buttonStyle(.glassProminent)
-                  .disabled(selectedAnswerIDsByQuestion.contains(where: { $0 == nil }))
+                  .disabled(
+                    selectedAnswerIDsByQuestion.contains(where: { $0 == nil })
+                  )
                 } else {
                   Button("Next") {
                     withAnimation(.smooth) {
@@ -266,9 +323,10 @@ struct LessonSheet: View {
                       selectedAnswerID = nil
                       hasSubmitted = false
                       if quizIndex < selectedAnswerIDsByQuestion.count {
-                        selectedAnswerID = selectedAnswerIDsByQuestion[quizIndex]
+                        selectedAnswerID =
+                          selectedAnswerIDsByQuestion[quizIndex]
                       }
-                    } 
+                    }
                   }
                   .buttonStyle(.glassProminent)
                 }
@@ -281,20 +339,21 @@ struct LessonSheet: View {
     .padding()
     .background(
       LinearGradient(
-        gradient: Gradient(colors: [Color(.systemBackground), Color(.systemBackground).opacity(0.9)]),
+        gradient: Gradient(colors: [
+          Color(.systemBackground), Color(.systemBackground).opacity(0.9),
+        ]),
         startPoint: .top,
         endPoint: .bottom
       )
       .ignoresSafeArea()
     )
     #if DEBUG
-    .onPencilSqueeze { phase in
-      onClose()
-    }
+      .onPencilSqueeze { phase in
+        onClose()
+      }
     #endif
   }
 }
-
 
 struct SlideHeaderCard: View {
   let slide: Slide
@@ -320,10 +379,10 @@ struct LessonCompletionView: View {
   let correct: Int
   let total: Int
   let onClose: () -> Void
-  
+
   var message: String {
     let fractionCorrect = Double(correct) / Double(total)
-    
+
     if fractionCorrect == 1.0 {
       return "Perfect score! 🎉"
     } else if fractionCorrect >= 2.0 / 3.0 {
@@ -332,7 +391,7 @@ struct LessonCompletionView: View {
       return "Nearly there! Keep practicing! 🚀"
     }
   }
-  
+
   @State private var confettiManager: ConfettiManager = .shared
 
   var body: some View {
@@ -340,17 +399,17 @@ struct LessonCompletionView: View {
       Image(systemName: "checkmark.seal.fill")
         .font(.system(size: 64))
         .foregroundStyle(.green)
-      
+
       Text("Completed \(lesson.title)")
         .font(.title).bold()
-      
+
       Text("Score: \(correct) / \(total)")
         .font(.headline)
-      
+
       Text(message)
         .font(.subheadline)
         .foregroundStyle(.secondary)
-      
+
       HStack {
         Button("Done") { onClose() }
           .buttonStyle(.glassProminent)

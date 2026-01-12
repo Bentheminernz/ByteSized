@@ -12,18 +12,18 @@ import ImagePlayground
 @Observable
 final class ImageCreatorService {
   static let shared = ImageCreatorService()
-  
+
   private var imageCreator: ImageCreator?
   var isInitialized: Bool {
     imageCreator != nil
   }
-  
+
   private init() {
     Task {
       await initialize()
     }
   }
-  
+
   private func initialize() async {
     do {
       imageCreator = try await ImageCreator()
@@ -31,7 +31,7 @@ final class ImageCreatorService {
       print("Error initializing ImageCreator: \(error)")
     }
   }
-  
+
   func generateImages(
     for prompts: [ImagePlaygroundConcept],
     style: ImagePlaygroundStyle,
@@ -41,10 +41,12 @@ final class ImageCreatorService {
       throw NSError(
         domain: "ImageCreatorService",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "ImageCreator is not initialized."]
+        userInfo: [
+          NSLocalizedDescriptionKey: "ImageCreator is not initialized."
+        ]
       )
     }
-    
+
     return imageCreator.images(for: prompts, style: style, limit: limit)
   }
 }

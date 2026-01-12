@@ -5,17 +5,17 @@
 //  Created by Ben Lawrence on 16/11/2025.
 //
 
-import SwiftUI
 import AVKit
+import SwiftUI
 
 struct VideoTimeEventModifier: ViewModifier {
   let player: AVPlayer
   let time: CMTime
   let action: () -> Void
-  
+
   @State private var triggered: Bool = false
   @State private var timeObserverToken: Any?
-  
+
   func body(content: Content) -> some View {
     content
       .onAppear {
@@ -28,11 +28,14 @@ struct VideoTimeEventModifier: ViewModifier {
         }
       }
   }
-  
+
   private func addObserver() {
     let interval = CMTime(seconds: 0.05, preferredTimescale: 600)
-    
-    let token = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { current in
+
+    let token = player.addPeriodicTimeObserver(
+      forInterval: interval,
+      queue: .main
+    ) { current in
       Task { @MainActor in
         if !triggered, current >= time {
           triggered = true
@@ -45,8 +48,14 @@ struct VideoTimeEventModifier: ViewModifier {
 }
 
 extension View {
-  func onVideoTime(_ seconds: Double, _ player: AVPlayer, perform action: @escaping () -> Void) -> some View {
-      let cmtime = CMTime(seconds: seconds, preferredTimescale: 1000)
-      return self.modifier(VideoTimeEventModifier(player: player, time: cmtime, action: action))
+  func onVideoTime(
+    _ seconds: Double,
+    _ player: AVPlayer,
+    perform action: @escaping () -> Void
+  ) -> some View {
+    let cmtime = CMTime(seconds: seconds, preferredTimescale: 1000)
+    return self.modifier(
+      VideoTimeEventModifier(player: player, time: cmtime, action: action)
+    )
   }
 }

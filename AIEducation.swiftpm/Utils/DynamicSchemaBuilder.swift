@@ -6,26 +6,26 @@
 //
 
 import Foundation
-import SwiftUI
 import FoundationModels
+import SwiftUI
 
 /// A simple description of a single field in a dynamic schema that can be mapped
 /// to a FoundationModels DynamicGenerationSchema.
 struct SchemaField: Identifiable, Codable {
   let id = UUID()
-  
+
   /// Name of the field
   var name: String
-  
+
   /// Type of the field (e.g., String, Int, [String], etc.)
   var type: FieldType
-  
+
   /// Description of the field (equivalent of @Guide)
   var description: String
-  
+
   /// Amount of elements for array types (if applicable, equivalent of @Guide(.count(n)))
   var arrayCount: Int?
-  
+
   enum FieldType: String, CaseIterable, Codable {
     case string = "String (Text)"
     case int = "Integer (A whole number)"
@@ -45,8 +45,12 @@ struct DynamicSchemaBuilder: Codable {
   var schemaDescription: String?
   /// The fields to include in the schema.
   var fields: [SchemaField]
-  
-  init(schemaName: String? = nil, schemaDescription: String? = nil, fields: [SchemaField]) {
+
+  init(
+    schemaName: String? = nil,
+    schemaDescription: String? = nil,
+    fields: [SchemaField]
+  ) {
     self.schemaName = schemaName
     self.schemaDescription = schemaDescription
     self.fields = fields
@@ -54,54 +58,87 @@ struct DynamicSchemaBuilder: Codable {
 }
 
 extension DynamicSchemaBuilder {
-    /// Build a FoundationModels.DynamicGenerationSchema representing an object with the given fields.
-    /// All fields are considered required. You can extend this with optionality as needed.
-    func makeDynamicSchema() -> DynamicGenerationSchema {
-        let properties: [DynamicGenerationSchema.Property] = fields.map { field in
-            DynamicGenerationSchema.Property(
-                name: field.name,
-                description: propertyDescription(for: field),
-                schema: mapFieldToDynamicSchema(field)
-            )
-        }
-        return DynamicGenerationSchema(
-            name: schemaName ?? "GeneratedObject",
-            description: schemaDescription,
-            properties: properties
-        )
+  /// Build a FoundationModels.DynamicGenerationSchema representing an object with the given fields.
+  /// All fields are considered required. You can extend this with optionality as needed.
+  func makeDynamicSchema() -> DynamicGenerationSchema {
+    let properties: [DynamicGenerationSchema.Property] = fields.map { field in
+      DynamicGenerationSchema.Property(
+        name: field.name,
+        description: propertyDescription(for: field),
+        schema: mapFieldToDynamicSchema(field)
+      )
     }
+    return DynamicGenerationSchema(
+      name: schemaName ?? "GeneratedObject",
+      description: schemaDescription,
+      properties: properties
+    )
+  }
 
-    /// Wrap the dynamic schema into a GenerationSchema root for use with LanguageModelSession.
-    func makeGenerationSchema() throws -> GenerationSchema {
-        try GenerationSchema(root: makeDynamicSchema(), dependencies: [])
-    }
+  /// Wrap the dynamic schema into a GenerationSchema root for use with LanguageModelSession.
+  func makeGenerationSchema() throws -> GenerationSchema {
+    try GenerationSchema(root: makeDynamicSchema(), dependencies: [])
+  }
 
-    /// Map a single SchemaField to its corresponding DynamicGenerationSchema node.
-    private func mapFieldToDynamicSchema(_ field: SchemaField) -> DynamicGenerationSchema {
-        switch field.type {
-        case .string:
-            return DynamicGenerationSchema(type: String.self)
-        case .int:
-            return DynamicGenerationSchema(type: Int.self)
-        case .double:
-            return DynamicGenerationSchema(type: Double.self)
-        case .bool:
-            return DynamicGenerationSchema(type: Bool.self)
-        case .stringArray:
-            return DynamicGenerationSchema(type: [String].self)
-        case .intArray:
-            return DynamicGenerationSchema(type: [Int].self)
-        }
+  /// Map a single SchemaField to its corresponding DynamicGenerationSchema node.
+  private func mapFieldToDynamicSchema(_ field: SchemaField)
+    -> DynamicGenerationSchema
+  {
+    switch field.type {
+    case .string:
+      return DynamicGenerationSchema(type: String.self)
+    case .int:
+      return DynamicGenerationSchema(type: Int.self)
+    case .double:
+      return DynamicGenerationSchema(type: Double.self)
+    case .bool:
+      return DynamicGenerationSchema(type: Bool.self)
+    case .stringArray:
+      return DynamicGenerationSchema(type: [String].self)
+    case .intArray:
+      return DynamicGenerationSchema(type: [Int].self)
     }
+  }
 
-    /// Combine the field's description with guidance like array count (if provided).
-    private func propertyDescription(for field: SchemaField) -> String? {
-        if let count = field.arrayCount {
-            // Provide light guidance about expected element count
-            return "\(field.description) (Count: \(count))"
-        }
-        return field.description
+  /// Combine the field's description with guidance like array count (if provided).
+  private func propertyDescription(for field: SchemaField) -> String? {
+    if let count = field.arrayCount {
+      // Provide light guidance about expected element count
+      return "\(field.description) (Count: \(count))"
     }
+    return field.description
+  }
+}
+
+extension DynamicSchemaBuilder {
+  static let superheroSchemaFields: [SchemaField] = [
+    SchemaField(
+      name: "name",
+      type: .string,
+      description: "The superhero's name"
+    ),
+    SchemaField(
+      name: "superpower",
+      type: .string,
+      description: "The superhero's primary superpower"
+    ),
+    SchemaField(
+      name: "age",
+      type: .int,
+      description: "The superhero's age"
+    ),
+    SchemaField(
+      name: "isHeroic",
+      type: .bool,
+      description: "Whether the character is heroic or villainous"
+    ),
+    SchemaField(
+      name: "allies",
+      type: .stringArray,
+      description: "A list of the superhero's allies",
+      arrayCount: 3
+    ),
+  ]
 }
 
 // MARK: - Usage notes
@@ -109,7 +146,7 @@ extension DynamicSchemaBuilder {
 /**
  let session = LanguageModelSession()
  let prompt = "Generate a whimsical player character."
- 
+
  // Build a dynamic schema at runtime
  let builder = DynamicSchemaBuilder(
      schemaName: "PlayerCharacter",
@@ -122,13 +159,13 @@ extension DynamicSchemaBuilder {
  )
  let dynamic = builder.makeDynamicSchema()
  let schema = try GenerationSchema(root: dynamic, dependencies: [])
- 
+
  // Request a structured response guided by the dynamic schema
  let response = try await session.respond(
      to: prompt,
      schema: schema
  )
- 
+
  // You can also define a result type conforming to ConvertibleFromGeneratedContent
  // and initialize it from response.content.
  */
@@ -145,7 +182,7 @@ struct SchemaBuilderView: View {
   @State private var generatedResult: [String: Any]?
   @State private var isGenerating = false
   @State private var errorMessage: String?
-  
+
   var body: some View {
     NavigationStack {
       VStack(spacing: 0) {
@@ -156,7 +193,7 @@ struct SchemaBuilderView: View {
             TextField("Description", text: $schemaDescription, axis: .vertical)
               .lineLimit(2...4)
           }
-          
+
           Section("Fields") {
             ForEach(fields) { field in
               FieldRow(field: field)
@@ -168,24 +205,32 @@ struct SchemaBuilderView: View {
             .onDelete { indexSet in
               fields.remove(atOffsets: indexSet)
             }
-            
+
             Button {
               showingAddField = true
             } label: {
               Label("Add Field", systemImage: "plus.circle.fill")
             }
           }
-          
+
           Section("System Prompt") {
-            TextField("System instructions", text: $systemPrompt, axis: .vertical)
-              .lineLimit(3...6)
+            TextField(
+              "System instructions",
+              text: $systemPrompt,
+              axis: .vertical
+            )
+            .lineLimit(3...6)
           }
-          
+
           Section("User Prompt") {
-            TextField("What should the AI generate?", text: $userPrompt, axis: .vertical)
-              .lineLimit(3...6)
+            TextField(
+              "What should the AI generate?",
+              text: $userPrompt,
+              axis: .vertical
+            )
+            .lineLimit(3...6)
           }
-          
+
           if let error = errorMessage {
             Section("Error") {
               Text(error)
@@ -194,7 +239,7 @@ struct SchemaBuilderView: View {
             }
           }
         }
-        
+
         // Generate Button
         Button {
           Task { await generate() }
@@ -209,7 +254,7 @@ struct SchemaBuilderView: View {
         .buttonStyle(.borderedProminent)
         .disabled(fields.isEmpty || userPrompt.isEmpty || isGenerating)
         .padding()
-        
+
         // Results
         if let result = generatedResult {
           ResultView(result: result, fields: fields)
@@ -230,12 +275,12 @@ struct SchemaBuilderView: View {
       }
     }
   }
-  
+
   func generate() async {
     isGenerating = true
     errorMessage = nil
     defer { isGenerating = false }
-    
+
     do {
       // Build dynamic schema using your existing DynamicSchemaBuilder
       let builder = DynamicSchemaBuilder(
@@ -243,39 +288,57 @@ struct SchemaBuilderView: View {
         schemaDescription: schemaDescription.isEmpty ? nil : schemaDescription,
         fields: fields
       )
-      
+
       // Use the builder's method to create GenerationSchema
       let schema = try builder.makeGenerationSchema()
-      
+
       // Create session with system prompt
       let session = LanguageModelSession(instructions: systemPrompt)
-      
+
       // Generate response
       let response = try await session.respond(
         to: userPrompt,
         schema: schema
       )
-      
+
       // Parse results - extract values directly
       var result: [String: Any] = [:]
       for field in fields {
         switch field.type {
         case .string:
-          result[field.name] = try response.content.value(String.self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            String.self,
+            forProperty: field.name
+          )
         case .int:
-          result[field.name] = try response.content.value(Int.self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            Int.self,
+            forProperty: field.name
+          )
         case .double:
-          result[field.name] = try response.content.value(Double.self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            Double.self,
+            forProperty: field.name
+          )
         case .bool:
-          result[field.name] = try response.content.value(Bool.self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            Bool.self,
+            forProperty: field.name
+          )
         case .stringArray:
-          result[field.name] = try response.content.value([String].self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            [String].self,
+            forProperty: field.name
+          )
         case .intArray:
-          result[field.name] = try response.content.value([Int].self, forProperty: field.name)
+          result[field.name] = try response.content.value(
+            [Int].self,
+            forProperty: field.name
+          )
         }
       }
       generatedResult = result
-      
+
     } catch {
       errorMessage = "Generation failed: \(error.localizedDescription)"
       print("Generation error: \(error)")
@@ -285,7 +348,7 @@ struct SchemaBuilderView: View {
 
 struct FieldRow: View {
   let field: SchemaField
-  
+
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
@@ -296,13 +359,13 @@ struct FieldRow: View {
           .font(.caption)
           .foregroundStyle(.secondary)
       }
-      
+
       if !field.description.isEmpty {
         Text(field.description)
           .font(.caption)
           .foregroundStyle(.secondary)
       }
-      
+
       if let count = field.arrayCount {
         Text("Count: \(count)")
           .font(.caption2)
@@ -320,15 +383,15 @@ struct AddFieldView: View {
   @State private var description = ""
   @State private var arrayCount: Int?
   @State private var showArrayCount = false
-  
+
   let onAdd: (SchemaField) -> Void
-  
+
   var body: some View {
     NavigationStack {
       Form {
         TextField("Field Name", text: $name)
           .autocapitalization(.none)
-        
+
         Picker("Type", selection: $type) {
           ForEach(SchemaField.FieldType.allCases, id: \.self) { type in
             Text(type.rawValue).tag(type)
@@ -340,21 +403,32 @@ struct AddFieldView: View {
             arrayCount = nil
           }
         }
-        
-        TextField("Description (guide for AI)", text: $description, axis: .vertical)
-          .lineLimit(2...4)
-        
+
+        TextField(
+          "Description (guide for AI)",
+          text: $description,
+          axis: .vertical
+        )
+        .lineLimit(2...4)
+
         if showArrayCount {
-          Toggle("Set Array Count", isOn: Binding(
-            get: { arrayCount != nil },
-            set: { arrayCount = $0 ? 4 : nil }
-          ))
-          
+          Toggle(
+            "Set Array Count",
+            isOn: Binding(
+              get: { arrayCount != nil },
+              set: { arrayCount = $0 ? 4 : nil }
+            )
+          )
+
           if arrayCount != nil {
-            Stepper("Count: \(arrayCount!)", value: Binding(
-              get: { arrayCount ?? 4 },
-              set: { arrayCount = $0 }
-            ), in: 1...20)
+            Stepper(
+              "Count: \(arrayCount!)",
+              value: Binding(
+                get: { arrayCount ?? 4 },
+                set: { arrayCount = $0 }
+              ),
+              in: 1...20
+            )
           }
         }
       }
@@ -389,10 +463,10 @@ struct EditFieldView: View {
   @State private var description: String
   @State private var arrayCount: Int?
   @State private var showArrayCount: Bool
-  
+
   let field: SchemaField
   let onSave: (SchemaField) -> Void
-  
+
   init(field: SchemaField, onSave: @escaping (SchemaField) -> Void) {
     self.field = field
     self.onSave = onSave
@@ -400,15 +474,17 @@ struct EditFieldView: View {
     _type = State(initialValue: field.type)
     _description = State(initialValue: field.description)
     _arrayCount = State(initialValue: field.arrayCount)
-    _showArrayCount = State(initialValue: field.type == .stringArray || field.type == .intArray)
+    _showArrayCount = State(
+      initialValue: field.type == .stringArray || field.type == .intArray
+    )
   }
-  
+
   var body: some View {
     NavigationStack {
       Form {
         TextField("Field Name", text: $name)
           .autocapitalization(.none)
-        
+
         Picker("Type", selection: $type) {
           ForEach(SchemaField.FieldType.allCases, id: \.self) { type in
             Text(type.rawValue).tag(type)
@@ -420,21 +496,32 @@ struct EditFieldView: View {
             arrayCount = nil
           }
         }
-        
-        TextField("Description (guide for AI)", text: $description, axis: .vertical)
-          .lineLimit(2...4)
-        
+
+        TextField(
+          "Description (guide for AI)",
+          text: $description,
+          axis: .vertical
+        )
+        .lineLimit(2...4)
+
         if showArrayCount {
-          Toggle("Set Array Count", isOn: Binding(
-            get: { arrayCount != nil },
-            set: { arrayCount = $0 ? 4 : nil }
-          ))
-          
+          Toggle(
+            "Set Array Count",
+            isOn: Binding(
+              get: { arrayCount != nil },
+              set: { arrayCount = $0 ? 4 : nil }
+            )
+          )
+
           if arrayCount != nil {
-            Stepper("Count: \(arrayCount!)", value: Binding(
-              get: { arrayCount ?? 4 },
-              set: { arrayCount = $0 }
-            ), in: 1...20)
+            Stepper(
+              "Count: \(arrayCount!)",
+              value: Binding(
+                get: { arrayCount ?? 4 },
+                set: { arrayCount = $0 }
+              ),
+              in: 1...20
+            )
           }
         }
       }
@@ -465,13 +552,13 @@ struct EditFieldView: View {
 struct ResultView: View {
   let result: [String: Any]
   let fields: [SchemaField]
-  
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Generated Result")
         .font(.headline)
         .padding(.horizontal)
-      
+
       ScrollView {
         VStack(alignment: .leading, spacing: 8) {
           ForEach(fields, id: \.id) { field in
@@ -495,7 +582,7 @@ struct ResultView: View {
     }
     .frame(maxHeight: 300)
   }
-  
+
   func formatValue(_ value: Any) -> String {
     if let array = value as? [Any] {
       return array.map { "\($0)" }.joined(separator: ", ")

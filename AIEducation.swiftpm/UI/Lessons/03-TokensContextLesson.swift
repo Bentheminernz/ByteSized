@@ -16,64 +16,79 @@ struct TokenContextLesson1: View {
   @State private var viewState: ViewState = .text
   @State private var visibleDemoText: String = ""
   @State private var timer: Timer?
-  
+
   enum ViewState { case text, token }
-  
+
   var fullDemoText = "The quick brown fox jumps over the lazy dog."
-  
+
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack {
-        Text("Large Language Models process text by breaking it down into smaller units called tokens. These tokens can represent words, subwords, or even individual characters depending on the tokenizer used. Understanding tokenization is crucial for working effectively with LLMs. These tokens can be represented as text or numerical IDs that the model uses for processing.")
-          .font(.body)
-          .foregroundStyle(.secondary)
-        
-        Text("For example take this sentence, \"\(fullDemoText)\". If we throw it into a tokenizer we get the following tokens:")
-          .font(.body)
-          .foregroundStyle(.secondary)
-        
+        Text(
+          "Large Language Models process text by breaking it down into smaller units called tokens. These tokens can represent words, subwords, or even individual characters depending on the tokenizer used. Understanding tokenization is crucial for working effectively with LLMs. These tokens can be represented as text or numerical IDs that the model uses for processing."
+        )
+        .font(.body)
+        .foregroundStyle(.secondary)
+
+        Text(
+          "For example take this sentence, \"\(fullDemoText)\". If we throw it into a tokenizer we get the following tokens:"
+        )
+        .font(.body)
+        .foregroundStyle(.secondary)
+
         WrapLayout(spacing: 6) {
-          ForEach(tokenizer.tokenize(visibleDemoText).indices, id: \.self) { index in
+          ForEach(tokenizer.tokenize(visibleDemoText).indices, id: \.self) {
+            index in
             switch viewState {
             case .text:
-              TokenChip(text: tokenizer.tokenize(visibleDemoText)[index].text,
-                        color: TokenChip.color(for: index))
+              TokenChip(
+                text: tokenizer.tokenize(visibleDemoText)[index].text,
+                color: TokenChip.color(for: index)
+              )
             case .token:
-              TokenChip(text: String(tokenizer.tokenize(visibleDemoText)[index].tokenID),
-                        color: .clear,
-                        border: .secondary)
+              TokenChip(
+                text: String(
+                  tokenizer.tokenize(visibleDemoText)[index].tokenID
+                ),
+                color: .clear,
+                border: .secondary
+              )
             }
           }
         }
       }
-      
+
       TextField("Enter text to tokenize", text: $inputText)
         .padding()
         .glassEffect(.regular.interactive(), in: .capsule)
         .padding(.top)
-      
+
       Text("Amount of Tokens: \(tokens.count)")
         .contentTransition(.numericText(value: Double(tokens.count)))
-      
+
       Picker("View Mode", selection: $viewState) {
         Text("Text View").tag(ViewState.text)
         Text("Token IDs").tag(ViewState.token)
       }
-      
+
       WrapLayout(spacing: 6) {
         ForEach(tokens.indices, id: \.self) { index in
           switch viewState {
           case .text:
-            TokenChip(text: tokens[index].text,
-                      color: TokenChip.color(for: index))
+            TokenChip(
+              text: tokens[index].text,
+              color: TokenChip.color(for: index)
+            )
           case .token:
-            TokenChip(text: String(tokens[index].tokenID),
-                      color: .clear,
-                      border: .secondary)
+            TokenChip(
+              text: String(tokens[index].tokenID),
+              color: .clear,
+              border: .secondary
+            )
           }
         }
       }
-      
+
       Spacer()
     }
     .padding()
@@ -87,17 +102,21 @@ struct TokenContextLesson1: View {
     }
     .animation(.bouncy, value: viewState)
   }
-  
+
   private func startTextAnimation() {
     visibleDemoText = ""
     let totalDuration: TimeInterval = 4.0
     let characterCount = fullDemoText.count
     let intervalTime = totalDuration / Double(characterCount)
     var currentIndex = 0
-    
-    timer = Timer.scheduledTimer(withTimeInterval: intervalTime, repeats: true) { timer in
+
+    timer = Timer.scheduledTimer(withTimeInterval: intervalTime, repeats: true)
+    { timer in
       if currentIndex < fullDemoText.count {
-        let index = fullDemoText.index(fullDemoText.startIndex, offsetBy: currentIndex)
+        let index = fullDemoText.index(
+          fullDemoText.startIndex,
+          offsetBy: currentIndex
+        )
         withAnimation(.bouncy) {
           visibleDemoText.append(fullDemoText[index])
         }
@@ -112,11 +131,15 @@ struct TokenContextLesson1: View {
 struct TokenContextLesson2: View {
   var body: some View {
     VStack {
-      Text("LLMs don't remember everythingn forever, they only 'see' a limited amount of text at once. This visible area is called the Context Window")
-        .font(.body)
-        .foregroundStyle(.secondary)
-      
-      DefinableText("Think of it like a chat history the model can read, everything is inside that window, your messages, the model's replies and any hidden system instructions is made up of tokens")
+      Text(
+        "LLMs don't remember everythingn forever, they only 'see' a limited amount of text at once. This visible area is called the Context Window"
+      )
+      .font(.body)
+      .foregroundStyle(.secondary)
+
+      DefinableText(
+        "Think of it like a chat history the model can read, everything is inside that window, your messages, the model's replies and any hidden system instructions is made up of tokens"
+      )
       TripleCircleDiagram()
     }
   }
@@ -129,9 +152,11 @@ struct WrapLayout: Layout {
 
   func makeCache(subviews: Subviews) -> Cache { Cache() }
 
-  func sizeThatFits(proposal: ProposedViewSize,
-                    subviews: Subviews,
-                    cache: inout Cache) -> CGSize {
+  func sizeThatFits(
+    proposal: ProposedViewSize,
+    subviews: Subviews,
+    cache: inout Cache
+  ) -> CGSize {
     let maxWidth = proposal.width ?? .infinity
     var x: CGFloat = 0
     var y: CGFloat = 0
@@ -154,10 +179,12 @@ struct WrapLayout: Layout {
     )
   }
 
-  func placeSubviews(in bounds: CGRect,
-                     proposal: ProposedViewSize,
-                     subviews: Subviews,
-                     cache: inout Cache) {
+  func placeSubviews(
+    in bounds: CGRect,
+    proposal: ProposedViewSize,
+    subviews: Subviews,
+    cache: inout Cache
+  ) {
     let maxWidth = bounds.width
     var x: CGFloat = 0
     var y: CGFloat = 0
@@ -170,10 +197,16 @@ struct WrapLayout: Layout {
         y += lineHeight + spacing
         lineHeight = 0
       }
-      view.place(at: CGPoint(x: bounds.minX + x,
-                             y: bounds.minY + y),
-                 proposal: ProposedViewSize(width: size.width,
-                                             height: size.height))
+      view.place(
+        at: CGPoint(
+          x: bounds.minX + x,
+          y: bounds.minY + y
+        ),
+        proposal: ProposedViewSize(
+          width: size.width,
+          height: size.height
+        )
+      )
       lineHeight = max(lineHeight, size.height)
       x += size.width + spacing
     }
@@ -199,7 +232,10 @@ struct TokenChip: View {
   }
 
   static func color(for index: Int) -> Color {
-    let palette: [Color] = [.blue, .green, .orange, .pink, .purple, .teal, .indigo, .red, .mint, .brown]
+    let palette: [Color] = [
+      .blue, .green, .orange, .pink, .purple, .teal, .indigo, .red, .mint,
+      .brown,
+    ]
     return palette[index % palette.count]
   }
 }
@@ -219,23 +255,25 @@ struct TripleCircleDiagram: View {
           Circle()
             .fill(.ultraThinMaterial)
             .overlay(
-              Text("Context Window" )
+              Text("Context Window")
             )
         )
 
       // Inner circles
       innerCircle(label)
-        .offset(y: -outerDiameter * 0.33) // Top
+        .offset(y: -outerDiameter * 0.33)  // Top
 
       innerCircle(label)
-        .offset(x: -outerDiameter * 0.22, y: outerDiameter * 0.25) // Bottom-left
+        .offset(x: -outerDiameter * 0.22, y: outerDiameter * 0.25)  // Bottom-left
 
       innerCircle(label)
-        .offset(x: outerDiameter * 0.22, y: outerDiameter * 0.25) // Bottom-right
+        .offset(x: outerDiameter * 0.22, y: outerDiameter * 0.25)  // Bottom-right
     }
     .frame(width: outerDiameter, height: outerDiameter)
     .accessibilityElement(children: .contain)
-    .accessibilityLabel("Three circles arranged inside a larger circle: top, bottom left, and bottom right.")
+    .accessibilityLabel(
+      "Three circles arranged inside a larger circle: top, bottom left, and bottom right."
+    )
   }
 
   @ViewBuilder

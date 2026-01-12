@@ -1,15 +1,15 @@
-import SwiftUI
-import FoundationModels
-import Foundation
-import SwiftData
 import Confetti
+import Foundation
+import FoundationModels
+import SwiftData
+import SwiftUI
 
 @main
 struct MyApp: App {
   @State private var confettiManager: ConfettiManager = .shared
   @State private var imageCreatorService: ImageCreatorService = .shared
   @State private var foundationModelsService: FoundationModelsService = .shared
-  
+
   var body: some Scene {
     WindowGroup {
       RootView()
@@ -23,45 +23,47 @@ struct MyApp: App {
 
 struct RootView: View {
   @AppStorage("hasSeenWelcome") var hasSeenWelcome: Bool = false
-  @AppStorage("hasSeenCompletedAllLessons") var hasSeenCompletedAllLessons: Bool = false
+  @AppStorage("hasSeenCompletedAllLessons") var hasSeenCompletedAllLessons:
+    Bool = false
   @Query private var completedLessons: [CompletedLesson]
   @State var confettiManager: ConfettiManager = .shared
   @State var selectedTab: Tabs = .lessons
-  
+
   @Environment(\.dismiss) private var dismiss
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  
+
   @State private var showiPhoneWarning: Bool = false
-  
+
   let model: SystemLanguageModel = SystemLanguageModel.default
-  
+
   enum Tabs: CaseIterable, Hashable {
     case lessons
     case playground
     #if DEBUG
-    case schema
+      case schema
     #endif
-    
+
     var name: String {
       switch self {
       case .lessons: return "Lessons"
       case .playground: return "Playground"
       #if DEBUG
-      case .schema: return "Schema"
+        case .schema: return "Schema"
       #endif
       }
     }
-    
+
     var icon: String {
       switch self {
       case .lessons: return "book.closed"
       case .playground: return "wand.and.stars.inverse"
       #if DEBUG
-      case .schema: return "puzzlepiece.extension"
+        case .schema: return "puzzlepiece.extension"
       #endif
       }
     }
-    
+
+    @MainActor
     @ViewBuilder
     var view: some View {
       switch self {
@@ -70,17 +72,17 @@ struct RootView: View {
       case .playground:
         NavigationStack { PlaygroundView() }
       #if DEBUG
-      case .schema:
-        NavigationStack { SchemaBuilderView() }
+        case .schema:
+          NavigationStack { SchemaBuilderView() }
       #endif
       }
     }
   }
-  
+
   #if DEBUG
-  @State var showDebugMenu: Bool = false
+    @State var showDebugMenu: Bool = false
   #endif
-  
+
   var body: some View {
     VStack {
       switch model.availability {
@@ -106,36 +108,46 @@ struct RootView: View {
       }
     }
     #if DEBUG
-    .onPencilDoubleTap { _ in
-      showDebugMenu.toggle()
-    }
-    .overlay {
-      if showDebugMenu {
-        VStack {
-          Button("Close Debug Menu") {
-            showDebugMenu = false
-          }
-          
-          Button("Exit") {
-            exit(0)
-          }
-          
-          Button("hasSeenWelcome: \(hasSeenWelcome.description)") {
-            hasSeenWelcome.toggle()
-          }
-          
-          Button("hasSeenCompletedAllLessons: \(hasSeenCompletedAllLessons.description)") {
-            hasSeenCompletedAllLessons.toggle()
-          }
-        }
-        .padding()
-        .glassEffect(.regular.tint(.black.opacity(0.5)), in: .rect(cornerRadius: 12))
+      .onPencilDoubleTap { _ in
+        showDebugMenu.toggle()
       }
-    }
+      .overlay {
+        if showDebugMenu {
+          VStack {
+            Button("Close Debug Menu") {
+              showDebugMenu = false
+            }
+
+            Button("Exit") {
+              exit(0)
+            }
+
+            Button("hasSeenWelcome: \(hasSeenWelcome.description)") {
+              hasSeenWelcome.toggle()
+            }
+
+            Button(
+              "hasSeenCompletedAllLessons: \(hasSeenCompletedAllLessons.description)"
+            ) {
+              hasSeenCompletedAllLessons.toggle()
+            }
+          }
+          .padding()
+          .glassEffect(
+            .regular.tint(.black.opacity(0.5)),
+            in: .rect(cornerRadius: 12)
+          )
+        }
+      }
     #endif
     .adaptiveModal(
       isPresented: Binding(
-        get: { hasSeenCompletedAllLessons == false && CompletedLesson.areAllLessonsCompleted(completedLessons: completedLessons) },
+        get: {
+          hasSeenCompletedAllLessons == false
+            && CompletedLesson.areAllLessonsCompleted(
+              completedLessons: completedLessons
+            )
+        },
         set: { newValue in
           if newValue == false {
             hasSeenCompletedAllLessons = true
@@ -144,18 +156,28 @@ struct RootView: View {
       ),
       interactiveDismissDisabled: true
     ) {
-      AllLessonsCompleteModal(selectedTab: $selectedTab, hasSeenCompletedAllLessons: $hasSeenCompletedAllLessons)
+      AllLessonsCompleteModal(
+        selectedTab: $selectedTab,
+        hasSeenCompletedAllLessons: $hasSeenCompletedAllLessons
+      )
     }
     .adaptiveModal(
       isPresented: $showiPhoneWarning,
       interactiveDismissDisabled: true
     ) {
       VStack {
-        WelcomeComponents.WelcomePageHeader(title: "iPhone Warning", subtitle: "Limited Functionality", imageName: "exclamationmark.triangle.fill", imageColor: .yellow)
-        Text("AIEducation is best experienced on an iPad due to its larger screen size and enhanced capabilities. Some features may be limited or not function optimally on an iPhone.")
-        
+        WelcomeComponents.WelcomePageHeader(
+          title: "iPhone Warning",
+          subtitle: "Limited Functionality",
+          imageName: "exclamationmark.triangle.fill",
+          imageColor: .yellow
+        )
+        Text(
+          "AIEducation is best experienced on an iPad due to its larger screen size and enhanced capabilities. Some features may be limited or not function optimally on an iPhone."
+        )
+
         Spacer()
-        
+
         Button(action: {
           showiPhoneWarning = false
         }) {

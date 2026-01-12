@@ -11,16 +11,16 @@ import SwiftUI
 enum GenerationState {
   /// Model is idle, no generation in progress
   case idle
-  
+
   /// Generation has been requested, preparing to generate
   case requested
-  
+
   /// Generation is in progress
   case generating
-  
+
   /// Generation has completed
   case completed
-  
+
   var modelStatusText: String {
     switch self {
     case .idle: return "Idle"

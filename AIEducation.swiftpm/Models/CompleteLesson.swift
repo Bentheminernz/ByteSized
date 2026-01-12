@@ -12,42 +12,44 @@ import SwiftData
 class CompletedLesson {
   @Attribute(.unique) var lessonID: Int
   var completedAt: Date
-  
+
   init(lessonID: Int, completedAt: Date = Date()) {
     self.lessonID = lessonID
     self.completedAt = completedAt
   }
-  
+
   static func markLessonAsCompleted(lessonID: Int, in context: ModelContext) {
     let completedLesson = CompletedLesson(lessonID: lessonID)
     context.insert(completedLesson)
     try? context.save()
   }
-  
+
   #if DEBUG
-  @MainActor
-  static func markAllLessonsAsCompleted(in context: ModelContext) {
-    let allLessonIDs = LessonCourses.allCourses.flatMap { course in
-      course.lessons.map { $0.id }
+    @MainActor
+    static func markAllLessonsAsCompleted(in context: ModelContext) {
+      let allLessonIDs = LessonCourses.allCourses.flatMap { course in
+        course.lessons.map { $0.id }
+      }
+
+      for lessonID in allLessonIDs {
+        let completedLesson = CompletedLesson(lessonID: lessonID)
+        context.insert(completedLesson)
+      }
+
+      try? context.save()
     }
-    
-    for lessonID in allLessonIDs {
-      let completedLesson = CompletedLesson(lessonID: lessonID)
-      context.insert(completedLesson)
-    }
-    
-    try? context.save()
-  }
   #endif
-  
+
   @MainActor
-  static func areAllLessonsCompleted(completedLessons: [CompletedLesson]) -> Bool {
+  static func areAllLessonsCompleted(completedLessons: [CompletedLesson])
+    -> Bool
+  {
     let allLessonIDs = LessonCourses.allCourses.flatMap { course in
       course.lessons.map { $0.id }
     }
-    
+
     let completedLessonIDs = Set(completedLessons.map { $0.lessonID })
-    
+
     return allLessonIDs.allSatisfy { completedLessonIDs.contains($0) }
   }
 }
