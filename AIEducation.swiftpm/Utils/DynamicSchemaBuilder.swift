@@ -110,7 +110,7 @@ extension DynamicSchemaBuilder {
   }
 }
 
-extension DynamicSchemaBuilder {
+struct ExampleSchema {
   static let superheroSchemaFields: [SchemaField] = [
     SchemaField(
       name: "name",
@@ -139,6 +139,158 @@ extension DynamicSchemaBuilder {
       arrayCount: 3
     ),
   ]
+
+  static let dogSchemaFields: [SchemaField] = [
+    SchemaField(
+      name: "name",
+      type: .string,
+      description: "The dog's name"
+    ),
+    SchemaField(
+      name: "breed",
+      type: .string,
+      description: "The breed of the dog"
+    ),
+    SchemaField(
+      name: "age",
+      type: .int,
+      description: "The dog's age in years"
+    ),
+    SchemaField(
+      name: "isTrained",
+      type: .bool,
+      description: "Whether the dog is trained"
+    ),
+    SchemaField(
+      name: "favoriteToys",
+      type: .stringArray,
+      description: "A list of the dog's favorite toys",
+      arrayCount: 5
+    ),
+  ]
+
+  static let movieSchemaFields: [SchemaField] = [
+    SchemaField(
+      name: "title",
+      type: .string,
+      description: "The movie's title"
+    ),
+    SchemaField(
+      name: "description",
+      type: .string,
+      description: "A brief description of the movie plot"
+    ),
+    SchemaField(
+      name: "director",
+      type: .string,
+      description: "The director of the movie"
+    ),
+    SchemaField(
+      name: "releaseYear",
+      type: .int,
+      description: "The year the movie was released"
+    ),
+    SchemaField(
+      name: "isAnimated",
+      type: .bool,
+      description: "Whether the movie is animated"
+    ),
+    SchemaField(
+      name: "cast",
+      type: .stringArray,
+      description: "A list of main cast members",
+      arrayCount: 4
+    ),
+  ]
+
+  static let recipeSchemaFields: [SchemaField] = [
+    SchemaField(
+      name: "name",
+      type: .string,
+      description: "The name of the recipe"
+    ),
+    SchemaField(
+      name: "servings",
+      type: .int,
+      description: "Number of servings the recipe makes"
+    ),
+    SchemaField(
+      name: "isVegetarian",
+      type: .bool,
+      description: "Whether the recipe is vegetarian"
+    ),
+    SchemaField(
+      name: "ingredients",
+      type: .stringArray,
+      description: "List of ingredients required",
+      arrayCount: 8
+    ),
+    SchemaField(
+      name: "steps",
+      type: .stringArray,
+      description: "Step-by-step instructions",
+      arrayCount: 6
+    ),
+  ]
+
+  static let personSchemaFields: [SchemaField] = [
+    SchemaField(
+      name: "firstName",
+      type: .string,
+      description: "The person's first name"
+    ),
+    SchemaField(
+      name: "lastName",
+      type: .string,
+      description: "The person's last name"
+    ),
+    SchemaField(
+      name: "age",
+      type: .int,
+      description: "The person's age"
+    ),
+    SchemaField(
+      name: "isEmployed",
+      type: .bool,
+      description: "Whether the person is currently employed"
+    ),
+    SchemaField(
+      name: "hobbies",
+      type: .stringArray,
+      description: "A list of the person's hobbies",
+      arrayCount: 4
+    ),
+    SchemaField(
+      name: "favouriteNumbers",
+      type: .intArray,
+      description: "A list of the person's favourite numbers",
+      arrayCount: 3
+    ),
+  ]
+
+  static let schemaFields:
+    [(name: String, fields: [SchemaField], examplePrompt: String)] = [
+      (
+        name: "Superhero", fields: superheroSchemaFields,
+        examplePrompt: "Generate a super cool superhero character!"
+      ),
+      (
+        name: "Dog", fields: dogSchemaFields,
+        examplePrompt: "Create an adorable dog profile!"
+      ),
+      (
+        name: "Movie", fields: movieSchemaFields,
+        examplePrompt: "Suggest a blockbuster movie idea!"
+      ),
+      (
+        name: "Recipe", fields: recipeSchemaFields,
+        examplePrompt: "Invent a delicious new recipe!"
+      ),
+      (
+        name: "Person", fields: personSchemaFields,
+        examplePrompt: "Describe a fascinating person!"
+      ),
+    ]
 }
 
 // MARK: - Usage notes

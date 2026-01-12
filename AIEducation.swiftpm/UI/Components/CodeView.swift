@@ -29,28 +29,30 @@ struct CodeViewer: View {
       .padding(.vertical, 8)
       .background(.ultraThinMaterial)
 
-      VStack(alignment: .leading, spacing: 0) {
-        if highlighted != nil {
-          ForEach(Array(highlightedLines.enumerated()), id: \.0) { _, line in
-            Text(line)
-              .font(.system(.callout, design: .monospaced))
-              .textSelection(.enabled)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .frame(height: lineHeight, alignment: .topLeading)
-          }
-        } else {
-          ForEach(plainLines, id: \.self) { line in
-            Text(line)
-              .font(.system(.callout, design: .monospaced))
-              .textSelection(.enabled)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .frame(height: lineHeight, alignment: .topLeading)
+      ScrollView(.horizontal) {
+        VStack(alignment: .leading, spacing: 0) {
+          if highlighted != nil {
+            ForEach(Array(highlightedLines.enumerated()), id: \.0) { _, line in
+              Text(line)
+                .font(.system(.callout, design: .monospaced))
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(height: lineHeight, alignment: .topLeading)
+            }
+          } else {
+            ForEach(plainLines, id: \.self) { line in
+              Text(line)
+                .font(.system(.callout, design: .monospaced))
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(height: lineHeight, alignment: .topLeading)
+            }
           }
         }
+        .padding(.vertical, 8)
+        .padding(.leading, 8)
+        .padding(.trailing, 12)
       }
-      .padding(.vertical, 8)
-      .padding(.leading, 8)
-      .padding(.trailing, 12)
     }
     .task(id: taskID) {
       await highlightNow()

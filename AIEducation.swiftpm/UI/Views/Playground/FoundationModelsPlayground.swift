@@ -205,8 +205,9 @@ struct FoundationModelsPlayground: View {
               .padding(.bottom, 8)
 
             VStack(alignment: .leading) {
-              Text("Generation Options")
-                .font(.headline)
+              Text("Temperature: \(String(temperature))")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
               Slider(value: $temperature, in: 0...1, step: 0.1) {
                 Text("Temperature: \(String(format: "%.1f", temperature))")
@@ -215,7 +216,13 @@ struct FoundationModelsPlayground: View {
               } maximumValueLabel: {
                 Text("1.0")
               }
+              .onChange(of: temperature) { oldValue, newValue in
+                temperature = round(newValue * 10) / 10
+              }
 
+              Text("Max Tokens: \(String(maxTokens))")
+                .font(.caption)
+                .foregroundStyle(.secondary)
               Slider(
                 value: Binding(
                   get: { Double(maxTokens) },
@@ -266,6 +273,27 @@ struct FoundationModelsPlayground: View {
                       .foregroundStyle(.secondary)
 
                     Spacer()
+
+                    Menu {
+                      ForEach(
+                        ExampleSchema.schemaFields.enumerated(),
+                        id: \.offset
+                      ) { index, schema in
+                        Button(schema.name) {
+                          schemaFields = schema.fields
+                          userInput = schema.examplePrompt
+                        }
+                      }
+                    } label: {
+                      HStack {
+                        Text("Load Example Schema")
+                          .font(.subheadline)
+                        Image(systemName: "chevron.down")
+                          .font(.caption)
+                      }
+                      //                      .padding(4)
+                    }
+                    .buttonStyle(.glassProminent)
 
                     Button("Edit Schema", systemImage: "slider.horizontal.3") {
                       showingSchemaBuilder = true
@@ -411,7 +439,7 @@ struct FoundationModelsPlayground: View {
       SchemaBuilderSheet(fields: $schemaFields)
     }
     .onAppear {
-      schemaFields = DynamicSchemaBuilder.superheroSchemaFields
+      //      schemaFields = DynamicSchemaBuilder.superheroSchemaFields
     }
     .onChange(of: outputMode) {
       foundationModelsService.resetContext(for: .shared)
