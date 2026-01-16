@@ -313,8 +313,24 @@ struct LessonCourses {
               title: "How do machines learn?",
               icon: "book.fill",
             ) {
-              GuidedGeneration1()
-            }
+//              GuidedGeneration1()
+              // MARK: - Fix
+              GuidedGeneration3()
+            },
+            Slide(
+              id: 2,
+              title: "How do machines learn?",
+              icon: "book.fill",
+            ) {
+              GuidedGeneration2()
+            },
+            Slide(
+              id: 3,
+              title: "How do machines learn?",
+              icon: "book.fill",
+            ) {
+              GuidedGeneration3()
+            },
           ],
           questions: [
             LessonQuestion(

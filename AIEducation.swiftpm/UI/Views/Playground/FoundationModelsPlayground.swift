@@ -357,7 +357,7 @@ struct FoundationModelsPlayground: View {
             }
             .tint(Color.green.gradient)
             .buttonStyle(.glassProminent)
-            .disabled(outputMode == .schema && schemaFields.isEmpty)
+            .disabled((outputMode == .schema && schemaFields.isEmpty) || userInput.isEmpty || foundationModelsService.statuses[.shared] == .generating)
           }
           .padding()
           .frame(width: geometry.size.width * 0.4)
@@ -536,6 +536,7 @@ struct FoundationModelsPlayground: View {
               modelOutput = content.content
             }
           }
+          foundationModelsService.completeStream(for: .shared)
         case .respondTo:
           let response = try await foundationModelsService.respond(
             options: GenerationOptions(

@@ -426,3 +426,11 @@ struct LessonCompletionView: View {
     }
   }
 }
+
+#Preview(traits: .landscapeRight) {
+  LessonSheet(
+    lesson: LessonCourses.allCourses[1].lessons[0],
+    animation: Namespace().wrappedValue,
+    onClose: {}
+  )
+}

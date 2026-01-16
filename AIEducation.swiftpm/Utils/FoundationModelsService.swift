@@ -28,7 +28,7 @@ final class FoundationModelsService {
   private(set) var statuses: [FoundationModelSession: GenerationState] = [:]
 
   private init() {
-    sessions[.shared] = LanguageModelSession()
+    sessions[.shared] = getSession(for: .shared)
     sessions[.shared]?.prewarm()
     statuses[.shared] = .idle
   }
@@ -162,6 +162,33 @@ final class FoundationModelsService {
       prompt: prompt
     )
   }
+  
+  /// Streams a generated typed response for a Generable content type.
+  /// - Parameters:
+  ///   - session: The foundation model session to use.
+  ///   - schema: The GenerationSchema type to generate.
+  ///   - includeSchemaInPrompt: Whether to include the schema in the prompt.
+  ///   - options: Generation options to customize the response.
+  ///   - prompt: A PromptBuilder closure providing the prompt content.
+  /// - Returns: A typed response stream producing the generated content in chunks.
+  func streamResponse(
+    from session: FoundationModelSession = .shared,
+    generating schema: GenerationSchema,
+    includeSchemaInPrompt: Bool = true,
+    options: GenerationOptions = GenerationOptions(),
+    @PromptBuilder _ prompt: @escaping () -> Prompt
+  ) -> LanguageModelSession.ResponseStream<GeneratedContent> {
+    let sessionObj: LanguageModelSession = getSession(for: session)
+    
+    statuses[session] = .generating
+    
+    return sessionObj.streamResponse(
+      schema: schema,
+      includeSchemaInPrompt: includeSchemaInPrompt,
+      options: options,
+      prompt: prompt
+    )
+  }
 
   /// Marks a streaming session as complete
   func completeStream(for session: FoundationModelSession) {
@@ -169,9 +196,15 @@ final class FoundationModelsService {
   }
 
   /// Get or create a LanguageModelSession for the given context.
+  /// - Parameters:
+  ///   - context: The foundation model session context.
+  ///   - instructions: Optional instructions to initialize the session with.
+  ///   - tools: Optional tools to include in the session.
+  /// - Returns: The LanguageModelSession associated with the context.
   private func getSession(
     for context: FoundationModelSession,
-    instructions: String? = nil
+    instructions: String? = nil,
+    tools: [any Tool] = []
   ) -> LanguageModelSession {
     if let existingSession = sessions[context] {
       return existingSession
@@ -179,8 +212,8 @@ final class FoundationModelsService {
 
     let newSession =
       instructions != nil
-      ? LanguageModelSession(instructions: instructions!)
-      : LanguageModelSession()
+      ? LanguageModelSession(tools: tools, instructions: instructions!)
+    : LanguageModelSession(tools: tools)
 
     sessions[context] = newSession
     statuses[context] = .idle
@@ -193,19 +226,26 @@ final class FoundationModelsService {
     _ = getSession(for: session)
   }
 
+  /// Prewarms a session for the given context.
+  /// - Parameters:
+  ///   - context: The foundation model session context.
+  ///   - instructions: Optional instructions to initialize the session with.
+  ///   - tools: Optional tools to include in the session.
   func createSession(
     for context: FoundationModelSession,
-    instructions: String? = nil
+    instructions: String? = nil,
+    tools: [any Tool] = []
   ) {
-    let session = getSession(for: context, instructions: instructions)
+    let session = getSession(for: context, instructions: instructions, tools: tools)
     session.prewarm()
   }
 
   func createSession(
     for contexts: [FoundationModelSession],
+    tools: [any Tool] = []
   ) {
     for context in contexts {
-      createSession(for: context)
+      createSession(for: context, tools: tools)  
     }
   }
 
