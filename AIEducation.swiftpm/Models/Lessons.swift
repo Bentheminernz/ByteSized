@@ -303,84 +303,143 @@ struct LessonCourses {
         // MARK: - Lesson 4
         Lesson(
           id: 4,
-          icon: "book.fill",
+          icon: "square.stack.3d.up",
           title: "Guided Generation",
           description:
             "Understand guided generation techniques to control AI outputs effectively.",
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "The Problem",
+              icon: "wrench.and.screwdriver",
             ) {
-//              GuidedGeneration1()
-              // MARK: - Fix
-              GuidedGeneration3()
+              GuidedGeneration1()
             },
             Slide(
               id: 2,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "For example...",
+              icon: "lightbulb.max"
             ) {
               GuidedGeneration2()
             },
             Slide(
               id: 3,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "But why?",
+              icon: "exclamationmark.questionmark"
             ) {
               GuidedGeneration3()
+            },
+            Slide(
+              id: 4,
+              title: "How do I do that??",
+              icon: "hammer"
+            ) {
+              GuidedGeneration4()
             },
           ],
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question: "In what application would you use guided generation?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "In a general chatbot application",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer: "In a game with dynamic character generation",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "In a text summarization tool",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "In a language translation app",
                   isCorrect: false
                 ),
               ]
             ),
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question: "What is the main goal of guided generation?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
+                  answer: "To make AI write in a predictable, structured way",
                   isCorrect: true
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "To make AI sound more human",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "To make the app run faster",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "To remove all creativity from AI",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question: "Why is unstructured AI text hard for apps to use?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer:
+                    "Because the text can change and is hard to reliably pick apart",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Because phones can't read text",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Because text is always wrong",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Because text uses too much storage",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 4,
+              question: "Which is an example of a structured output?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer:
+                    "A recipe with clear fields like name, ingredients, and steps",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "A long paragraph describing a meal",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "A poem about cooking",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "A random list of words",
                   isCorrect: false
                 ),
               ]

@@ -237,7 +237,7 @@ struct MainView: View {
             .lineLimit(2)
           Spacer()
           if isCompleted {
-            Image(systemName: "checkmark.seal.fill")
+            Label("Completed", systemImage: "checkmark.seal.fill")
               .foregroundStyle(.green)
           }
         }
@@ -283,7 +283,7 @@ struct MainView: View {
             .foregroundStyle(.secondary)
 
           if isCompleted {
-            Image(systemName: "checkmark.seal.fill")
+            Label("Completed", systemImage: "checkmark.seal.fill")
               .foregroundStyle(.green)
           }
         }
@@ -328,14 +328,6 @@ struct MainView: View {
     }
     return nil
   }
-}
-
-struct Colours {
-  static let Icterine = Color(red: 0.38, green: 0.949, blue: 0.761)
-  static let GreenYellow = Color(red: 0.761, green: 0.949, blue: 0.38)  // #c2f261
-  static let LightGreen = Color(red: 0.569, green: 0.949, blue: 0.569)  // #91f291
-  static let Aquamarine = Color(red: 0.38, green: 0.949, blue: 0.761)  // #61f2c2
-  static let FlourescantCyan = Color(red: 0.188, green: 0.949, blue: 0.949)  // #30f2f2
 }
 
 #Preview(traits: .landscapeLeft) {

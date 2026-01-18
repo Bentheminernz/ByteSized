@@ -11,6 +11,8 @@ import SwiftUI
 struct CodeViewer: View {
   let code: String
   let language: String
+  var fontSize: CGFloat = 16
+  var lineFontSize: CGFloat = 16
 
   @Environment(\.colorScheme) private var colorScheme
   @State private var highlighted: AttributedString?
@@ -20,7 +22,7 @@ struct CodeViewer: View {
       VStack(alignment: .trailing, spacing: 0) {
         ForEach(0..<lineCount, id: \.self) { index in
           Text("\(index + 1)")
-            .font(.system(.callout, design: .monospaced))
+            .font(.system(size: lineFontSize, design: .monospaced))
             .foregroundStyle(.secondary)
             .padding(.horizontal, 8)
             .frame(height: lineHeight, alignment: .topTrailing)
@@ -34,7 +36,7 @@ struct CodeViewer: View {
           if highlighted != nil {
             ForEach(Array(highlightedLines.enumerated()), id: \.0) { _, line in
               Text(line)
-                .font(.system(.callout, design: .monospaced))
+                .font(.system(size: fontSize, design: .monospaced))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(height: lineHeight, alignment: .topLeading)
@@ -42,7 +44,7 @@ struct CodeViewer: View {
           } else {
             ForEach(plainLines, id: \.self) { line in
               Text(line)
-                .font(.system(.callout, design: .monospaced))
+                .font(.system(size: fontSize, design: .monospaced))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(height: lineHeight, alignment: .topLeading)
