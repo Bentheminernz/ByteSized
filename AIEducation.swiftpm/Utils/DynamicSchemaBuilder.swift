@@ -565,7 +565,7 @@ struct AddFieldView: View {
 
         if showArrayCount {
           Toggle(
-            "Set Array Count",
+            "Set Max Item Count",
             isOn: Binding(
               get: { arrayCount != nil },
               set: { arrayCount = $0 ? 4 : nil }
@@ -658,7 +658,7 @@ struct EditFieldView: View {
 
         if showArrayCount {
           Toggle(
-            "Set Array Count",
+            "Set Max Item Count",
             isOn: Binding(
               get: { arrayCount != nil },
               set: { arrayCount = $0 ? 4 : nil }
