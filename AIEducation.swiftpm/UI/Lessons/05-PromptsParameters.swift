@@ -33,6 +33,8 @@ struct PromptsAndParameters1: View {
 struct PromptsAndParameters2: View {
   @State private var temperature: Double = 0.5
   @State private var prompt: String = "Hello there! Can you tell me a joke?"
+  
+  @State private var oldModelOutput: String = ""
   @State private var modelOutput: String = ""
 
   @Environment(FoundationModelsService.self) private var foundationModelsService
@@ -57,26 +59,36 @@ struct PromptsAndParameters2: View {
       }
       
       Button("Regenerate Response") {
-//        modelOutput = ""P00hb3a
         Task {
           await generateResponse()
         }
       }
       .buttonStyle(.glassProminent)
-
+      
       Text(prompt)
-
-      if let status = foundationModelsService.statuses[session]?.modelStatusText
-      {
-        Text(status)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+      
+      HStack(spacing: 8) {
+        VStack {
+          Text("Previous Response")
+            .foregroundStyle(.secondary)
+          
+          Text(oldModelOutput)
+            .padding()
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .intelligence(in: .rect(cornerRadius: 10))
+        }
+        .opacity(oldModelOutput.isEmpty ? 0 : 1)
+        
+        VStack {
+          Text("Current Response")
+            .foregroundStyle(.secondary)
+          
+          Text(modelOutput)
+            .padding()
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .intelligence(in: .rect(cornerRadius: 10))
+        }
       }
-
-      Text(modelOutput)
-        .padding()
-        .glassEffect(in: .rect(cornerRadius: 10))
-        .intelligence(in: .rect(cornerRadius: 10))
     }
     .padding()
     .animation(.bouncy, value: temperature)
@@ -100,6 +112,7 @@ struct PromptsAndParameters2: View {
 
   private func generateResponse() async {
     do {
+      let old = modelOutput
       let options: GenerationOptions = GenerationOptions(
         temperature: temperature,
         maximumResponseTokens: 150
@@ -116,6 +129,9 @@ struct PromptsAndParameters2: View {
         withAnimation(.bouncy) {
           modelOutput = content.content
         }
+      }
+      withAnimation(.bouncy) {
+        oldModelOutput = old
       }
       foundationModelsService.completeStream(for: session)
     } catch {
