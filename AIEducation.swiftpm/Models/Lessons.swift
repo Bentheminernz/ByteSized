@@ -451,23 +451,29 @@ struct LessonCourses {
           id: 5,
           icon: "thermometer",
           title: "Prompts & Parameters",
-          description:
-            "Explore prompt engineering techniques and model parameters to optimize outputs.",
+          description: "Explore how prompts and parameters influence LLM outputs.",
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "What affects AI outputs?",
+              icon: "slider.horizontal.3",
             ) {
               PromptsAndParameters1()
             },
             Slide(
               id: 2,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "The Perfect Prompt",
+              icon: "character.cursor.ibeam"
             ) {
               PromptsAndParameters2()
             },
+            Slide(
+              id: 3,
+              title: "Is it getting hot in here?",
+              icon: "thermometer"
+            ) {
+              PromptsAndParameters3()
+            }
           ],
           questions: [
             LessonQuestion(

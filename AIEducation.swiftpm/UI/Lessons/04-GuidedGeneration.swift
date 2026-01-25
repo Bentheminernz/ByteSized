@@ -181,69 +181,73 @@ struct GuidedGeneration2: View {
       foundationModelsService.createSession(for: [
         sessionPlainText, sessionStructured,
       ])
-
-      Task {
-        do {
-          let response = foundationModelsService.streamResponse(
-            from: sessionPlainText
-          ) {
-            """
-            Create a family-friendly gourmet recipe that is safe to prepare at home.
-
-            Requirements:
-            - No alcohol
-            - No raw or undercooked ingredients
-            - Suitable for all ages
-            - Uses common kitchen equipment
-            - Includes a name, short description, ingredient list, and clear step-by-step instructions
-            - Follow basic food safety practices
-
-            The meal should be impressive but simple and safe.
-            """
-          }
-
-          for try await content in response {
-            withAnimation(.bouncy) {
-              plainTextRecipe = content.content
-            }
-          }
-          foundationModelsService.completeStream(for: sessionPlainText)
-
-          let responseStruct = foundationModelsService.streamResponse(
-            from: sessionStructured,
-            generating: Recipe.self
-          ) {
-            """
-            Create a family-friendly gourmet-style meal that is safe to prepare at home.
-
-            Constraints:
-            - No alcohol
-            - No raw or undercooked meat, eggs, or seafood
-            - Appropriate for all ages
-            - Clear, safe cooking steps
-            - Realistic ingredient quantities
-
-            The recipe should be impressive but safe and practical.
-            """
-          }
-
-          for try await content in responseStruct {
-            withAnimation(.bouncy) {
-              structuredRecipe = content.content
-            }
-          }
-          foundationModelsService.completeStream(for: sessionStructured)
-        } catch let error as LanguageModelSession.GenerationError {
-          print("Generation error: \(error)")
-        } catch {
-          print("Unexpected error: \(error)")
-        }
-      }
+    }
+    .task {
+      try? await generateRecipes()
     }
     .onDisappear {
       foundationModelsService.clearSession(for: [
         sessionPlainText, sessionStructured,
       ])
+    }
+  }
+  
+  func generateRecipes() async throws {
+    do {
+      let response = foundationModelsService.streamResponse(
+        from: sessionPlainText,
+        options: GenerationOptions(maximumResponseTokens: 300)
+      ) {
+        """
+        Create a family-friendly gourmet recipe that is safe to prepare at home.
+
+        Requirements:
+        - No alcohol
+        - No raw or undercooked ingredients
+        - Suitable for all ages
+        - Uses common kitchen equipment
+        - Includes a name, short description, ingredient list, and clear step-by-step instructions
+        - Follow basic food safety practices
+
+        The meal should be impressive but simple and safe.
+        """
+      }
+
+      for try await content in response {
+        withAnimation(.bouncy) {
+          plainTextRecipe = content.content
+        }
+      }
+      foundationModelsService.completeStream(for: sessionPlainText)
+
+      let responseStruct = foundationModelsService.streamResponse(
+        from: sessionStructured,
+        generating: Recipe.self
+      ) {
+        """
+        Create a family-friendly gourmet-style meal that is safe to prepare at home.
+
+        Constraints:
+        - No alcohol
+        - No raw or undercooked meat, eggs, or seafood
+        - Appropriate for all ages
+        - Clear, safe cooking steps
+        - Realistic ingredient quantities
+
+        The recipe should be impressive but safe and practical.
+        """
+      }
+
+      for try await content in responseStruct {
+        withAnimation(.bouncy) {
+          structuredRecipe = content.content
+        }
+      }
+      foundationModelsService.completeStream(for: sessionStructured)
+    } catch let error as LanguageModelSession.GenerationError {
+      print("Generation error: \(error)")
+    } catch {
+      print("Unexpected error: \(error)")
     }
   }
 
@@ -313,6 +317,7 @@ struct GuidedGeneration3: View {
             That is a great question! Structured data outputs are incredibly useful when you want to do more than show a wall of text to a user.
             What about completely unique characters in a game, dynamic product descriptions in an e-commerce app, or personalized workout plans in a fitness app?
             All of these use cases require the app to understand and manipulate the generated content programmatically.
+            Lets look at how we can achieve this using the Apple Foundation Models framework.
           """
         )
       }

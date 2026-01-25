@@ -15,7 +15,8 @@ struct MainView: View {
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
-  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first(where: { $0.id == 5 })
+  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 1 }.first?.lessons.first(where: { $0.id == 1 })
+//  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first(where: { $0.id == 5 })
 //    @State private var selectedLesson: Lesson?
   #else
     @State private var selectedLesson: Lesson?
@@ -57,8 +58,9 @@ struct MainView: View {
                 .padding(.horizontal)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                  LazyHStack(spacing: 16) {
+                  LazyHStack(alignment: .top, spacing: 16) {
                     ForEach(course.lessons) { lesson in
+                      let expandedHeight = CGFloat(210 + ((lesson.slides.count) * 22))
                       LessonCard(
                         lesson,
                         isNext: nextUncompletedLessonID == lesson.id
@@ -83,7 +85,7 @@ struct MainView: View {
                       #endif
                       .frame(
                         width: expandedCardId == lesson.id ? 520 : 400,
-                        height: expandedCardId == lesson.id ? 180 : 120
+                        height: expandedCardId == lesson.id ? expandedHeight : 120
                       )
                       .onTapGesture {
                         withAnimation(.bouncy(duration: 0.3)) {
@@ -96,6 +98,8 @@ struct MainView: View {
                   }
                   .padding()
                 }
+                .frame(height: expandedCardId != nil && course.lessons.contains(where: { $0.id == expandedCardId }) ? 300 + 32 : 120 + 32)
+                .animation(.bouncy(duration: 0.3), value: expandedCardId)
               }
               .scrollTransition { content, phase in
                 content
@@ -177,7 +181,7 @@ struct MainView: View {
       }
     }
     .padding(.top)
-    .navigationTitle("AI Education")
+    .navigationTitle("ByteSized")
     .background(
       LinearGradient(
         gradient: Gradient(colors: [
@@ -288,6 +292,30 @@ struct MainView: View {
           }
         }
       }
+      
+      if expandedCardId == lesson.id {
+        VStack(alignment: .leading) {
+          Text("Lesson Contents:")
+            .font(.subheadline.bold())
+          
+          ForEach(lesson.slides, id: \.id) { slide in
+            VStack(alignment: .leading) {
+              HStack {
+                Image(systemName: slide.icon)
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 18, height: 18)
+                  .symbolColorRenderingMode(.gradient)
+                
+                Text(slide.title)
+                  .font(.subheadline)
+              }
+            }
+          }
+        }
+        .padding(.top, 4)
+      }
+      
       Spacer()
 
       if expandedCardId == lesson.id {

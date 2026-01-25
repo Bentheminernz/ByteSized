@@ -21,6 +21,10 @@ struct LessonSheet: View {
   @State private var answersCorrect: Int = 0
   @State private var selectedAnswerIDsByQuestion: [Int?] = []
 
+  #if targetEnvironment(simulator)
+    @State var showHideSheetButton: Bool = true
+  #endif
+
   var body: some View {
     let showingSlides = currentIndex < lesson.slides.count
 
@@ -82,6 +86,14 @@ struct LessonSheet: View {
                         ? Color.green : Color.gray.opacity(0.5)
                     )
                     .frame(width: idx == currentIndex ? 40 : 15, height: 15)
+                    .onTapGesture {
+                      isAdvancing = (idx > currentIndex)
+                      DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation(.smooth) {
+                          currentIndex = idx
+                        }
+                      }
+                    }
                 }
 
                 Capsule()
@@ -92,6 +104,21 @@ struct LessonSheet: View {
                       .font(.system(size: 10, weight: .bold))
                       .foregroundStyle(.white)
                   )
+                  .onTapGesture {
+                    isAdvancing = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                      withAnimation(.smooth) {
+                        currentIndex = lesson.slides.count
+                        quizIndex = 0
+                        selectedAnswerID = nil
+                        hasSubmitted = false
+                        selectedAnswerIDsByQuestion = Array(
+                          repeating: nil,
+                          count: lesson.questions.count
+                        )
+                      }
+                    }
+                  }
               }
               .padding()
               .glassEffect(.clear.interactive(), in: .capsule)
@@ -350,6 +377,38 @@ struct LessonSheet: View {
     #if DEBUG
       .onPencilSqueeze { phase in
         onClose()
+      }
+    #endif
+    #if targetEnvironment(simulator)
+      .overlay {
+        if showHideSheetButton {
+          VStack {
+            Spacer()
+            HStack {
+              Button(action: {
+                onClose()
+              }) {
+                Text("Close Lesson")
+                  .padding(8)
+                  .background(Color.black.opacity(0.5))
+                  .foregroundColor(.white)
+                  .cornerRadius(8)
+              }
+              
+              Button(action: {
+                showHideSheetButton.toggle()
+              }) {
+                Text(
+                  showHideSheetButton ? "Hide Close Button" : "Show Close Button"
+                )
+                .padding(8)
+                .background(Color.black.opacity(0.5))
+                .foregroundColor(.white)
+                .cornerRadius(8)
+              }
+            }
+          }
+        }
       }
     #endif
   }

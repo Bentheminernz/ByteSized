@@ -118,6 +118,10 @@ struct RootView: View {
             Button("Close Debug Menu") {
               showDebugMenu = false
             }
+            
+            Button("Dismiss Current Screen") {
+              dismiss()
+            }
 
             Button("Exit") {
               exit(0)

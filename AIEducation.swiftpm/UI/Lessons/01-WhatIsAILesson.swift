@@ -104,19 +104,25 @@ struct WhatIsAILesson2: View {
 
   var body: some View {
     VStack {
-      Text(
-        "Artificial Intelligence is the simple idea of getting computers to act in a way that feel intelligent"
-      )
-      .font(.largeTitle)
-      .bold()
-
-      Text("But how do we get computers to do this?")
-        .font(.title2)
-
-      Text(
-        "One way is through Language Models, which are trained on vast amounts of text data to understand and generate human-like language. Let's see an example of a Language Model in action!"
-      )
-      .font(.body)
+      VStack(spacing: 8) {
+        Text(
+          "Artificial Intelligence is the simple idea of getting computers to act in a way that feel intelligent"
+        )
+        .font(.largeTitle)
+        .bold()
+        
+        Text("But how do we get computers to do this?")
+          .font(.title2)
+        
+        Text(
+          "One way is through Language Models, which are trained on vast amounts of text data to understand and generate human-like language. Let's see an example of a Language Model in action!"
+        )
+        .font(.body)
+      }
+      
+      Text("Here we're prompting a Language Model to write a short story for children about a magical cat:")
+        .font(.headline)
+        .padding(.top)
 
       if !llmOutput.isEmpty {
         ScrollView {
