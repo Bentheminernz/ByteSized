@@ -534,23 +534,37 @@ struct LessonCourses {
         Lesson(
           id: 6,
           icon: "book.fill",
-          title: "Master Prompt Engineering",
+          title: "Tools (master prompt engineering)",
           description:
-            "Become proficient in crafting effective prompts to get the best results from LLMs.",
+            "Unlock the full potential of LLMs with agentic tools!",
           slides: [
             Slide(
               id: 1,
-              title: "Prompt Engineering",
-              icon: "book.fill",
+              title: "A tool?? For an AI?",
+              icon: "hammer",
             ) {
-              MasterPromptEngineering1()
+              Tools1()
             },
             Slide(
               id: 2,
-              title: "Demo?",
-              icon: "book.fill",
+              title: "That sounds awesome! Show me more!",
+              icon: "sparkles"
             ) {
-              MasterPromptEngineering2()
+              Tools2()
+            },
+            Slide(
+              id: 3,
+              title: "Woahhhh, that was amazing!! How does it work??",
+              icon: "brain.head.profile"
+            ) {
+              Tools3()
+            },
+            Slide(
+              id: 4,
+              title: "Ok enough teasing, how do I use this??",
+              icon: "book.fill"
+            ) {
+              Tools4()
             },
           ],
           questions: [
@@ -626,25 +640,25 @@ struct LessonCourses {
           slides: [
             Slide(
               id: 1,
-              title: "Image Generation",
+              title: "Surely AI can generate more than just text?",
               icon: "photo",
             ) {
-              IntroView()
+              ImageGeneration1()
             },
             Slide(
               id: 2,
-              title: "Training Data",
+              title: "Ok but like how does it know what stuff looks like?",
               icon: "photo",
             ) {
-              TrainingData()
+              ImageGeneration2()
             },
             Slide(
               id: 3,
-              title: "Demo",
+              title: "Time to blow your mind!",
               icon: "photo",
               hideHeader: true
             ) {
-              DemoView()
+              ImageGeneration3()
             },
           ],
           questions: [

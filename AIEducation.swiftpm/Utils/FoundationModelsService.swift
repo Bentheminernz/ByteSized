@@ -263,4 +263,11 @@ final class FoundationModelsService {
       clearSession(for: context)
     }
   }
+  
+  func printActiveSessions() {
+    print("Active Foundation Model Sessions:")
+    for (key, _) in sessions {
+      print("- \(key)")
+    }
+  }
 }

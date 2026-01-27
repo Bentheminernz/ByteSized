@@ -82,6 +82,7 @@ struct RootView: View {
 
   #if DEBUG
     @State var showDebugMenu: Bool = false
+  @Environment(FoundationModelsService.self) private var foundationModelsService
   #endif
 
   var body: some View {
@@ -135,6 +136,10 @@ struct RootView: View {
               "hasSeenCompletedAllLessons: \(hasSeenCompletedAllLessons.description)"
             ) {
               hasSeenCompletedAllLessons.toggle()
+            }
+            
+            Button("Print active llms") {
+              print(foundationModelsService.printActiveSessions())
             }
           }
           .padding()

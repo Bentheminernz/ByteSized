@@ -178,9 +178,7 @@ struct ContactsTool: Tool {
   private func formatContact(_ contact: CNContact, number: Int) -> String {
     var sections: [String] = []
 
-    sections.append("═══════════════════════════════════════")
     sections.append("CONTACT \(number)")
-    sections.append("═══════════════════════════════════════")
 
     if let nameSection = formatNameSection(contact) {
       sections.append(nameSection)
@@ -601,9 +599,8 @@ struct CalendarTool: Tool {
     dateFormatter.timeStyle = .none
 
     var output =
-      "📅 Calendar Events (\(dateFormatter.string(from: startDate)) - \(dateFormatter.string(from: endDate)))\n"
-    output += "Found \(events.count) event(s)\n"
-    output += String(repeating: "═", count: 50) + "\n\n"
+      "Calendar Events (\(dateFormatter.string(from: startDate)) - \(dateFormatter.string(from: endDate)))"
+    output += "Found \(events.count) event(s)"
 
     let groupedEvents = Dictionary(grouping: events) { event -> Date in
       Calendar.current.startOfDay(for: event.startDate)
@@ -626,7 +623,6 @@ struct CalendarTool: Tool {
     dayFormatter.dateFormat = "EEEE, MMMM d, yyyy"
 
     var output = "▸ \(dayFormatter.string(from: day))\n"
-    output += String(repeating: "─", count: 40) + "\n"
 
     for event in events {
       output += formatEvent(event)
@@ -641,17 +637,17 @@ struct CalendarTool: Tool {
 
     // Time and title
     let timeStr = formatEventTime(event)
-    lines.append("  ⏰ \(timeStr)")
-    lines.append("  📝 \(event.title ?? "Untitled Event")")
+    lines.append("\(timeStr)")
+    lines.append("\(event.title ?? "Untitled Event")")
 
     // Calendar
     if let calendar = event.calendar {
-      lines.append("  📂 Calendar: \(calendar.title)")
+      lines.append("Calendar: \(calendar.title)")
     }
 
     // Location
     if let location = event.location, !location.isEmpty {
-      lines.append("  📍 Location: \(location)")
+      lines.append("Location: \(location)")
     }
 
     // Attendees

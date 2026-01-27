@@ -165,7 +165,7 @@ struct GuidedGeneration2: View {
             ScrollView {
               CodeViewer(
                 code: buildJsonString(),
-                language: "json",
+                language: .json,
                 fontSize: 12,
                 lineFontSize: 14
               )
@@ -394,7 +394,7 @@ struct GuidedGeneration4: View {
           .padding(.vertical, 4)
           .padding(.horizontal)
 
-          CodeViewer(code: generableStruct, language: "swift")
+          CodeViewer(code: generableStruct, language: .swift)
         }
       }
 
@@ -411,7 +411,7 @@ struct GuidedGeneration4: View {
           .padding(.vertical, 4)
           .padding(.horizontal)
 
-          CodeViewer(code: callingModel, language: "swift")
+          CodeViewer(code: callingModel, language: .swift)
         }
       }
     }

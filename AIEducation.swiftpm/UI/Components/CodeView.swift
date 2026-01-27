@@ -10,9 +10,14 @@ import SwiftUI
 
 struct CodeViewer: View {
   let code: String
-  let language: String
+  let language: Language
   var fontSize: CGFloat = 16
   var lineFontSize: CGFloat = 16
+  
+  enum Language: String, CaseIterable {
+    case swift
+    case json
+  }
 
   @Environment(\.colorScheme) private var colorScheme
   @State private var highlighted: AttributedString?
@@ -110,7 +115,7 @@ struct CodeViewer: View {
       let highlighter = Highlight()
       let attributed = try await highlighter.attributedText(
         code,
-        language: language,
+        language: language.rawValue,
         colors: colorScheme == .dark ? .dark(.xcode) : .light(.xcode)
       )
       highlighted = attributed

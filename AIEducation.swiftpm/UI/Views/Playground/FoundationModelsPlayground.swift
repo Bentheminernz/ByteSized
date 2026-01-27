@@ -425,7 +425,7 @@ struct FoundationModelsPlayground: View {
               .accessibilityLabel("Copy Swift Code to Clipboard")
             }
             VStack {
-              CodeViewer(code: fullCode, language: "swift")
+              CodeViewer(code: fullCode, language: .swift)
             }
             .glassEffect(in: .rect(cornerRadius: 10))
           }

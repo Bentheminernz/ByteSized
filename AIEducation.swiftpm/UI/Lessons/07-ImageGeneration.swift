@@ -91,17 +91,16 @@ struct CascadingImagesView: View {
   }
 }
 
-struct IntroView: View {
+struct ImageGeneration1: View {
   var body: some View {
-    Text("Welcome to the AI Image Generation Tutorial!")
-      .font(.largeTitle)
-      .bold()
-      .padding()
-      .glassEffect(.clear, in: .rect(cornerRadius: 15))
+    VStack {
+      Text("Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text!")
+        .font(.headline.bold())
+    }
   }
 }
 
-struct TrainingData: View {
+struct ImageGeneration2: View {
   var body: some View {
     ZStack {
       CascadingImagesView()
@@ -123,7 +122,7 @@ struct TrainingData: View {
   }
 }
 
-struct DemoView: View {
+struct ImageGeneration3: View {
   @State private var generatedImages: [CGImage?] = Array(
     repeating: nil,
     count: 3
