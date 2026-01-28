@@ -47,6 +47,10 @@ struct DefinableText: View {
     "training": "The process of adjusting parameters to reduce loss.",
     "validation":
       "Evaluating the model on held-out data to check generalisation.",
+    "llm":
+      "Large Language Model, a type of AI model designed to understand and generate human-like text.",
+    "json":
+      "JavaScript Object Notation, a lightweight data format that is easy for humans to read and write, and easy for machines to parse and generate.",
   ]
 
   init(_ text: String, definitions: [String: String]? = nil) {

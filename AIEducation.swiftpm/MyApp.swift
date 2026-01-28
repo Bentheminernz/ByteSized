@@ -90,7 +90,8 @@ struct RootView: View {
       switch model.availability {
       case .available:
         TabView(selection: $selectedTab) {
-          ForEach(Tabs.allCases, id: \.self) { tab in
+//          ForEach(Tabs.allCases, id: \.self) { tab in
+          ForEach(Tabs.allCases.filter { $0.name != "Schema" }, id: \.self) { tab in
             Tab(tab.name, systemImage: tab.icon, value: tab) {
               tab.view
             }

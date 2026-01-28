@@ -268,7 +268,7 @@ struct FoundationModelsPlayground: View {
               if outputMode == .schema {
                 VStack(alignment: .leading, spacing: 8) {
                   HStack {
-                    Text("Schema Fields")
+                    Text("Guided Generation Fields")
                       .font(.subheadline)
                       .foregroundStyle(.secondary)
 
@@ -286,7 +286,7 @@ struct FoundationModelsPlayground: View {
                       }
                     } label: {
                       HStack {
-                        Text("Load Example Schema")
+                        Text("Load Example Guide")
                           .font(.subheadline)
                         Image(systemName: "chevron.down")
                           .font(.caption)
@@ -295,7 +295,7 @@ struct FoundationModelsPlayground: View {
                     }
                     .buttonStyle(.glassProminent)
 
-                    Button("Edit Schema", systemImage: "slider.horizontal.3") {
+                    Button("Edit Guide", systemImage: "slider.horizontal.3") {
                       showingSchemaBuilder = true
                     }
                     .buttonStyle(.glassProminent)

@@ -13,10 +13,37 @@ struct CodeViewer: View {
   let language: Language
   var fontSize: CGFloat = 16
   var lineFontSize: CGFloat = 16
-  
-  enum Language: String, CaseIterable {
+
+  enum Language: CaseIterable {
     case swift
     case json
+
+    var color: Color {
+      switch self {
+      case .swift:
+        return Color(red: 241 / 255, green: 101 / 255, blue: 41 / 255)
+      case .json:
+        return .blue
+      }
+    }
+
+    var icon: String {
+      switch self {
+      case .swift:
+        return "swift"
+      case .json:
+        return "curlybraces"
+      }
+    }
+    
+    var name: String {
+      switch self {
+      case .swift:
+        return "Swift"
+      case .json:
+        return "JSON"
+      }
+    }
   }
 
   @Environment(\.colorScheme) private var colorScheme
@@ -59,6 +86,12 @@ struct CodeViewer: View {
         .padding(.vertical, 8)
         .padding(.leading, 8)
         .padding(.trailing, 12)
+      }
+      .overlay(alignment: .topTrailing) {
+        Label(language.name, systemImage: language.icon)
+          .padding(8)
+          .glassEffect(.regular.tint(language.color), in: .capsule)
+          .padding(8)
       }
     }
     .task(id: taskID) {
@@ -115,7 +148,7 @@ struct CodeViewer: View {
       let highlighter = Highlight()
       let attributed = try await highlighter.attributedText(
         code,
-        language: language.rawValue,
+        language: language.name.lowercased(),
         colors: colorScheme == .dark ? .dark(.xcode) : .light(.xcode)
       )
       highlighted = attributed

@@ -19,9 +19,9 @@ struct GuidedGeneration1: View {
           .font(.title.bold())
         Text(
           """
-             While perfect for chatbots or content creation, this becomes liability when you need to parse or integrate outputs
-             programmatically. Unstructured text responses require brittle parsing logic that breaks easily. Structured outputs solve
-             this by constraining the model to return predictable predefined formats, making them as reliable as any API call.
+           While perfect for chatbots or content creation, free-form text becomes a problem when you need the model's response to fit into your app or system. 
+          You'd have to write fragile code to extract the information you need, and it often breaks when the response format changes slightly. 
+          Structured outputs solve this by forcing the model to return information in an exact format you specify, making it as reliable as any other data source your app uses.
           """
         )
       }
@@ -73,9 +73,11 @@ struct GuidedGeneration2: View {
   var body: some View {
     HStack {
       VStack {
-        Text("If you wanted to get an LLM to generate you a recipe, it would return something like this:")
+        DefinableText(
+          "If you wanted to get an LLM to generate you a recipe, it would return something like this:"
+        )
         //        .foregroundStyle(.secondary)
-        
+
         if !plainTextRecipe.isEmpty {
           ScrollView {
             Text(plainTextRecipe)
@@ -85,43 +87,45 @@ struct GuidedGeneration2: View {
           .glassEffect(in: .rect(cornerRadius: 10))
           .intelligence(in: .rect(cornerRadius: 10))
         }
-        
-        Text("This output is easy to read as a human, but is near impossible to work with programmatically! You'd have to use some brittle parsing logic to extract the relevant fields, which is not a good practice. Instead, by guiding the model to return structured data, you can get reliable, predictable outputs that are easy to work with.")
-          .foregroundStyle(.secondary)
-          .padding(.top, 4)
+
+        Text(
+          "This output is easy to read as a human, but really hard to use in your app! You'd need to write fragile code that tries to pick out the specific pieces of information you need—and it breaks easily when the response changes even slightly. Instead, by telling the model to return organized data in a specific format, you get consistent, predictable results that your app can actually use."
+        )
+        .foregroundStyle(.secondary)
+        .padding(.top, 4)
       }
-      
+
       Divider()
         .padding()
-      
+
       VStack(alignment: .leading, spacing: 12) {
         if let recipe = structuredRecipe {
           VStack(spacing: 8) {
             Text("From that, we could format the structured output like so:")
               .foregroundStyle(.secondary)
-            
+
             ScrollView {
               VStack(alignment: .leading, spacing: 10) {
                 if let name = recipe.name {
                   Text(name)
                     .font(.title3.bold())
                 }
-                
+
                 if let description = recipe.description {
                   Text(description)
                     .foregroundStyle(.secondary)
                     .font(.subheadline)
                 }
-                
+
                 if let ingredients = recipe.ingredients {
                   VStack(alignment: .leading, spacing: 2) {
                     Text("Ingredients:")
                       .font(.subheadline.bold())
-                    
+
                     ForEach(ingredients.indices, id: \.self) { idx in
                       let ingredient = ingredients[idx]
                       if let ingredientName = ingredient.name,
-                         let quantity = ingredient.quantity
+                        let quantity = ingredient.quantity
                       {
                         Text("- \(quantity) of \(ingredientName)")
                           .font(.subheadline)
@@ -130,16 +134,16 @@ struct GuidedGeneration2: View {
                   }
                   .padding(.top, 4)
                 }
-                
+
                 if let instructions = recipe.instructions {
                   VStack(alignment: .leading, spacing: 2) {
                     Text("Instructions:")
                       .font(.subheadline.bold())
-                    
+
                     ForEach(instructions.indices, id: \.self) { idx in
                       let instruction = instructions[idx]
                       if let stepNumber = instruction.stepNumber,
-                         let description = instruction.description
+                        let description = instruction.description
                       {
                         Text("\(stepNumber). \(description)")
                           .font(.subheadline)
@@ -159,9 +163,11 @@ struct GuidedGeneration2: View {
 
         if structuredRecipe != nil {
           VStack(spacing: 8) {
-            Text("Or we might want to format it as JSON for an API:")
-              .foregroundStyle(.secondary)
-            
+            DefinableText(
+              "Or we might want it in a standard format (JSON) that other software can read:"
+            )
+            .foregroundStyle(.secondary)
+
             ScrollView {
               CodeViewer(
                 code: buildJsonString(),
@@ -191,7 +197,7 @@ struct GuidedGeneration2: View {
       ])
     }
   }
-  
+
   func generateRecipes() async throws {
     do {
       let response = foundationModelsService.streamResponse(
@@ -314,10 +320,10 @@ struct GuidedGeneration3: View {
 
         Text(
           """
-            That is a great question! Structured data outputs are incredibly useful when you want to do more than show a wall of text to a user.
-            What about completely unique characters in a game, dynamic product descriptions in an e-commerce app, or personalized workout plans in a fitness app?
-            All of these use cases require the app to understand and manipulate the generated content programmatically.
-            Lets look at how we can achieve this using the Apple Foundation Models framework.
+            That is a great question! Structured data outputs are incredibly useful when you want to do more than just show text to a user.
+            What about generating completely unique characters in a game, dynamic product descriptions in an e-commerce app, or personalized workout plans in a fitness app?
+            All of these require your app to actually use and work with the AI's output—not just display it.
+            Let's look at how we can achieve this using the Apple Foundation Models framework.
           """
         )
       }
@@ -333,8 +339,10 @@ struct GuidedGeneration4: View {
   let generableStruct = """
     import FoundationModels
 
+    // Creates a Recipe structure using the @Generable macro
     @Generable
     struct Recipe {
+      // Fields annotated with @Guide provide context to the model
       @Guide(description: "A salivating recipe name")
       var name: String
 
@@ -344,6 +352,7 @@ struct GuidedGeneration4: View {
       @Guide(description: "A list of ingredients required for the recipe")
       var ingredients: [Ingredient]
 
+      // Creates an Ingredient structure using the @Generable macro
       @Generable
       struct Ingredient {
         var name: String
@@ -353,6 +362,7 @@ struct GuidedGeneration4: View {
       @Guide(description: "Step-by-step instructions to prepare the recipe")
       var instructions: [Instruction]
 
+      // Creates an Instruction structure using the @Generable macro
       @Generable
       struct Instruction {
         var stepNumber: Int

@@ -332,7 +332,8 @@ struct LessonCourses {
             Slide(
               id: 4,
               title: "How do I do that??",
-              icon: "hammer"
+              icon: "hammer",
+              containsCode: true
             ) {
               GuidedGeneration4()
             },
@@ -370,13 +371,13 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "To make AI write in a predictable, structured way",
-                  isCorrect: true
+                  answer: "To make AI sound more human",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "To make AI sound more human",
-                  isCorrect: false
+                  answer: "To make AI write in a predictable, structured way",
+                  isCorrect: true
                 ),
                 LessonAnswer(
                   id: 3,
@@ -396,24 +397,24 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer:
-                    "Because the text can change and is hard to reliably pick apart",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
                   answer: "Because phones can't read text",
                   isCorrect: false
                 ),
                 LessonAnswer(
-                  id: 3,
+                  id: 2,
                   answer: "Because text is always wrong",
                   isCorrect: false
                 ),
                 LessonAnswer(
-                  id: 4,
+                  id: 3,
                   answer: "Because text uses too much storage",
                   isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer:
+                    "Because the text can change and is hard to reliably pick apart",
+                  isCorrect: true
                 ),
               ]
             ),
@@ -562,7 +563,8 @@ struct LessonCourses {
             Slide(
               id: 4,
               title: "Ok enough teasing, how do I use this??",
-              icon: "book.fill"
+              icon: "book.fill",
+              containsCode: true
             ) {
               Tools4()
             },
@@ -897,18 +899,21 @@ struct Slide: Identifiable {
   let icon: String
   private let _content: () -> AnyView
   var hideHeader: Bool = false
+  var containsCode: Bool = false
 
   init<Content: View>(
     id: Int,
     title: String,
     icon: String,
     hideHeader: Bool = false,
+    containsCode: Bool = false,
     @ViewBuilder content: @escaping () -> Content
   ) {
     self.id = id
     self.title = title
     self.icon = icon
     self.hideHeader = hideHeader
+    self.containsCode = containsCode
     self._content = { AnyView(content()) }
   }
 

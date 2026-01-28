@@ -426,7 +426,14 @@ struct SlideHeaderCard: View {
         .symbolColorRenderingMode(.gradient)
       Text(slide.title)
         .font(.title2).bold()
+      
       Spacer()
+      
+      if slide.containsCode {
+        Text("Code Examples, feel free to skip if it's not your thing!")
+          .padding(12)
+          .glassEffect(.regular.tint(Colours.LightGreen.opacity(0.8)), in: .capsule)
+      }
     }
     .padding()
     .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
@@ -486,10 +493,14 @@ struct LessonCompletionView: View {
   }
 }
 
-#Preview(traits: .landscapeRight) {
+#Preview("Lesson Sheet", traits: .landscapeRight) {
   LessonSheet(
-    lesson: LessonCourses.allCourses[1].lessons[0],
+    lesson: LessonCourses.allCourses[2].lessons[0],
     animation: Namespace().wrappedValue,
     onClose: {}
   )
+}
+
+#Preview("Lesson Slide Header", traits: .landscapeRight) {
+  SlideHeaderCard(slide: LessonCourses.allCourses[1].lessons[0].slides[3])
 }

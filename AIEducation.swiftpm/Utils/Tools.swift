@@ -39,6 +39,12 @@ struct WeatherTool: Tool {
         "miami": (28.0, "Sunny", 0.68, 9.2),
         "chicago": (3.0, "Snow", 0.70, 22.0),
         "los angeles": (20.0, "Sunny", 0.50, 7.5),
+        "christchurch": (14.0, "Partly Cloudy", 0.60, 11.0),
+        "auckland": (18.0, "Clear", 0.55, 10.0),
+        "wellington": (13.0, "Windy", 0.75, 20.0),
+        "nelson": (15.0, "Sunny", 0.50, 8.0),
+        "melbourne": (22.0, "Cloudy", 0.65, 12.0),
+        "brisbane": (30.0, "Sunny", 0.60, 10.0),
       ]
 
   /// Fetches simulated weather data for the specified city
@@ -52,8 +58,6 @@ struct WeatherTool: Tool {
         - Condition: \(weatherData.condition)
         - Humidity: \(Int(weatherData.humidity * 100))%
         - Wind Speed: \(String(format: "%.1f", weatherData.wind)) km/h
-
-        (Note: This is simulated weather data for demonstration purposes. Please state to the user that this is not real data.)
         """
       return GeneratedContent(weatherInfo)
     }
@@ -72,8 +76,6 @@ struct WeatherTool: Tool {
       - Condition: \(randomCondition)
       - Humidity: \(randomHumidity)%
       - Wind Speed: \(String(format: "%.1f", randomWind)) km/h
-
-      (Note: This is simulated weather data for demonstration purposes. Please state to the user that this is not real data.)
       """
 
     return GeneratedContent(weatherInfo)
