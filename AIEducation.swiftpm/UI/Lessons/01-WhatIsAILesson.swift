@@ -110,19 +110,21 @@ struct WhatIsAILesson2: View {
         )
         .font(.largeTitle)
         .bold()
-        
+
         Text("But how do we get computers to do this?")
           .font(.title2)
-        
+
         Text(
           "One way is through Language Models, which are trained on vast amounts of text data to understand and generate human-like language. Let's see an example of a Language Model in action!"
         )
         .font(.body)
       }
-      
-      Text("Here we're prompting a Language Model to write a short story for children about a magical cat:")
-        .font(.headline)
-        .padding(.top)
+
+      Text(
+        "Here we're prompting a Language Model to write a short story for children about a magical cat:"
+      )
+      .font(.headline)
+      .padding(.top)
 
       if !llmOutput.isEmpty {
         ScrollView {
@@ -183,14 +185,14 @@ struct WhatIsAILesson3: View {
   var body: some View {
     VStack {
       Text(
-        "Machine Learning is a way we can teach computers to learn from data, rather than programming them with specific instructions."
+        "Machine Learning teaches computers to recognize patterns, just like how you learned what a cat looks like."
       )
       .font(.largeTitle)
       .bold()
       .padding()
 
       Text(
-        "They're essentially just finding patterns in data. Let's see an example of a simple machine learning model that can detect whether an image contains a cat or not."
+        "Behind the scenes, it's basically a giant math equation. The computer looks at thousands of cat pictures and keeps tweaking the numbers in its equation—trying over and over until it gets really accurate at spotting cats. It's like practicing until you get perfect!"
       )
       .font(.body)
       .padding()
@@ -233,7 +235,6 @@ struct WhatIsAILesson3: View {
           .padding()
 
         VStack {
-          // TODO: fix symbolEffect animation
           Image(systemName: isCatDetected ? "checkmark" : "xmark")
             .font(.largeTitle)
             .foregroundStyle(

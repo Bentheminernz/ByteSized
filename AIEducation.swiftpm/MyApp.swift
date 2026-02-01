@@ -107,7 +107,7 @@ struct RootView: View {
           WelcomeView()
         }
       case .unavailable(let unavailableReason):
-        AppleIntelligenceUnavailableUI(unavailableReason)
+        AppleIntelligenceUnavailableUI(reason: unavailableReason)
       }
     }
     #if DEBUG

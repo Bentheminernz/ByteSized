@@ -12,7 +12,7 @@ import SwiftUI
 /// A simple description of a single field in a dynamic schema that can be mapped
 /// to a FoundationModels DynamicGenerationSchema.
 struct SchemaField: Identifiable, Codable {
-  let id = UUID()
+  var id = UUID()
 
   /// Name of the field
   var name: String

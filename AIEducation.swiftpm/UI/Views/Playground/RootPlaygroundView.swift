@@ -12,6 +12,8 @@ import SwiftData
 import SwiftUI
 
 struct PlaygroundView: View {
+  @Environment(ImageCreatorService.self) private var imageCreatorService
+  
   @Query private var completedLessons: [CompletedLesson]
 
   enum CurrentView { case foundationModels, imagePlayground }
@@ -48,7 +50,19 @@ struct PlaygroundView: View {
         case .foundationModels:
           FoundationModelsPlayground()
         case .imagePlayground:
-          ImagePlaygroundView()
+          if let isSupported = imageCreatorService.isSupported,
+             isSupported {
+            ImagePlaygroundView()
+          } else {
+            ContentUnavailableView {
+              Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
+            } description: {
+              Text("Image Generation powered by Apple Intelligence is not supported on your device.")
+              #if targetEnvironment(simulator)
+                Text("Image Playground is not supported in the simulator :), Please test on a real device.")
+              #endif
+            }
+          }
         }
       } else {
         ContentUnavailableView {

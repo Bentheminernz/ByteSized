@@ -8,48 +8,50 @@
 import FoundationModels
 import SwiftUI
 
-@ViewBuilder
-func AppleIntelligenceUnavailableUI(
-  _ reason: SystemLanguageModel.Availability.UnavailableReason
-) -> some View {
-  switch reason {
-  case .deviceNotEligible:
+struct AppleIntelligenceUnavailableUI: View {
+  let reason: SystemLanguageModel.Availability.UnavailableReason
+  
+  private var title: String {
+    reasonContent(for: reason).0
+  }
+
+  private var message: String {
+    reasonContent(for: reason).1
+  }
+  
+  var body: some View {
     ContentUnavailableView {
-      Label(
-        "Apple Intelligence Unavailable",
-        systemImage: "apple.intelligence.badge.xmark"
-      )
+      Label(title, systemImage: "apple.intelligence.badge.xmark")
     } description: {
-      Text("Your device is not eligible to use Apple Intelligence features.")
+      Text(message)
+    } actions: {
+      if reason == .appleIntelligenceNotEnabled {
+        Button("Open Settings") {
+          if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+          }
+        }
+      }
     }
-  case .appleIntelligenceNotEnabled:
-    ContentUnavailableView {
-      Label(
-        "Apple Intelligence Not Enabled",
-        systemImage: "apple.intelligence.badge.xmark"
-      )
-    } description: {
-      Text(
-        "Please enable Apple Intelligence in Settings to use these features."
-      )
-    }
-  case .modelNotReady:
-    ContentUnavailableView {
-      Label(
-        "Apple Intelligence Not Ready",
-        systemImage: "apple.intelligence.badge.xmark"
-      )
-    } description: {
-      Text("Apple Intelligence is not ready yet. Please try again later.")
-    }
-  default:
-    ContentUnavailableView {
-      Label(
-        "Apple Intelligence Unavailable",
-        systemImage: "apple.intelligence.badge.xmark"
-      )
-    } description: {
-      Text("Apple Intelligence features are currently unavailable.")
+  }
+  
+  
+  private func reasonContent(
+    for reason: SystemLanguageModel.Availability.UnavailableReason
+  ) -> (String, String) {
+    switch reason {
+    case .deviceNotEligible:
+      return ("Apple Intelligence Unavailable",
+              "Your device is not eligible to use Apple Intelligence features.")
+    case .appleIntelligenceNotEnabled:
+      return ("Apple Intelligence Not Enabled",
+              "Please enable Apple Intelligence in Settings to use these features.")
+    case .modelNotReady:
+      return ("Apple Intelligence Not Ready",
+              "Apple Intelligence is not ready yet. Please try again later.")
+    default:
+      return ("Apple Intelligence Unavailable",
+              "Apple Intelligence features are currently unavailable.")
     }
   }
 }

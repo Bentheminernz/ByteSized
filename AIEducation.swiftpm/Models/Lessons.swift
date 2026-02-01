@@ -452,7 +452,8 @@ struct LessonCourses {
           id: 5,
           icon: "thermometer",
           title: "Prompts & Parameters",
-          description: "Explore how prompts and parameters influence LLM outputs.",
+          description:
+            "Explore how prompts and parameters influence LLM outputs.",
           slides: [
             Slide(
               id: 1,
@@ -474,7 +475,7 @@ struct LessonCourses {
               icon: "thermometer"
             ) {
               PromptsAndParameters3()
-            }
+            },
           ],
           questions: [
             LessonQuestion(
@@ -572,52 +573,115 @@ struct LessonCourses {
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question:
+                "What is the main purpose of giving AI models access to tools?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "To replace the need for training data entirely",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "To transform them from text generators into powerful assistants that can perform a wide range of tasks",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "To make them run faster and use less memory",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "To allow them to write their own code",
                   isCorrect: false
                 ),
               ]
             ),
+
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question:
+                "How does an AI model decide which tools to use when responding to a prompt?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
+                  answer: "It automatically uses every tool that's available",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "The user must explicitly tell it which tools to use",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "It randomly selects tools to try",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer:
+                    "It evaluates the request and determines if any tools can help generate a better informed response",
+                  isCorrect: true
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 3,
+              question:
+                "What happens after a tool returns its result to the AI model?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer:
+                    "The model reads and understands the result, may call more tools if needed, or crafts a final answer",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer:
+                    "The model immediately passes the raw result to the user",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "The tool result is saved for the next conversation",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "The session ends and resets",
+                  isCorrect: false
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 4,
+              question: "What defines how a tool works for an AI model?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Only the programming language used to write it",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "The number of parameters it accepts",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer:
+                    "A clear description of what it does and what information it needs to work",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "The size of the code file",
                   isCorrect: false
                 ),
               ]
@@ -656,12 +720,19 @@ struct LessonCourses {
             },
             Slide(
               id: 3,
-              title: "Time to blow your mind!",
+              title: "But how does it tell a cat from the sky?",
               icon: "photo",
               hideHeader: true
             ) {
               ImageGeneration3()
             },
+            Slide(
+              id: 4,
+              title: "Ok enough stalling, show me a demo!",
+              icon: "photo",
+            ) {
+              ImageGeneration4()
+            }
           ],
           questions: [
             LessonQuestion(

@@ -10,6 +10,7 @@ import PhotosUI
 import SwiftUI
 
 struct ImagePlaygroundView: View {
+  @Environment(ImageCreatorService.self) private var imageCreatorService
   @State private var imageStyle: ImagePlaygroundStyle = .animation
   @State private var textPrompts: [String] = []
   @State private var imageCount: Int = 3
@@ -19,7 +20,6 @@ struct ImagePlaygroundView: View {
   @State private var playgroundLoadedImages: [CGImage] = []
   @State private var generatedImages: [CGImage?] = []
 
-  @State private var generationState: GenerationState = .idle
   @State private var generationError: ImageCreator.Error?
 
   private var fullCode: String {
@@ -186,7 +186,7 @@ struct ImagePlaygroundView: View {
                 .frame(maxWidth: .infinity)
             }
             .disabled(
-              [.requested, .generating].contains(generationState)
+              [.requested, .generating].contains(imageCreatorService.generationState)
                 || (textPrompts.isEmpty && playgroundLoadedImages.isEmpty)
             )
             .tint(Color.green.gradient)
@@ -209,7 +209,7 @@ struct ImagePlaygroundView: View {
                 .font(.system(size: 32))
                 .symbolEffect(
                   .breathe,
-                  isActive: generationState == .generating
+                  isActive: imageCreatorService.generationState == .generating
                 )
                 .symbolRenderingMode(.multicolor)
                 .symbolColorRenderingMode(.gradient)
@@ -218,7 +218,7 @@ struct ImagePlaygroundView: View {
                 .font(.title2).bold()
             }
 
-            Text(generationState.modelStatusText)
+            Text(imageCreatorService.generationState.modelStatusText)
               .font(.subheadline)
               .foregroundStyle(.secondary)
 
@@ -316,11 +316,7 @@ struct ImagePlaygroundView: View {
   }
 
   func generateImages() async -> ImageCreator.Error? {
-    generationState = .requested
-    defer { generationState = .completed }
-
     do {
-      let creator = try await ImageCreator()
       var concepts: [ImagePlaygroundConcept] = []
 
       for cgImage in playgroundLoadedImages {
@@ -330,8 +326,7 @@ struct ImagePlaygroundView: View {
         concepts.append(.text(prompt))
       }
 
-      generationState = .generating
-      let imageSequence = creator.images(
+      let imageSequence = try await imageCreatorService.generateImages(
         for: concepts,
         style: imageStyle,
         limit: imageCount
@@ -346,15 +341,12 @@ struct ImagePlaygroundView: View {
         }
         idx += 1
       }
-      generationState = .completed
       return nil  // success, no error
     } catch let imageError as ImageCreator.Error {
-      generationState = .completed
       return imageError
     } catch {
       // Some other unexpected error
       print("Unexpected error generating images: \(error)")
-      generationState = .completed
       return nil
     }
   }

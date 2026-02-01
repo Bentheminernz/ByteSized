@@ -29,7 +29,7 @@ struct GetWeatherTool: Tool {
 
     // Returns the result of the call in natural language
     let result = """
-      The forecast for \\(arguments.city) is \\(temperature)°C
+      The forecast for \(arguments.city) is \(temperature)°C
       """
     return result
   }

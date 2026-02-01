@@ -15,7 +15,7 @@ struct MainView: View {
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
-  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first(where: { $0.id == 6 })
+  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 3 }.first?.lessons.first(where: { $0.id == 7 })
 //    @State private var selectedLesson: Lesson?
   #else
     @State private var selectedLesson: Lesson?
@@ -342,18 +342,6 @@ struct MainView: View {
         }
       }
     )
-  }
-
-  private func nextLesson(after lesson: Lesson) -> Int? {
-    for course in LessonCourses.allCourses {
-      if let index = course.lessons.firstIndex(where: { $0.id == lesson.id }) {
-        let nextIndex = course.lessons.index(after: index)
-        if nextIndex < course.lessons.endIndex {
-          return course.lessons[nextIndex].id
-        }
-      }
-    }
-    return nil
   }
 }
 

@@ -8,6 +8,7 @@
 import FoundationModels
 import SwiftUI
 
+// MARK: -Complete
 struct Tools1: View {
   var body: some View {
     VStack {
@@ -34,6 +35,7 @@ struct Tools1: View {
 struct Tools2: View {
   @Environment(FoundationModelsService.self) private var foundationModelsService
   @State private var modelResponse: String = ""
+  @State private var showFakeResponse: Bool = false
 
   let session = FoundationModelSession.custom("ToolsExampleSession")
   let prompt =
@@ -53,6 +55,34 @@ struct Tools2: View {
         .padding()
         .glassEffect(in: .rect(cornerRadius: 8))
         .intelligence(in: .rect(cornerRadius: 8))
+
+      if modelResponse != "" && !showFakeResponse {
+        Button(
+          "If you didn't get a proper response, click here to see an example."
+        ) {
+          showFakeResponse = true
+        }
+      }
+
+      if showFakeResponse {
+        Text(
+          """
+          Your next calendar even is:
+          - Meeting with John Appleseed
+          - Date and Time: Sunday, February 1st, 2026, 10:00AM - 1:00PM (3h)
+          - Location: Te Pae, Christchurch, New Zealand
+          - Notes: Fictitious Apple Keynote discussing latest technologies and empowering Kiwi Developers.
+          
+          The weather in Christchurch is currently 22°C with clear skies and a gentle breeze.
+          
+          For John Appleseed (A contact who is attending):
+          - Phone: (555) 123-4567
+          - Email: johnappleseed@example.com
+          """
+        )
+        .padding()
+        .glassEffect(in: .rect(cornerRadius: 8))
+      }
     }
     .task {
       do {
@@ -195,11 +225,11 @@ struct Tools4: View {
 
     let instructions = "Help the user with getting weather information"
     let session = LanguageModelSession(tools: [GetWeatherTool()], instructions: instructions)
-    
+
     let response = try await session.respond(
       to: "What's the weather like in Paris?"
     )
-    
+
     print(response.content)
     """
 
@@ -212,23 +242,26 @@ struct Tools4: View {
         "Using Apples Foundation Models frame, it is incredibly easy to write tools for the LLM to use."
       )
       .foregroundStyle(.secondary)
-
       HStack {
         VStack {
-          Text("First, you define your tool by conforming to the Tool protocol. You provide a name, description, and the arguments it needs. Then you implement the call function which contains the logic of what the tool does:")
-            .foregroundStyle(.secondary)
-          
+          Text(
+            "First, you define your tool by conforming to the Tool protocol. You provide a name, description, and the arguments it needs. Then you implement the call function which contains the logic of what the tool does:"
+          )
+          .foregroundStyle(.secondary)
+
           ScrollView {
             CodeViewer(code: toolCode, language: .swift)
           }
         }
 
         Divider()
-        
+
         VStack {
-          Text("Then to call the tool from the LLM, you just create a session with the tool included and make your request as normal:")
-            .foregroundStyle(.secondary)
-          
+          Text(
+            "Then to call the tool from the LLM, you just create a session with the tool included and make your request as normal:"
+          )
+          .foregroundStyle(.secondary)
+
           ScrollView {
             CodeViewer(code: callingCode, language: .swift)
           }

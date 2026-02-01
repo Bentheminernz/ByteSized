@@ -94,8 +94,11 @@ struct CascadingImagesView: View {
 struct ImageGeneration1: View {
   var body: some View {
     VStack {
-      Text("Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text!")
-        .font(.headline.bold())
+      Text("Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text! They can also generate images!")
+        .font(.title.bold())
+      
+      Text("You might be asking, but how?? How can it make images?? They're designed to work with text and are trained on text, so how can they create images??")
+        .foregroundStyle(.secondary)
     }
   }
 }
@@ -107,22 +110,51 @@ struct ImageGeneration2: View {
         .ignoresSafeArea()
 
       VStack {
-        Text("How does an image generator work?")
-          .font(.largeTitle)
+        Text("Well its the exact same principle as text generation!")
+          .font(.title.bold())
           .bold()
 
         Text(
-          "A crucial part in generating AI images is the use of training data. The AI model is trained on a vast dataset of images, like the ones falling in the background. By analyzing these images, the model learns to recognize patterns, shapes, colors, and textures. When you provide a text prompt, the model uses this learned information to create new images that match the description. The more diverse and extensive the training data, the better the model can generate high-quality and varied images."
+          "Just like how Large Language Models are trained on vast amounts of text data to understand patterns and relationships between words, AI image generation models, also known as, Diffusion Models, are trained on huge datasets of images. They learn to recognize patterns, colors, shapes, and objects within those images. When given a prompt, they use that learned knowledge to generate new images that match the description."
         )
       }
       .padding()
-      .glassEffect(.clear, in: .rect(cornerRadius: 15))
+      .glassEffect(.regular, in: .rect(cornerRadius: 15))
       .padding()
     }
   }
 }
 
 struct ImageGeneration3: View {
+  var body: some View {
+    HStack {
+      VStack {
+        Text("That makes sense but, how can the diffusion model tell the difference between the sky and a cat or a tree?? Let alone know what a cat or a tree is??")
+          .font(.title.bold())
+        
+        Text("""
+          Fantastic Question! The answer lies in the training data, usually images are bundled with descriptive text captions. These captions provide context and meaning to certain elements within the images.
+          For example, an image might contain a car, streetlamp, and a tree, and the caption would describe their objects and their position within the image. By learning from these captions, the model can associate specific words with visual features in the images.
+          
+          """
+        )
+      }
+      
+      if let image = Bundle.main.url(forResource: "TrainingData", withExtension: "heic"),
+         let uiImage = UIImage(contentsOfFile: image.path) {
+        Image(uiImage: uiImage)
+          .resizable()
+          .scaledToFit()
+          .frame(width: 200, height: 200)
+          .clipShape(RoundedRectangle(cornerRadius: 12))
+      }
+    }
+  }
+}
+
+struct ImageGeneration4: View {
+  @Environment(ImageCreatorService.self) private var imageCreatorService
+  
   @State private var generatedImages: [CGImage?] = Array(
     repeating: nil,
     count: 3
@@ -130,71 +162,103 @@ struct ImageGeneration3: View {
   @State private var imageStyle: ImagePlaygroundStyle = .animation
 
   var body: some View {
-    VStack {
-      Picker("Image Style", selection: $imageStyle) {
-        Text("Animation").tag(ImagePlaygroundStyle.animation)
-        Text("Sketch").tag(ImagePlaygroundStyle.sketch)
-        Text("Illustration").tag(ImagePlaygroundStyle.illustration)
-      }
-
-      ScrollView(.horizontal) {
-        HStack(spacing: 16) {
-          ForEach(generatedImages.indices, id: \.self) { idx in
-            Group {
-              if let cgImage = generatedImages[idx] {
-                Image(uiImage: UIImage(cgImage: cgImage))
-                  .resizable()
-                  .scaledToFit()
-                  .clipShape(.rect(cornerRadius: 8))
-                  .intelligence(in: .rect(cornerRadius: 8), spread: 4)
-              } else {
-                ZStack {
-                  RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.gray.opacity(0.15))
-                    .overlay(
-                      RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
-                  VStack(spacing: 8) {
-                    ProgressView()
-                    Text("Loading…")
-                      .font(.footnote)
-                      .foregroundStyle(.secondary)
+    if let isSupported = imageCreatorService.isSupported,
+       isSupported {
+      VStack {
+        Text("Now that we know how image generation works, let's see it in action! Below, we'll generate some images based on this prompt: \"A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze\"")
+          .font(.title.bold())
+        
+        ScrollView(.horizontal) {
+          HStack(spacing: 16) {
+            ForEach(generatedImages.indices, id: \.self) { idx in
+              Group {
+                if let cgImage = generatedImages[idx] {
+                  Image(uiImage: UIImage(cgImage: cgImage))
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(.rect(cornerRadius: 8))
+                    .intelligence(in: .rect(cornerRadius: 8), spread: 4)
+                } else {
+                  ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                      .fill(Color.gray.opacity(0.15))
+                      .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                          .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                      )
+                    VStack(spacing: 8) {
+                      ProgressView()
+                      Text("Loading…")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    }
                   }
+                  .frame(width: 300, height: 300)
                 }
-                .frame(width: 300, height: 300)
               }
             }
           }
+          .padding()
         }
-        .padding()
+        
+        Text("We can even change the style of the generated images! Try selecting a different style below:")
+          .font(.headline)
+        
+        Picker("Image Style", selection: $imageStyle) {
+          Text("Animation").tag(ImagePlaygroundStyle.animation)
+          Text("Illustration").tag(ImagePlaygroundStyle.illustration)
+          Text("Sketch").tag(ImagePlaygroundStyle.sketch)
+        }
+        .pickerStyle(.segmented)
       }
-    }
-    .padding()
-    .onAppear {
-      generatedImages = Array(repeating: nil, count: 3)
-      Task {
-        await generateImages()
+      .onAppear {
+        generatedImages = Array(repeating: nil, count: 3)
+        Task {
+          await generateImages()
+        }
       }
-    }
-    .onChange(of: imageStyle) {
-      generatedImages = Array(repeating: nil, count: 3)
-      Task {
-        await generateImages()
+      .onChange(of: imageStyle) {
+        generatedImages = Array(repeating: nil, count: 3)
+        Task {
+          await generateImages()
+        }
+      }
+    } else {
+      ContentUnavailableView {
+        Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
+      } description: {
+        Text("Sorry, Image Generation powered by Apple Intelligence is not supported on your device.")
+        Text("Heres an example of what it would look like:")
+          
+        if let url = Bundle.main.url(forResource: "AIExample", withExtension: "jpg"),
+           let uiImage = UIImage(contentsOfFile: url.path) {
+          Image(uiImage: uiImage)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 200, height: 200)
+            .cornerRadius(12)
+            .intelligence(in: .rect(cornerRadius: 12), spread: 4)
+        }
       }
     }
   }
 
   private func generateImages() async {
     do {
-      let imageCreator = try await ImageCreator()
-      let imageSequence = imageCreator.images(
+      guard let availableStyle = imageCreatorService.availableStyles.first else {
+        print("No available styles")
+        return
+      }
+      
+      let style = !imageCreatorService.availableStyles.contains(imageStyle) ? availableStyle : .animation
+      
+      let imageSequence = try await imageCreatorService.generateImages(
         for: [
           .text(
             "A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze"
           )
         ],
-        style: imageStyle,
+        style: style,
         limit: 3
       )
       for try await generated in imageSequence {
