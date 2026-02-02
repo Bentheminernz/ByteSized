@@ -535,8 +535,8 @@ struct LessonCourses {
         // MARK: - Lesson 6
         Lesson(
           id: 6,
-          icon: "book.fill",
-          title: "Tools (master prompt engineering)",
+          icon: "hammer",
+          title: "Tools",
           description:
             "Unlock the full potential of LLMs with agentic tools!",
           slides: [
@@ -732,57 +732,127 @@ struct LessonCourses {
               icon: "photo",
             ) {
               ImageGeneration4()
-            }
+            },
+            Slide(
+              id: 5,
+              title: "How can I use this in my apps?",
+              icon: "photo",
+              containsCode: true
+            ) {
+              ImageGeneration5()
+            },
           ],
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question:
+                "How is AI image generation similar to how AI generates text?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "Both use magic to create new content",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "Both learn patterns from huge amounts of training data",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "Both copy existing content from the internet",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "Both require a human to guide every decision",
                   isCorrect: false
                 ),
               ]
             ),
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question:
+                "How does an AI image model know what a cat or tree looks like?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
+                  answer:
+                    "Programmers manually describe every object to the AI",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "It guesses based on random combinations",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer:
+                    "It learns from images that have text descriptions explaining what's in them",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer:
+                    "It searches the internet each time it needs to draw something",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question:
+                "What type of information do AI image models learn from during training?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Only the colors in images",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer:
+                    "Patterns, colors, shapes, objects, and their relationships",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Just the size and resolution of images",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "Only text descriptions without actual images",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 4,
+              question:
+                "Why are text captions important when training AI image generation models?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer:
+                    "They help the model understand what objects are and where they appear in images",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "They tell the model what colors to use",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "They are not important, models only need images",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "They control the size of the generated image",
                   isCorrect: false
                 ),
               ]
@@ -792,68 +862,151 @@ struct LessonCourses {
         // MARK: - Lesson 8
         Lesson(
           id: 8,
-          icon: "photo",
-          title: "AI Art & Ethics",
+          icon: "brain.head.profile",
+          title: "AI Safety & Bias",
           description:
-            "Delve into the ethical considerations surrounding AI-generated art and creativity.",
+            "Understand the ethical considerations and challenges in AI development.",
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "AI Bias?? What even is that?",
+              icon: "brain.head.profile",
             ) {
-              Text("AI")
-            }
+              AISafetyBias1()
+            },
+            Slide(
+              id: 2,
+              title: "So what does it look like?",
+              icon: "person.crop.square.badge.camera",
+            ) {
+              AISafetyBias2()
+            },
+            Slide(
+              id: 3,
+              title: "How do we fix it?",
+              icon: "checkmark.shield",
+            ) {
+              AISafetyBias3()
+            },
+            Slide(
+              id: 4,
+              title: "How can we make AI safer?",
+              icon: "heart.circle",
+            ) {
+              AISafetyBias4()
+            },
           ],
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question:
+                "If an AI system for screening job applications mostly learned from past hires who went to certain schools, what might happen?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "The AI will choose the best candidate every time",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "Qualified candidates from other backgrounds might be unfairly overlooked",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "The AI will work slower than expected",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "Nothing, because AI is always objective",
                   isCorrect: false
                 ),
               ]
             ),
+
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question:
+                "According to the lesson, how does AI learn patterns and biases?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Quantum Computing",
+                  answer: "Programmers manually tell the AI what to think",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "From the training data it learns from, just like eating pizza from only one restaurant",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "AI makes random guesses until it gets things right",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "The AI invents its own biases independently",
+                  isCorrect: false
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 3,
+              question:
+                "What is one way that having diverse teams helps reduce AI bias?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "It makes the AI run faster",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "It reduces the cost of development",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer:
+                    "Different perspectives help catch biases that others might miss",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "It's not actually helpful for reducing bias",
+                  isCorrect: false
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 4,
+              question:
+                "What can you do as a user when you notice biased or unfair AI behavior?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Report it - your feedback matters!",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Nothing, because AI can't be changed",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Assume the AI must be right since it's technology",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Stop using all technology completely",
                   isCorrect: false
                 ),
               ]

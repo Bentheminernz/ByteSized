@@ -90,7 +90,7 @@ struct CodeViewer: View {
       .overlay(alignment: .topTrailing) {
         Label(language.name, systemImage: language.icon)
           .padding(8)
-          .glassEffect(.regular.tint(language.color), in: .capsule)
+          .glassEffect(.regular.tint(language.color).interactive(), in: .capsule)
           .padding(8)
       }
     }

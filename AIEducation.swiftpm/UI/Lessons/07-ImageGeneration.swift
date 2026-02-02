@@ -94,11 +94,15 @@ struct CascadingImagesView: View {
 struct ImageGeneration1: View {
   var body: some View {
     VStack {
-      Text("Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text! They can also generate images!")
-        .font(.title.bold())
-      
-      Text("You might be asking, but how?? How can it make images?? They're designed to work with text and are trained on text, so how can they create images??")
-        .foregroundStyle(.secondary)
+      Text(
+        "Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text! They can also generate images!"
+      )
+      .font(.title.bold())
+
+      Text(
+        "You might be asking, but how?? How can it make images?? They're designed to work with text and are trained on text, so how can they create images??"
+      )
+      .foregroundStyle(.secondary)
     }
   }
 }
@@ -129,24 +133,31 @@ struct ImageGeneration3: View {
   var body: some View {
     HStack {
       VStack {
-        Text("That makes sense but, how can the diffusion model tell the difference between the sky and a cat or a tree?? Let alone know what a cat or a tree is??")
-          .font(.title.bold())
-        
-        Text("""
+        Text(
+          "That makes sense but, how can the diffusion model tell the difference between the sky and a cat or a tree?? Let alone know what a cat or a tree is??"
+        )
+        .font(.title.bold())
+
+        Text(
+          """
           Fantastic Question! The answer lies in the training data, usually images are bundled with descriptive text captions. These captions provide context and meaning to certain elements within the images.
           For example, an image might contain a car, streetlamp, and a tree, and the caption would describe their objects and their position within the image. By learning from these captions, the model can associate specific words with visual features in the images.
-          
+
           """
         )
       }
-      
-      if let image = Bundle.main.url(forResource: "TrainingData", withExtension: "heic"),
-         let uiImage = UIImage(contentsOfFile: image.path) {
+
+      if let image = Bundle.main.url(
+        forResource: "TrainingData",
+        withExtension: "heic"
+      ),
+        let uiImage = UIImage(contentsOfFile: image.path)
+      {
         Image(uiImage: uiImage)
           .resizable()
           .scaledToFit()
-          .frame(width: 200, height: 200)
-          .clipShape(RoundedRectangle(cornerRadius: 12))
+          .frame(width: 400, height: 400)
+          .cornerRadius(8)
       }
     }
   }
@@ -154,7 +165,7 @@ struct ImageGeneration3: View {
 
 struct ImageGeneration4: View {
   @Environment(ImageCreatorService.self) private var imageCreatorService
-  
+
   @State private var generatedImages: [CGImage?] = Array(
     repeating: nil,
     count: 3
@@ -163,11 +174,14 @@ struct ImageGeneration4: View {
 
   var body: some View {
     if let isSupported = imageCreatorService.isSupported,
-       isSupported {
+      isSupported
+    {
       VStack {
-        Text("Now that we know how image generation works, let's see it in action! Below, we'll generate some images based on this prompt: \"A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze\"")
-          .font(.title.bold())
-        
+        Text(
+          "Now that we know how image generation works, let's see it in action! Below, we'll generate some images based on this prompt: \"A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze\""
+        )
+        .font(.title.bold())
+
         ScrollView(.horizontal) {
           HStack(spacing: 16) {
             ForEach(generatedImages.indices, id: \.self) { idx in
@@ -200,10 +214,12 @@ struct ImageGeneration4: View {
           }
           .padding()
         }
-        
-        Text("We can even change the style of the generated images! Try selecting a different style below:")
-          .font(.headline)
-        
+
+        Text(
+          "We can even change the style of the generated images! Try selecting a different style below:"
+        )
+        .font(.headline)
+
         Picker("Image Style", selection: $imageStyle) {
           Text("Animation").tag(ImagePlaygroundStyle.animation)
           Text("Illustration").tag(ImagePlaygroundStyle.illustration)
@@ -225,13 +241,22 @@ struct ImageGeneration4: View {
       }
     } else {
       ContentUnavailableView {
-        Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
+        Label(
+          "Image Generation Not Supported",
+          systemImage: "apple.intelligence.badge.xmark"
+        )
       } description: {
-        Text("Sorry, Image Generation powered by Apple Intelligence is not supported on your device.")
+        Text(
+          "Sorry, Image Generation powered by Apple Intelligence is not supported on your device."
+        )
         Text("Heres an example of what it would look like:")
-          
-        if let url = Bundle.main.url(forResource: "AIExample", withExtension: "jpg"),
-           let uiImage = UIImage(contentsOfFile: url.path) {
+
+        if let url = Bundle.main.url(
+          forResource: "AIExample",
+          withExtension: "jpg"
+        ),
+          let uiImage = UIImage(contentsOfFile: url.path)
+        {
           Image(uiImage: uiImage)
             .resizable()
             .scaledToFit()
@@ -245,13 +270,16 @@ struct ImageGeneration4: View {
 
   private func generateImages() async {
     do {
-      guard let availableStyle = imageCreatorService.availableStyles.first else {
+      guard let availableStyle = imageCreatorService.availableStyles.first
+      else {
         print("No available styles")
         return
       }
-      
-      let style = !imageCreatorService.availableStyles.contains(imageStyle) ? availableStyle : .animation
-      
+
+      let style =
+        !imageCreatorService.availableStyles.contains(imageStyle)
+        ? availableStyle : .animation
+
       let imageSequence = try await imageCreatorService.generateImages(
         for: [
           .text(
@@ -270,6 +298,79 @@ struct ImageGeneration4: View {
       }
     } catch {
       print("Error occurred \(error)")
+    }
+  }
+}
+
+struct ImageGeneration5: View {
+  let code = """
+    import ImagePlayground
+    import UIKit
+
+    var images: [CGImage] = []
+    let imageCreator = try await ImageCreator()
+
+    let generatedImages = imageCreator.images(
+      for: [.text("A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze")],
+      style: .animation,
+      limit: 3
+    )
+
+    for try await image in generatedImages {
+      images.append(image.cgImage)
+    }
+    """
+
+  let uiCode = """
+    import SwiftUI
+
+    struct ContentView: View {
+      @State private var images: [CGImage] = []
+      
+      var body: some View {
+        VStack {
+          ForEach(images, id: \\.self) { image in
+            Image(uiImage: UIImage(cgImage: image))
+              .resizable()
+              .scaledToFit()
+          }
+        }
+      }
+    }
+
+    """
+
+  var body: some View {
+    VStack {
+      Text(
+        "Just like with Apple's Foundation Models, using Image Playground is super simple! Here's an example of how to generate images programmatically:"
+      )
+      .font(.title.bold())
+      .padding(.bottom, 8)
+
+      HStack(spacing: 16) {
+        VStack {
+          Text(
+            "First, you create an instance of the ImageCreator, and then you can call the images(for:style:limit:) method to generate images based on a text prompt:"
+          )
+          .foregroundStyle(.secondary)
+          
+          ScrollView {
+            CodeViewer(code: code, language: .swift)
+          }
+        }
+        
+        Divider()
+        
+        VStack {
+          Text("And then to display those images in a SwiftUI view, you can do something like this:")
+            .foregroundStyle(.secondary)
+          
+          ScrollView {
+            CodeViewer(code: uiCode, language: .swift)
+          }
+        }
+      }
     }
   }
 }
