@@ -169,11 +169,11 @@ struct DefinitionBubble: View {
     VStack(alignment: .leading, spacing: 8) {
       Text(word)
         .font(.headline)
-        .foregroundColor(.primary)
+        .foregroundStyle(.primary)
 
       Text(definition)
         .font(.subheadline)
-        .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)
     }
     .padding()

@@ -8,56 +8,53 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "ByteSized",
-    platforms: [
-        .iOS("26.0")
-    ],
-    products: [
-        .iOSApplication(
-            name: "ByteSized",
-            targets: ["AppModule"],
-            bundleIdentifier: "com.benlawrence.AIEducation",
-            teamIdentifier: "4TD3JXVDW7",
-            displayVersion: "1.0",
-            bundleVersion: "1",
-            appIcon: .asset("AppIcon"),
-            accentColor: .presetColor(.green),
-            supportedDeviceFamilies: [
-                .pad,
-                .phone
-            ],
-            supportedInterfaceOrientations: [
-                .portrait,
-                .landscapeRight,
-                .landscapeLeft,
-                .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ],
-            capabilities: [
-                .photoLibraryAdd(purposeString: "AI Education needs access in order to save images."),
-                .contacts(purposeString: "ByteSized needs access to your contacts so the LLM can access it. Data is processed on device"),
-                .calendars(purposeString: "ByteSized needs access to your calendar so the LLM can access it. Data is processed on device")
-            ],
-            appCategory: .education
-        )
-    ],
-    dependencies: [
-        .package(url: "https://github.com/appstefan/HighlightSwift", "1.0.9"..<"2.0.0"),
-        .package(url: "https://github.com/ottijp/confetti-swiftui", "0.1.0"..<"1.0.0"),
-        .package(url: "https://github.com/Bentheminernz/Alertsy", "1.0.0"..<"2.0.0")
-    ],
-    targets: [
-        .executableTarget(
-            name: "AppModule",
-            dependencies: [
-                .product(name: "HighlightSwift", package: "highlightswift"),
-                .product(name: "Confetti", package: "confetti-swiftui"),
-                .product(name: "Alertsy", package: "alertsy")
-            ],
-            path: ".",
-            resources: [
-                .process("Resources")
-            ]
-        )
-    ],
-    swiftLanguageVersions: [.version("6")]
+  name: "ByteSized",
+  platforms: [
+    .iOS("26.0")
+  ],
+  products: [
+    .iOSApplication(
+      name: "ByteSized",
+      targets: ["AppModule"],
+      bundleIdentifier: "com.benlawrence.AIEducation",
+      teamIdentifier: "4TD3JXVDW7",
+      displayVersion: "1.0",
+      bundleVersion: "1",
+      appIcon: .asset("AppIcon"),
+      accentColor: .presetColor(.green),
+      supportedDeviceFamilies: [
+        .pad,
+      ],
+      supportedInterfaceOrientations: [
+        .landscapeRight,
+        .landscapeLeft,
+      ],
+      capabilities: [
+        .photoLibraryAdd(purposeString: "AI Education needs access in order to save images."),
+        .contacts(purposeString: "ByteSized needs access to your contacts so the LLM can access it. Data is processed on device"),
+        .calendars(purposeString: "ByteSized needs access to your calendar so the LLM can access it. Data is processed on device")
+      ],
+      appCategory: .education
+    )
+  ],
+  dependencies: [
+    .package(url: "https://github.com/appstefan/HighlightSwift", "1.0.9"..<"2.0.0"),
+    .package(url: "https://github.com/ottijp/confetti-swiftui", "0.1.0"..<"1.0.0"),
+    .package(url: "https://github.com/Bentheminernz/Alertsy", "1.0.0"..<"2.0.0")
+  ],
+  targets: [
+    .executableTarget(
+      name: "AppModule",
+      dependencies: [
+        .product(name: "HighlightSwift", package: "highlightswift"),
+        .product(name: "Confetti", package: "confetti-swiftui"),
+        .product(name: "Alertsy", package: "alertsy")
+      ],
+      path: ".",
+      resources: [
+        .process("Resources")
+      ]
+    )
+  ],
+  swiftLanguageModes: [.v6]
 )

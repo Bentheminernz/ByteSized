@@ -191,7 +191,7 @@ struct WelcomeComponents {
 
         Text(subtitle)
           .font(.subheadline)
-          .foregroundColor(.secondary)
+          .foregroundStyle(.secondary)
           .multilineTextAlignment(.center)
           .fixedSize(horizontal: false, vertical: true)
       }

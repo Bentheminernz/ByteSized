@@ -61,7 +61,7 @@ struct LessonSheet: View {
             //            .animation(.bouncy, value: currentIndex)
             .frame(maxHeight: .infinity)
 
-            Spacer()
+//            Spacer()
 
             HStack {
               Button("Previous") {
@@ -391,7 +391,7 @@ struct LessonSheet: View {
                 Text("Close Lesson")
                   .padding(8)
                   .background(Color.black.opacity(0.5))
-                  .foregroundColor(.white)
+                  .foregroundStyle(.white)
                   .cornerRadius(8)
               }
               
@@ -403,7 +403,7 @@ struct LessonSheet: View {
                 )
                 .padding(8)
                 .background(Color.black.opacity(0.5))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .cornerRadius(8)
               }
             }
@@ -424,8 +424,11 @@ struct SlideHeaderCard: View {
         .scaledToFit()
         .frame(width: 48, height: 48)
         .symbolColorRenderingMode(.gradient)
+        .contentTransition(.symbolEffect(.replace))
+      
       Text(slide.title)
         .font(.title2).bold()
+        .contentTransition(.numericText(value: Double(slide.id)))
       
       Spacer()
       

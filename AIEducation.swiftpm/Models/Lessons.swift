@@ -147,17 +147,38 @@ struct LessonCourses {
             Slide(
               id: 1,
               title: "How do machines learn?",
-              icon: "book.fill",
+              icon: "arrow.down.circle",
             ) {
               HowDoMachinesLearn1()
             },
             Slide(
               id: 2,
-              title: "Supervised Learning",
-              icon: "book.fill",
+              title: "Ok so how does it know how to talk?",
+              icon: "text.page.badge.magnifyingglass"
             ) {
-              HowDoMachinesLearnPage2()
+              HowDoMachinesLearn2()
             },
+            Slide(
+              id: 3,
+              title: "Makes sense, what about images?",
+              icon: "rectangle.and.text.magnifyingglass"
+            ) {
+              HowDoMachinesLearn3()
+            },
+            Slide(
+              id: 4,
+              title: "test",
+              icon: "chart.line.uptrend.xyaxis"
+            ) {
+              HowDoMachinesLearn4()
+            },
+            Slide(
+              id: 5,
+              title: "test",
+              icon: "brain.head.profile"
+            ) {
+              HowDoMachinesLearn5()
+            }
           ],
           questions: [
             LessonQuestion(
@@ -692,9 +713,9 @@ struct LessonCourses {
     ),
     LessonCourse(
       id: 3,
-      title: "Multi-Modal AI",
+      title: "Advanced AI Topics",
       description:
-        "Explore the exciting world of multi-modal AI and its applications.",
+        "Delve into specialized areas of AI including image generation, safety, and future applications.",
       lessons: [
         // MARK: - Lesson 7
         Lesson(
@@ -714,29 +735,28 @@ struct LessonCourses {
             Slide(
               id: 2,
               title: "Ok but like how does it know what stuff looks like?",
-              icon: "photo",
+              icon: "photo.stack"
             ) {
               ImageGeneration2()
             },
             Slide(
               id: 3,
               title: "But how does it tell a cat from the sky?",
-              icon: "photo",
-              hideHeader: true
+              icon: "photo.badge.magnifyingglass",
             ) {
               ImageGeneration3()
             },
             Slide(
               id: 4,
               title: "Ok enough stalling, show me a demo!",
-              icon: "photo",
+              icon: "wand.and.sparkles",
             ) {
               ImageGeneration4()
             },
             Slide(
               id: 5,
               title: "How can I use this in my apps?",
-              icon: "photo",
+              icon: "chevron.left.forwardslash.chevron.right",
               containsCode: true
             ) {
               ImageGeneration5()
@@ -1017,67 +1037,149 @@ struct LessonCourses {
         Lesson(
           id: 9,
           icon: "camera",
-          title: "Multi-Modal Models",
+          title: "AI & The Future",
           description:
-            "Learn about models that can process and generate multiple types of data, such as text and images.",
+            "Explore the potential future careers and applications of AI technology.",
           slides: [
             Slide(
               id: 1,
-              title: "How do machines learn?",
-              icon: "book.fill",
+              title: "What does the future hold for AI?",
+              icon: "clock"
             ) {
-              Text("AI")
-            }
+              AIFutureCareers1()
+            },
+            Slide(
+              id: 2,
+              title: "What about industry-specific jobs?",
+              icon: "briefcase.fill"
+            ) {
+              AIFutureCareers2()
+            },
+            Slide(
+              id: 3,
+              title: "What new opportunities could arise?",
+              icon: "lightbulb.max"
+            ) {
+              AIFutureCareers3()
+            },
+            Slide(
+              id: 4,
+              title: "What can I do now?",
+              icon: "star.fill"
+            ) {
+              AIFutureCareers4()
+            },
           ],
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question:
+                "According to the lesson, how has AI changed in just the past 10 years?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "It hasn't changed much at all",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "AI assistants went from science fiction to everyday use",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "AI became less useful than before",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "Only scientists can use AI now",
                   isCorrect: false
                 ),
               ]
             ),
+
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question: "What does an AI Ethics Specialist do?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Quantum Computing",
+                  answer: "Only write code for AI systems",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer:
+                    "Make sure AI systems are fair, safe, and beneficial for everyone",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "Design video games",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "Teach AI to students",
+                  isCorrect: false
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 3,
+              question:
+                "According to the lesson, what's true about preparing for an AI future?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "You must be a math genius to work with AI",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Only coding experts can use AI",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer:
+                    "You can work with AI no matter what you're interested in",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "You need to choose between AI or your passions",
+                  isCorrect: false
+                ),
+              ]
+            ),
+
+            LessonQuestion(
+              id: 4,
+              question:
+                "According to the lesson, who is shaping the future of AI?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Only scientists in labs",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Only tech companies",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "People from all backgrounds with diverse interests",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Only adults with college degrees",
                   isCorrect: false
                 ),
               ]

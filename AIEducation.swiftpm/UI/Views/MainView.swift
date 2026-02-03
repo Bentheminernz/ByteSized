@@ -15,7 +15,7 @@ struct MainView: View {
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
-  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 3 }.first?.lessons.first(where: { $0.id == 8 })
+  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 1 }.first?.lessons.first(where: { $0.id == 2 })
 //    @State private var selectedLesson: Lesson?
   #else
     @State private var selectedLesson: Lesson?
@@ -278,17 +278,19 @@ struct MainView: View {
           .symbolColorRenderingMode(.gradient)
 
         VStack(alignment: .leading) {
-          Text(lesson.title)
-            .font(.headline)
-            .padding(.bottom, 2)
+          HStack(alignment: .center) {
+            Text(lesson.title)
+              .font(.headline)
+              .padding(.bottom, 2)
+            
+            if isCompleted {
+              Image(systemName: "checkmark.seal.fill")
+                .foregroundStyle(.green)
+            }
+          }
           Text(lesson.description)
             .font(.subheadline)
             .foregroundStyle(.secondary)
-
-          if isCompleted {
-            Label("Completed", systemImage: "checkmark.seal.fill")
-              .foregroundStyle(.green)
-          }
         }
       }
       
@@ -318,17 +320,24 @@ struct MainView: View {
       Spacer()
 
       if expandedCardId == lesson.id {
-        Button(action: {
-          selectedLesson = lesson
-          expandedCardId = nil
-        }) {
-          Text("Start Lesson")
-            .font(.headline)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(.ultraThinMaterial, in: Capsule())
+        HStack {
+          Button(action: {
+            selectedLesson = lesson
+            expandedCardId = nil
+          }) {
+            Text("Start Lesson")
+              .font(.headline)
+              .padding(.horizontal, 14)
+              .padding(.vertical, 8)
+              .background(.ultraThinMaterial, in: Capsule())
+          }
+          .buttonStyle(.plain)
+          
+          if isCompleted {
+            Label("Completed", systemImage: "checkmark.seal.fill")
+              .foregroundStyle(.green)
+          }
         }
-        .buttonStyle(.plain)
       }
     }
     .padding()

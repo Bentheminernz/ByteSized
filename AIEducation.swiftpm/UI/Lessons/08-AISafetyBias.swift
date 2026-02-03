@@ -69,7 +69,7 @@ struct AISafetyBias1: View {
       }
       .padding(.top, 20)
     }
-    .padding()
+    .padding(.horizontal)
   }
 }
 
@@ -105,7 +105,7 @@ struct AISafetyBias2: View {
         )
       }
     }
-    .padding()
+    .padding(.horizontal)
   }
 }
 
@@ -187,7 +187,7 @@ struct AISafetyBias3: View {
         )
       }
     }
-    .padding()
+    .padding(.horizontal)
   }
 }
 
@@ -278,7 +278,7 @@ struct AISafetyBias4: View {
           .multilineTextAlignment(.center)
           .padding(.top, 10)
       }
-      .padding()
+      .padding(.horizontal)
     }
   }
 }
