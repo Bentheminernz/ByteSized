@@ -1,15 +1,6 @@
 {
-  "originHash" : "952a739c967b3004a044d4b7aa538a09ecf2688a37fc5f736d19c2d34888516f",
+  "originHash" : "6b84f7b17669f71f135c1b0adda50d0174d21f46718fc06290d8548678459875",
   "pins" : [
-    {
-      "identity" : "alertsy",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Bentheminernz/Alertsy",
-      "state" : {
-        "revision" : "518fe73f70c8310767de20127a168e38a5f3a9d0",
-        "version" : "1.0.0"
-      }
-    },
     {
       "identity" : "confetti-swiftui",
       "kind" : "remoteSourceControl",

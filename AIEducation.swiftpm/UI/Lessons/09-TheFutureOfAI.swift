@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// MARK: - Status: Not Started
+// MARK: - Status: Completed
 struct AIFutureCareers1: View {
   var body: some View {
     VStack(spacing: 20) {

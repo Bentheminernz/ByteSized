@@ -139,7 +139,7 @@ struct LessonCourses {
         // MARK: - Lesson 2
         Lesson(
           id: 2,
-          icon: "book.fill",
+          icon: "graduationcap",
           title: "How do machines learn?",
           description:
             "Discover the various machine learning techniques that enable computers to learn from data.",
@@ -167,14 +167,14 @@ struct LessonCourses {
             },
             Slide(
               id: 4,
-              title: "test",
+              title: "If its trained on examples, how does it learn real patterns instead of just memorizing?",
               icon: "chart.line.uptrend.xyaxis"
             ) {
               HowDoMachinesLearn4()
             },
             Slide(
               id: 5,
-              title: "test",
+              title: "Can I just feed it a few examples or does it need heaps?",
               icon: "brain.head.profile"
             ) {
               HowDoMachinesLearn5()
@@ -183,52 +183,130 @@ struct LessonCourses {
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question: "How does AI learn to recognize patterns?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
+                  answer: "By being exposed to many diverse examples",
                   isCorrect: true
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Automated Interaction",
+                  answer: "By memorizing every single image it sees",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "By reading instruction manuals",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "By randomly guessing until it gets it right",
                   isCorrect: false
                 ),
               ]
             ),
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question: "When AI looks at an image, what does it actually see?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
+                  answer: "Numbers representing pixel brightness and colors",
                   isCorrect: true
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "The same thing humans see",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "Words describing the image",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "Nothing until it's trained",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question: "What is the difference between training data and testing data?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Training data is used to learn, testing data checks performance on new examples",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Training data is fake, testing data is real",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "They are exactly the same thing",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Testing data is used first, then training data",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 4,
+              question: "Why does AI need lots of training examples?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "To find real patterns instead of memorizing specific examples",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Because AI has poor memory",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "To make training take longer",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "It doesn't - one example is enough",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 5,
+              question: "How does AI learn to predict the next word in a sentence?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "By reading millions of texts and noticing which words typically follow others",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "By using a dictionary to find random words",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "By asking humans for every single prediction",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "By counting the letters in each word",
                   isCorrect: false
                 ),
               ]
@@ -245,69 +323,168 @@ struct LessonCourses {
           slides: [
             Slide(
               id: 1,
-              title: "Tokens",
-              icon: "book.fill",
+              title: "What Are Tokens?",
+              icon: "puzzlepiece.fill",
             ) {
               TokenContextLesson1()
             },
             Slide(
               id: 2,
-              title: "Context Windows",
-              icon: "book.fill",
+              title: "Why Tokens Matter",
+              icon: "lightbulb.max",
             ) {
               TokenContextLesson2()
             },
+            Slide(
+              id: 3,
+              title: "Context Windows",
+              icon: "rectangle.stack.fill",
+            ) {
+              TokenContextLesson3()
+            },
+            Slide(
+              id: 4,
+              title: "Window Sizes",
+              icon: "chart.bar.fill",
+            ) {
+              TokenContextLesson4()
+            },
+            Slide(
+              id: 5,
+              title: "Practical Tips",
+              icon: "star.fill",
+            ) {
+              TokenContextLesson5()
+            }
           ],
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question: "What are tokens in AI?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "Rewards you earn for using AI",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer: "Small pieces that AI breaks text into for processing",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "Special passwords for AI access",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "Error messages from the AI",
                   isCorrect: false
                 ),
               ]
             ),
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question: "What is a context window?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
+                  answer: "The screen where you type messages to AI",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "A window that shows AI's source code",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "The time limit for AI responses",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "The limited amount of text an AI can see and remember at once",
+                  isCorrect: true
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question: "What happens when a context window fills up?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "The AI starts forgetting older messages",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "The AI becomes smarter",
                   isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "The AI stops working completely",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Nothing - it can remember everything",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 4,
+              question: "What's included in the context window?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Only your most recent message",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Everything ever typed to the AI",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Your messages, AI's responses, and system instructions",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Only the AI's training data",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 5,
+              question: "Why is it helpful to be concise when prompting AI?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Because AI can't read long messages",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "To make the AI respond faster",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "It's not - longer is always better",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 1,
+                  answer: "To save tokens and leave more room in the context window",
+                  isCorrect: true
                 ),
               ]
             ),

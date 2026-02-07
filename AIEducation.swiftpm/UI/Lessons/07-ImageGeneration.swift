@@ -10,7 +10,7 @@ import ImagePlayground
 import SwiftUI
 import UIKit
 
-// MARK: - WIP
+// MARK: - Completed
 
 struct FallingImage: Identifiable {
   let id = UUID()

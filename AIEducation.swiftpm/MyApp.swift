@@ -3,7 +3,6 @@ import Foundation
 import FoundationModels
 import SwiftData
 import SwiftUI
-import Alertsy
 
 @main
 struct MyApp: App {
@@ -201,7 +200,6 @@ struct RootView: View {
       }
       .padding()
     }
-    .alertsy()
     .onAppear {
       if horizontalSizeClass == .compact {
         showiPhoneWarning = true
