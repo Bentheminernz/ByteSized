@@ -201,15 +201,20 @@ final class FoundationModelsService {
   ///   - instructions: Optional instructions to initialize the session with.
   ///   - tools: Optional tools to include in the session.
   /// - Returns: The LanguageModelSession associated with the context.
-  private func getSession(
+  func getSession(
     for context: FoundationModelSession,
     instructions: String? = nil,
-    tools: [any Tool] = []
+    tools: [any Tool] = [],
+    createIfMissing: Bool = true
   ) -> LanguageModelSession {
     if let existingSession = sessions[context] {
       return existingSession
     }
 
+    if !createIfMissing {
+      fatalError("Session for context \(context) does not exist and createIfMissing is false.")
+    }
+    
     let newSession =
       instructions != nil
       ? LanguageModelSession(tools: tools, instructions: instructions!)

@@ -51,6 +51,8 @@ struct DefinableText: View {
       "Large Language Model, a type of AI model designed to understand and generate human-like text.",
     "json":
       "JavaScript Object Notation, a lightweight data format that is easy for humans to read and write, and easy for machines to parse and generate.",
+    "system instruction":
+      "A special prompt that sets the behavior and guidelines for how the model should respond.",
   ]
 
   init(_ text: String, definitions: [String: String]? = nil) {

@@ -8,34 +8,96 @@
 import FoundationModels
 import SwiftUI
 
-// MARK: - WIP
-
+// MARK: - Complete
 struct PromptsAndParameters1: View {
   var body: some View {
-    HStack {
-      Spacer()
-      VStack {
-        Text(
-          "Many different factors go into affecting the quality of the output from an AI model."
-        )
-        .font(.title.bold())
-
-        Text(
-          "One such factor is the prompt itself, the input text you provide to the model. Crafting effective prompts is an art form in itself, often referred to as 'prompt engineering'."
-        )
-        .foregroundStyle(.secondary)
-
-        Text(
-          "Another important factor is the parameters used during generation. Parameters such as temperature and max tokens can significantly influence the creativity, coherence, and length of the generated output."
-        )
-        .foregroundStyle(.secondary)
+    VStack(alignment: .center, spacing: 30) {
+      Text("Crafting the Perfect Prompt")
+        .font(.largeTitle)
+        .bold()
+      
+      Text(
+        "Think of AI like a chef in a restaurant. The better your order (prompt), the better your meal (output)!"
+      )
+      .font(.title3)
+      .multilineTextAlignment(.center)
+      
+      HStack(spacing: 20) {
+        VStack(spacing: 12) {
+          Image(systemName: "text.bubble")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 80)
+            .foregroundStyle(.blue)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("The Prompt")
+            .font(.headline)
+          
+          Text(
+            "What you tell the AI. Clear instructions get better results!"
+          )
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 300)
+        
+        VStack(spacing: 12) {
+          Image(systemName: "slider.horizontal.3")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 80)
+            .foregroundStyle(.purple)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("Parameters")
+            .font(.headline)
+          
+          Text(
+            "Settings that control how creative or focused the AI should be."
+          )
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 300)
+        
+        VStack(spacing: 12) {
+          Image(systemName: "sparkles")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 80)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("Great Output")
+            .font(.headline)
+          
+          Text(
+            "When you combine good prompts with the right settings, magic happens!"
+          )
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 300)
       }
-      Spacer()
+      
+      Text(
+        "Let's explore how to write better prompts and adjust parameters to get exactly what you want from AI."
+      )
+      .font(.body)
+      .foregroundStyle(.secondary)
     }
     .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
   }
 }
 
+// MARK: - Slide 2
 struct PromptsAndParameters2: View {
   @Environment(FoundationModelsService.self) private var foundationModelsService
 
@@ -50,17 +112,25 @@ struct PromptsAndParameters2: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
+      Text("Good vs. Bad Prompts")
+        .font(.largeTitle.bold())
+      
       Text(
-        "An LLM is like an instrument: better prompts and parameters produce better results. Let's start with crafting a good prompt."
+        "Let's see the difference! Watch how specific details make all the difference."
       )
-      .font(.title.bold())
+      .font(.title3)
+      .foregroundStyle(.secondary)
 
-      HStack(spacing: 12) {
-        //        ScrollView {
+      HStack(spacing: 20) {
         VStack(alignment: .leading, spacing: 12) {
-          Text("Bad Prompt")
-            .font(.headline)
-            .foregroundStyle(.red)
+          HStack {
+            Image(systemName: "xmark.circle.fill")
+              .foregroundStyle(.red)
+              .font(.title)
+            Text("Vague Prompt")
+              .font(.title2.bold())
+              .foregroundStyle(.red)
+          }
 
           Text("\"\(badPrompt)\"")
             .padding()
@@ -75,24 +145,45 @@ struct PromptsAndParameters2: View {
             .intelligence(in: .rect(cornerRadius: 10))
           }
 
-          Text("Now, this seems like a decent prompt, why is it bad?")
-            .font(.headline)
-
-          Text(
-            "The problem is, it's too vague and unclear. What should it say about dogs? How long do you want it? What style should it be written in?"
-          )
+          VStack(alignment: .leading, spacing: 8) {
+            Text("Why is this bad?")
+              .font(.headline)
+            
+            HStack(alignment: .top) {
+              Image(systemName: "1.circle.fill")
+                .foregroundStyle(.red)
+              Text("No clear topic or focus")
+            }
+            
+            HStack(alignment: .top) {
+              Image(systemName: "2.circle.fill")
+                .foregroundStyle(.red)
+              Text("Doesn't specify length")
+            }
+            
+            HStack(alignment: .top) {
+              Image(systemName: "3.circle.fill")
+                .foregroundStyle(.red)
+              Text("Missing the style or format")
+            }
+          }
           .font(.subheadline)
           .foregroundStyle(.secondary)
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 8))
         }
-        //          .padding()
-        //        }
 
         Divider()
 
         VStack(alignment: .leading, spacing: 12) {
-          Text("Good Prompt")
-            .font(.headline)
-            .foregroundStyle(.green)
+          HStack {
+            Image(systemName: "checkmark.circle.fill")
+              .foregroundStyle(.green)
+              .font(.title)
+            Text("Specific Prompt")
+              .font(.title2.bold())
+              .foregroundStyle(.green)
+          }
 
           Text("\"\(goodPrompt)\"")
             .padding()
@@ -107,11 +198,32 @@ struct PromptsAndParameters2: View {
             .intelligence(in: .rect(cornerRadius: 10))
           }
 
-          Text(
-            "This prompt is much better because it's specific about the format (3 paragraphs), the purpose (informative), the topic (companionship), and the focus areas (loyalty, trainability, emotional benefits)."
-          )
+          VStack(alignment: .leading, spacing: 8) {
+            Text("Why is this better?")
+              .font(.headline)
+            
+            HStack(alignment: .top) {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+              Text("Clear topic: companionship")
+            }
+            
+            HStack(alignment: .top) {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+              Text("Exact length: 3 paragraphs")
+            }
+            
+            HStack(alignment: .top) {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+              Text("Specific focus areas listed")
+            }
+          }
           .font(.subheadline)
           .foregroundStyle(.secondary)
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 8))
         }
       }
     }
@@ -158,6 +270,8 @@ struct PromptsAndParameters2: View {
   }
 }
 
+
+// MARK: - Slide 3
 struct PromptsAndParameters3: View {
   @State private var temperature: Double = 0.5
   @State private var prompt: String = "Hello there! Can you tell me a joke?"
@@ -170,102 +284,209 @@ struct PromptsAndParameters3: View {
   let session: FoundationModelSession = .custom("PromptsAndParameters2")
 
   var body: some View {
-    VStack {
-      Text(
-        "Temperature is used to increase or decrease the randomness of the output."
-      )
-      .font(.title.bold())
-
-      Text(
-        "Lower temperatures (e.g., 0.2) make the output more focused and deterministic, while higher temperatures (e.g., 0.8) introduce more randomness and creativity. In the demo below, you can adjust the temperature slider to see how it affects the generated response."
-      )
-      .foregroundStyle(.secondary)
-
-      Text(
-        "Temperature: \(String(format: "%.1f", temperature)) - \(temperatureText())"
-      )
-      .contentTransition(.numericText(value: temperature))
-      Slider(value: $temperature, in: 0...1, step: 0.1) {
-        Text("Temperature: \(String(format: "%.1f", temperature))")
-      } minimumValueLabel: {
-        Text("0.0")
-      } maximumValueLabel: {
-        Text("1.0")
-      }
-
-      Button(action: {
-        Task {
-          await generateResponse()
-        }
-      }) {
-        HStack {
-          if foundationModelsService.statuses[session] == .generating
-            || foundationModelsService.statuses[session] == .requested
-          {
-            ProgressView()
+    ScrollView {
+      VStack(spacing: 20) {
+        VStack(spacing: 12) {
+          HStack {
+            Image(systemName: "thermometer.medium")
+              .font(.largeTitle)
+              .foregroundStyle(.orange)
+            
+            Text("Temperature Control")
+              .font(.largeTitle.bold())
           }
+          
           Text(
-            (foundationModelsService.statuses[session] == .generating
-             || foundationModelsService.statuses[session] == .requested)
-            ? "Generating..."
-            : "Generate Response"
+            "Think of temperature like a creativity dial. Turn it low for focused answers, or high for wild ideas!"
           )
+          .font(.title3)
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
         }
-      }
-      .buttonStyle(.glassProminent)
-      .disabled(
-        foundationModelsService.statuses[session] == .generating
-        || foundationModelsService.statuses[session] == .requested
-      )
-
-      VStack(alignment: .leading) {
-        Text("Prompt:")
-          .font(.headline)
-          .padding(.top)
-
-        TextField("Enter your prompt here", text: $prompt)
+        
+        HStack(spacing: 30) {
+          VStack {
+            Image(systemName: "snowflake")
+              .font(.system(size: 50))
+              .foregroundStyle(.cyan)
+            
+            Text("Low Temperature")
+              .font(.headline)
+            
+            Text("Predictable & Focused")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
           .padding()
-          .glassEffect(in: .capsule)
-      }
-
-      HStack(spacing: 16) {
-        VStack {
-          Text("Previous Response")
+          .glassEffect(.regular, in: .rect(cornerRadius: 12))
+          
+          Image(systemName: "arrow.right")
+            .font(.title)
             .foregroundStyle(.secondary)
-
-          Text(oldModelOutput)
+          
+          VStack {
+            Image(systemName: "flame.fill")
+              .font(.system(size: 50))
+              .foregroundStyle(.orange)
+            
+            Text("High Temperature")
+              .font(.headline)
+            
+            Text("Creative & Random")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 12))
+        }
+        
+        VStack(spacing: 12) {
+          HStack {
+            Spacer()
+            VStack {
+              Text("\(String(format: "%.1f", temperature))")
+                .font(.system(size: 50, weight: .bold, design: .rounded))
+                .contentTransition(.numericText(value: temperature))
+              
+              Text(temperatureText())
+                .font(.headline)
+                .foregroundStyle(temperatureColor())
+            }
+            .padding()
+            .glassEffect(.regular, in: .rect(cornerRadius: 15))
+            Spacer()
+          }
+          
+          HStack(spacing: 12) {
+            Image(systemName: "snowflake")
+              .foregroundStyle(.cyan)
+            
+            Slider(value: $temperature, in: 0...1, step: 0.1) {
+              Text("Temperature: \(String(format: "%.1f", temperature))")
+            } minimumValueLabel: {
+              Text("0.0")
+                .font(.caption)
+            } maximumValueLabel: {
+              Text("1.0")
+                .font(.caption)
+            }
+            .tint(temperatureColor())
+            
+            Image(systemName: "flame.fill")
+              .foregroundStyle(.orange)
+          }
+        }
+        
+        Button(action: {
+          Task {
+            await generateResponse()
+          }
+        }) {
+          HStack {
+            if foundationModelsService.statuses[session] == .generating
+                || foundationModelsService.statuses[session] == .requested
+            {
+              ProgressView()
+            }
+            Text(
+              (foundationModelsService.statuses[session] == .generating
+               || foundationModelsService.statuses[session] == .requested)
+              ? "Generating..."
+              : "Generate Response"
+            )
+          }
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(
+          foundationModelsService.statuses[session] == .generating
+          || foundationModelsService.statuses[session] == .requested
+        )
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "text.bubble.fill")
+              .foregroundStyle(.blue)
+            Text("Your Prompt:")
+              .font(.headline)
+          }
+          .padding(.top)
+          
+          TextField("Enter your prompt here", text: $prompt)
             .padding()
             .glassEffect(in: .rect(cornerRadius: 10))
-            .intelligence(in: .rect(cornerRadius: 10))
+            .overlay(
+              RoundedRectangle(cornerRadius: 10)
+                .stroke(.blue.opacity(0.3), lineWidth: 1)
+            )
         }
-        .opacity(oldModelOutput.isEmpty ? 0 : 1)
-
-        VStack {
-          Text("Current Response")
-            .foregroundStyle(.secondary)
-
-          Text(modelOutput)
-            .padding()
+        
+        HStack(spacing: 16) {
+          VStack(spacing: 8) {
+            HStack {
+              Image(systemName: "clock.arrow.circlepath")
+                .foregroundStyle(.secondary)
+              Text("Previous Response")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            }
+            
+            ScrollView {
+              Text(oldModelOutput.isEmpty ? "No previous response yet" : oldModelOutput)
+                .padding()
+                .foregroundStyle(oldModelOutput.isEmpty ? .tertiary : .primary)
+            }
+            .frame(minHeight: 150)
             .glassEffect(in: .rect(cornerRadius: 10))
             .intelligence(in: .rect(cornerRadius: 10))
+          }
+          .opacity(oldModelOutput.isEmpty ? 0.5 : 1)
+          
+          VStack(spacing: 8) {
+            HStack {
+              Image(systemName: "sparkles")
+                .foregroundStyle(.yellow)
+              Text("Current Response")
+                .font(.headline)
+            }
+            
+            ScrollView {
+              Text(modelOutput.isEmpty ? "Click 'Generate Response' to start!" : modelOutput)
+                .padding()
+                .foregroundStyle(modelOutput.isEmpty ? .tertiary : .primary)
+            }
+            .frame(minHeight: 150)
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .intelligence(in: .rect(cornerRadius: 10))
+          }
         }
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "lightbulb.fill")
+              .foregroundStyle(.yellow)
+            Text("Pro Tip:")
+              .font(.headline)
+          }
+          
+          Text(
+            "Try generating the same prompt multiple times at different temperatures. See how low temperatures give similar responses while high temperatures create unique, creative variations!"
+          )
+          .foregroundStyle(.secondary)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 10))
+        .padding(.bottom, 12)
       }
-
-      Text(
-        "You should notice that as you adjust the temperature slider, the nature of the generated response changes. Lower temperatures yield more predictable and coherent responses, while higher temperatures produce more diverse and creative outputs."
-      )
-      .foregroundStyle(.secondary)
-      .padding(.top, 12)
-    }
-    .padding()
-    .animation(.bouncy, value: temperature)
-    .onChange(of: temperature) {
-      if foundationModelsService.statuses[session] != .generating
-        && foundationModelsService.statuses[session] != .requested
-      {
-        //        modelOutput = ""
-        Task {
-          await generateResponse()
+      .padding(.horizontal)
+      .animation(.bouncy, value: temperature)
+      .onChange(of: temperature) {
+        if foundationModelsService.statuses[session] != .generating
+            && foundationModelsService.statuses[session] != .requested
+        {
+          //        modelOutput = ""
+          Task {
+            await generateResponse()
+          }
         }
       }
     }
@@ -274,7 +495,14 @@ struct PromptsAndParameters3: View {
     }
     .task {
       foundationModelsService.createSession(for: session)
-      await generateResponse()
+      
+      let oldModel = foundationModelsService.getSession(for: .custom("PromptsAndParameters2"), createIfMissing: false)
+      if !oldModel.isResponding {
+        await generateResponse()
+      } else {
+        foundationModelsService.clearSession(for: .custom("PromptsAndParameters2"))
+        await generateResponse()
+      }
     }
   }
 
@@ -301,6 +529,9 @@ struct PromptsAndParameters3: View {
       }
 
       for try await content in response {
+        if content.content.contains("Attemped to call respond(to:)") {
+          
+        }
         withAnimation(.bouncy) {
           modelOutput = content.content
         }
@@ -323,5 +554,485 @@ struct PromptsAndParameters3: View {
       return "High (Creative)"
     }
   }
+  
+  private func temperatureColor() -> Color {
+    if temperature <= 0.3 {
+      return .cyan
+    } else if temperature <= 0.7 {
+      return .blue
+    } else {
+      return .orange
+    }
+  }
 }
+
+// MARK: - Slide 4
+struct PromptsAndParameters4: View {
+  @State private var maxTokens: Double = 50
+  @State private var prompt: String = "Tell me about the solar system"
+  @State private var modelOutput: String = ""
+  
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  let session: FoundationModelSession = .custom("PromptsAndParameters4")
+  
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 20) {
+        VStack(spacing: 12) {
+          HStack {
+            Image(systemName: "text.alignleft")
+              .font(.largeTitle)
+              .foregroundStyle(.green)
+            
+            Text("Max Tokens")
+              .font(.largeTitle.bold())
+          }
+          
+          Text("Control How Long the AI's Response Should Be")
+            .font(.title3)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+        }
+        
+        HStack(spacing: 30) {
+          VStack(spacing: 12) {
+            Image(systemName: "text.word.spacing")
+              .font(.system(size: 50))
+              .foregroundStyle(.blue)
+            
+            Text("What are Tokens?")
+              .font(.headline)
+            
+            Text("Tokens are like building blocks of text. A word can be 1-2 tokens.")
+              .multilineTextAlignment(.center)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 15))
+          .frame(width: 300)
+          
+          VStack(spacing: 12) {
+            Image(systemName: "ruler")
+              .font(.system(size: 50))
+              .foregroundStyle(.purple)
+            
+            Text("Max Tokens")
+              .font(.headline)
+            
+            Text("Sets a limit on how many tokens (words) the AI can use in its response.")
+              .multilineTextAlignment(.center)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 15))
+          .frame(width: 300)
+          
+          VStack(spacing: 12) {
+            Image(systemName: "scissors")
+              .font(.system(size: 50))
+              .foregroundStyle(.orange)
+            
+            Text("Why Limit?")
+              .font(.headline)
+            
+            Text("Helps control costs and keeps responses short when you don't need long answers.")
+              .multilineTextAlignment(.center)
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+          .padding()
+          .glassEffect(.regular, in: .rect(cornerRadius: 15))
+          .frame(width: 300)
+        }
+        
+        VStack(spacing: 12) {
+          HStack {
+            Spacer()
+            VStack {
+              Text(String(format: "%.0f", maxTokens))
+                .font(.system(size: 50, weight: .bold, design: .rounded))
+                .contentTransition(.numericText(value: maxTokens))
+              
+              Text("tokens")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+            }
+            .padding()
+            .glassEffect(.regular, in: .rect(cornerRadius: 15))
+            Spacer()
+          }
+          
+          HStack(spacing: 12) {
+            Text("Short")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+            
+            Slider(value: $maxTokens, in: 20...200, step: 10) {
+              Text("Max Tokens: \(Int(maxTokens))")
+            }
+            .tint(.green)
+
+            Text("Long")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+        }
+        
+        Button(action: {
+          Task {
+            await generateResponse()
+          }
+        }) {
+          HStack {
+            if foundationModelsService.statuses[session] == .generating
+                || foundationModelsService.statuses[session] == .requested
+            {
+              ProgressView()
+            }
+            Text(
+              (foundationModelsService.statuses[session] == .generating
+               || foundationModelsService.statuses[session] == .requested)
+              ? "Generating..."
+              : "Generate Response"
+            )
+          }
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(
+          foundationModelsService.statuses[session] == .generating
+          || foundationModelsService.statuses[session] == .requested
+        )
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "text.bubble.fill")
+              .foregroundStyle(.blue)
+            Text("Your Prompt:")
+              .font(.headline)
+          }
+          
+          TextField("Enter your prompt here", text: $prompt)
+            .padding()
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .overlay(
+              RoundedRectangle(cornerRadius: 10)
+                .stroke(.blue.opacity(0.3), lineWidth: 1)
+            )
+        }
+        
+        VStack(spacing: 8) {
+          HStack {
+            Image(systemName: "text.alignleft")
+              .foregroundStyle(.green)
+            Text("AI Response")
+              .font(.headline)
+          }
+          
+          ScrollView {
+            Text(modelOutput.isEmpty ? "Adjust the slider and click 'Generate Response' to see how max tokens affects length!" : modelOutput)
+              .padding()
+              .foregroundStyle(modelOutput.isEmpty ? .tertiary : .primary)
+          }
+          .frame(minHeight: 200)
+          .glassEffect(in: .rect(cornerRadius: 10))
+          .intelligence(in: .rect(cornerRadius: 10))
+        }
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "exclamationmark.triangle.fill")
+              .foregroundStyle(.orange)
+            Text("Notice:")
+              .font(.headline)
+          }
+          
+          Text(
+            "With fewer tokens, responses might be cut off mid-sentence. With more tokens, you get complete, detailed answers. Try different values to see the difference!"
+          )
+          .foregroundStyle(.secondary)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 10))
+        .padding(.bottom, 12)
+      }
+      .padding(.horizontal)
+      .animation(.bouncy, value: maxTokens)
+    }
+    .onDisappear {
+      foundationModelsService.clearSession(for: session)
+    }
+    .task {
+      foundationModelsService.createSession(for: session)
+    }
+    .onChange(of: maxTokens) {
+      if foundationModelsService.statuses[session] != .generating
+          && foundationModelsService.statuses[session] != .requested
+      {
+        Task {
+          await generateResponse()
+        }
+      }
+    }
+  }
+  
+  private func generateResponse() async {
+    do {
+      let options: GenerationOptions = GenerationOptions(
+        temperature: 0.7,
+        maximumResponseTokens: Int(maxTokens)
+      )
+      
+      modelOutput = ""
+      
+      let response = foundationModelsService.streamResponse(
+        from: session,
+        options: options
+      ) {
+        prompt
+      }
+      
+      for try await content in response {
+        withAnimation(.bouncy) {
+          modelOutput = content.content
+        }
+      }
+      foundationModelsService.completeStream(for: session)
+    } catch {
+      modelOutput = "Failed to generate response: \(error.localizedDescription)"
+    }
+  }
+}
+
+// MARK: - Slide 5
+struct PromptsAndParameters5: View {
+  @State private var showingSystemPrompt = false
+  @State private var userMessage: String = "What's your favorite food?"
+  @State private var modelOutput: String = ""
+  @State private var selectedPersonality: Int = 0
+  
+  let personalities = [
+    ("Cowboy", "🤠", "You are a friendly cowboy who speaks in cowboy slang and relates everything to the Wild West."),
+    ("Pirate", "🏴‍☠️", "You are a friendly pirate who talks in pirate speak and relates everything to the sea and treasure."),
+    ("Mad Scientist", "🔬", "You are a quirky mad scientist who loves experiments and uses scientific jargon in your responses.")
+  ]
+  
+  @Environment(FoundationModelsService.self) private var foundationModelsService
+  let session: FoundationModelSession = .custom("PromptsAndParameters5")
+  
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 20) {
+        VStack(spacing: 12) {
+          HStack {
+            Image(systemName: "person.text.rectangle")
+              .font(.largeTitle)
+              .foregroundStyle(.purple)
+            
+            Text("System Instructions")
+              .font(.largeTitle.bold())
+          }
+          
+          Text("Give the AI a Personality!")
+            .font(.title3)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+          
+          Text(
+            "System instructions tell the AI how to behave. It's like giving someone a role to play!"
+          )
+          .multilineTextAlignment(.center)
+          .foregroundStyle(.secondary)
+        }
+        
+        VStack(spacing: 15) {
+          Text("Choose a Personality:")
+            .font(.headline)
+          
+          HStack(spacing: 20) {
+            ForEach(0..<personalities.count, id: \.self) { index in
+              Button(action: {
+                selectedPersonality = index
+                modelOutput = ""
+              }) {
+                VStack(spacing: 8) {
+                  Text(personalities[index].1)
+                    .font(.system(size: 50))
+                  
+                  Text(personalities[index].0)
+                    .font(.headline)
+                    .foregroundStyle(selectedPersonality == index ? .primary : .secondary)
+                }
+                .padding()
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 15))
+                .overlay(
+                  RoundedRectangle(cornerRadius: 15)
+                    .stroke(selectedPersonality == index ? Color.purple : Color.clear, lineWidth: 3)
+                )
+              }
+              .buttonStyle(.plain)
+            }
+          }
+        }
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "doc.text")
+              .foregroundStyle(.purple)
+            Text("System Instruction for \(personalities[selectedPersonality].0):")
+              .font(.headline)
+            
+            Spacer()
+            
+            Button(action: {
+              withAnimation(.bouncy) {
+                showingSystemPrompt.toggle()
+              }
+            }) {
+              HStack(spacing: 4) {
+                Image(systemName: showingSystemPrompt ? "eye.slash.fill" : "eye.fill")
+                  .contentTransition(.symbolEffect(.replace))
+                Text(showingSystemPrompt ? "Hide" : "Show")
+              }
+//              .font(.caption)
+            }
+            .buttonStyle(.bordered)
+          }
+          
+          if showingSystemPrompt {
+            Text(personalities[selectedPersonality].2)
+              .padding()
+              .glassEffect(.regular, in: .rect(cornerRadius: 8))
+              .foregroundStyle(.secondary)
+              .font(.subheadline)
+          }
+        }
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "message.fill")
+              .foregroundStyle(.blue)
+            Text("Your Message:")
+              .font(.headline)
+          }
+          
+          TextField("Type your message here", text: $userMessage)
+            .padding()
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .overlay(
+              RoundedRectangle(cornerRadius: 10)
+                .stroke(.blue.opacity(0.3), lineWidth: 1)
+            )
+        }
+        
+        Button(action: {
+          Task {
+            await generateResponse()
+          }
+        }) {
+          HStack {
+            if foundationModelsService.statuses[session] == .generating
+                || foundationModelsService.statuses[session] == .requested
+            {
+              ProgressView()
+            }
+            Text(
+              (foundationModelsService.statuses[session] == .generating
+               || foundationModelsService.statuses[session] == .requested)
+              ? "Generating..."
+              : "Send Message"
+            )
+          }
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(
+          foundationModelsService.statuses[session] == .generating
+          || foundationModelsService.statuses[session] == .requested
+        )
+        
+        VStack(spacing: 8) {
+          HStack {
+            Text(personalities[selectedPersonality].1)
+              .font(.title)
+            Text("\(personalities[selectedPersonality].0)'s Response:")
+              .font(.headline)
+          }
+          
+          ScrollView {
+            Text(modelOutput.isEmpty ? "Select a personality and send a message to see them in action!" : modelOutput)
+              .padding()
+              .foregroundStyle(modelOutput.isEmpty ? .tertiary : .primary)
+          }
+          .frame(minHeight: 200)
+          .glassEffect(in: .rect(cornerRadius: 10))
+          .intelligence(in: .rect(cornerRadius: 10))
+        }
+        
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Image(systemName: "star.fill")
+              .foregroundStyle(.yellow)
+            Text("Try This:")
+              .font(.headline)
+          }
+          
+          Text(
+            "Ask the same question to different personalities and see how their responses change based on their system instructions!"
+          )
+          .foregroundStyle(.secondary)
+          .padding(.bottom, 12)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 10))
+      }
+      .padding(.horizontal)
+      .onDisappear {
+        foundationModelsService.clearSession(for: session)
+      }
+      .onChange(of: selectedPersonality) {
+        foundationModelsService.clearSession(for: session)
+        foundationModelsService.createSession(for: session, instructions: personalities[selectedPersonality].2)
+      }
+      .task {
+        foundationModelsService.createSession(for: session, instructions: personalities[selectedPersonality].2)
+      }
+    }
+  }
+  
+  private func generateResponse() async {
+    do {
+      modelOutput = ""
+      
+      // Create session with system instructions
+      foundationModelsService.clearSession(for: session)
+      foundationModelsService.createSession(
+        for: session,
+        instructions: personalities[selectedPersonality].2
+      )
+      
+      let options: GenerationOptions = GenerationOptions(
+        temperature: 0.8,
+        maximumResponseTokens: 150
+      )
+      
+      let response = foundationModelsService.streamResponse(
+        from: session,
+        options: options
+      ) {
+        userMessage
+      }
+      
+      for try await content in response {
+        withAnimation(.bouncy) {
+          modelOutput = content.content
+        }
+      }
+      foundationModelsService.completeStream(for: session)
+    } catch {
+      modelOutput = "Failed to generate response: \(error.localizedDescription)"
+    }
+  }
+}
+
 

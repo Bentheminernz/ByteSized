@@ -674,6 +674,20 @@ struct LessonCourses {
             ) {
               PromptsAndParameters3()
             },
+            Slide(
+              id: 4,
+              title: "Build a Prompt",
+              icon: "wand.and.stars"
+            ) {
+              PromptsAndParameters4()
+            },
+            Slide(
+              id: 5,
+              title: "Friendly Dials",
+              icon: "dial.low"
+            ) {
+              PromptsAndParameters5()
+            },
           ],
           questions: [
             LessonQuestion(
@@ -762,7 +776,7 @@ struct LessonCourses {
             Slide(
               id: 4,
               title: "Ok enough teasing, how do I use this??",
-              icon: "book.fill",
+              icon: "book.and.wrench",
               containsCode: true
             ) {
               Tools4()
