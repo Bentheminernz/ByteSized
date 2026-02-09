@@ -97,6 +97,9 @@ struct Tools2: View {
         tools: [WeatherTool(), CalendarTool(), ContactsTool()]
       )
     }
+    .onDisappear {
+      foundationModelsService.clearSession(for: session)
+    }
   }
 
   private func generateResponse() async throws {
@@ -119,50 +122,52 @@ struct Tools3: View {
   ]
 
   var body: some View {
-    VStack {
-      Text(
-        "How do tools work with AI models?"
-      )
-      .font(.title.bold())
-      .padding(.bottom)
-
-      LazyVGrid(columns: grid, alignment: .leading, spacing: 16) {
-        StepView(1, title: "The Model Decides When Tools Are Needed") {
-          """
-          When you give a model a prompt, it doesn't automatically use every tool provided.
-          Instead, it'll evaluate your request and determine if any tools can help it generate a better informed response.
-          Think of it like asking a friend for help—they'll decide if they need to look something up or use a calculator based on what you ask.
-          """
-        }
-
-        StepView(2, title: "Tool Calling Happens Multiple Times") {
-          """
-          The model doesn't just call one tool and stop, it can make multiple tool calls in sequence as it collects the information it needs.
-          It's like solving a puzzle, the model might check your calendar first, then fetch the weather data for that location, and the contact details for attendees.
-          Each call builds on the previous one, until the model has enough information to provide a complete response.
-          """
-        }
-
-        StepView(3, title: "Tools Are Defined By Their Purpose, Not Their Code")
-        {
-          """
-          When you create a tool, you're giving the model a clear description of what it does and what information it needs to work. 
-          For example, a weather tool might need to know which city you're asking about. The model reads these descriptions and figures out the right details to provide - like extracting "Boston" from your question "What's the weather in Boston?" 
-          Your tool does its job with those details, and sends back what it found in plain, readable text.
-          """
-        }
-
-        StepView(4, title: "The Model Interprets Tool Results and Keeps Going")
-        {
-          """
-          After a tool returns its result, the model doesn't just pass it along to you—it reads and understands what came back.
-          It might realize it needs more information and call another tool, or it might have everything it needs to craft a final answer.
-          Think of it like a researcher gathering sources: they don't just collect papers and hand them to you, they read through them, connect the dots, and write up their findings in a way that actually answers your question.
-          """
+    ScrollView {
+      VStack {
+        Text(
+          "How do tools work with AI models?"
+        )
+        .font(.title.bold())
+        .padding(.bottom)
+        
+        LazyVGrid(columns: grid, alignment: .leading, spacing: 16) {
+          StepView(1, title: "The Model Decides When Tools Are Needed") {
+            """
+            When you give a model a prompt, it doesn't automatically use every tool provided.
+            Instead, it'll evaluate your request and determine if any tools can help it generate a better informed response.
+            Think of it like asking a friend for help—they'll decide if they need to look something up or use a calculator based on what you ask.
+            """
+          }
+          
+          StepView(2, title: "Tool Calling Happens Multiple Times") {
+            """
+            The model doesn't just call one tool and stop, it can make multiple tool calls in sequence as it collects the information it needs.
+            It's like solving a puzzle, the model might check your calendar first, then fetch the weather data for that location, and the contact details for attendees.
+            Each call builds on the previous one, until the model has enough information to provide a complete response.
+            """
+          }
+          
+          StepView(3, title: "Tools Are Defined By Their Purpose, Not Their Code")
+          {
+            """
+            When you create a tool, you're giving the model a clear description of what it does and what information it needs to work. 
+            For example, a weather tool might need to know which city you're asking about. The model reads these descriptions and figures out the right details to provide - like extracting "Boston" from your question "What's the weather in Boston?" 
+            Your tool does its job with those details, and sends back what it found in plain, readable text.
+            """
+          }
+          
+          StepView(4, title: "The Model Interprets Tool Results and Keeps Going")
+          {
+            """
+            After a tool returns its result, the model doesn't just pass it along to you—it reads and understands what came back.
+            It might realize it needs more information and call another tool, or it might have everything it needs to craft a final answer.
+            Think of it like a researcher gathering sources: they don't just collect papers and hand them to you, they read through them, connect the dots, and write up their findings in a way that actually answers your question.
+            """
+          }
         }
       }
+      .padding()
     }
-    .padding()
   }
 
   @ViewBuilder

@@ -148,46 +148,48 @@ struct BiasExampleCard: View {
 
 struct AISafetyBias3: View {
   var body: some View {
-    VStack(spacing: 20) {
-      Text("How Do We Make AI Safer and Fairer?")
-        .font(.title.bold())
-      
-      Text(
-        "The good news is that people are working hard to make AI more fair! Here are some ways developers and researchers are tackling AI bias:"
-      )
-      .foregroundStyle(.secondary)
-      
-      VStack(spacing: 15) {
-        SafetyStrategyCard(
-          number: 1,
-          title: "Diverse Training Data",
-          description: "Using data that represents many different types of people, backgrounds, and perspectives so the AI learns from a more complete picture of the world.",
-          color: .blue
-        )
+    ScrollView {
+      VStack(spacing: 20) {
+        Text("How Do We Make AI Safer and Fairer?")
+          .font(.title.bold())
         
-        SafetyStrategyCard(
-          number: 2,
-          title: "Testing for Fairness",
-          description: "Checking the AI's decisions across different groups of people to make sure it's treating everyone fairly. If problems are found, the AI is adjusted.",
-          color: .green
+        Text(
+          "The good news is that people are working hard to make AI more fair! Here are some ways developers and researchers are tackling AI bias:"
         )
+        .foregroundStyle(.secondary)
         
-        SafetyStrategyCard(
-          number: 3,
-          title: "Diverse Teams",
-          description: "Having people from different backgrounds work on AI projects brings different perspectives and helps catch biases that others might miss.",
-          color: .purple
-        )
-        
-        SafetyStrategyCard(
-          number: 4,
-          title: "Transparency & Accountability",
-          description: "Making it clear how AI systems make decisions and having humans review important choices, especially ones that affect people's lives.",
-          color: .orange
-        )
+        VStack(spacing: 15) {
+          SafetyStrategyCard(
+            number: 1,
+            title: "Diverse Training Data",
+            description: "Using data that represents many different types of people, backgrounds, and perspectives so the AI learns from a more complete picture of the world.",
+            color: .blue
+          )
+          
+          SafetyStrategyCard(
+            number: 2,
+            title: "Testing for Fairness",
+            description: "Checking the AI's decisions across different groups of people to make sure it's treating everyone fairly. If problems are found, the AI is adjusted.",
+            color: .green
+          )
+          
+          SafetyStrategyCard(
+            number: 3,
+            title: "Diverse Teams",
+            description: "Having people from different backgrounds work on AI projects brings different perspectives and helps catch biases that others might miss.",
+            color: .purple
+          )
+          
+          SafetyStrategyCard(
+            number: 4,
+            title: "Transparency & Accountability",
+            description: "Making it clear how AI systems make decisions and having humans review important choices, especially ones that affect people's lives.",
+            color: .orange
+          )
+        }
       }
+      .padding(.horizontal)
     }
-    .padding(.horizontal)
   }
 }
 

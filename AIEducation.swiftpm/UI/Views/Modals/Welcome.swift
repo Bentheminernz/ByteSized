@@ -13,6 +13,16 @@ struct WelcomeView: View {
   @State private var currentPage: Int = 1
 
   var body: some View {
+    ViewThatFits {
+      view
+      
+      ScrollView {
+        view
+      }
+    }
+  }
+  
+  private var view: some View {
     VStack {
       if currentPage == 1 {
         WelcomePage1()

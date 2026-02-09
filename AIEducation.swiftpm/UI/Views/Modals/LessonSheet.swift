@@ -24,8 +24,19 @@ struct LessonSheet: View {
   #if targetEnvironment(simulator)
     @State var showHideSheetButton: Bool = true
   #endif
-
+  
   var body: some View {
+    HorizontalView {
+      ContentUnavailableView {
+        Label("Please rotate your device to landscape to view the lesson content.", systemImage: "rectangle.portrait.rotate")
+      }
+    } content: {
+      view
+    }
+    .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
+  }
+
+  var view: some View {
     let showingSlides = currentIndex < lesson.slides.count
 
     return Group {
@@ -41,7 +52,7 @@ struct LessonSheet: View {
           if showingSlides {
             if lesson.slides[currentIndex].hideHeader != true {
               SlideHeaderCard(slide: lesson.slides[currentIndex])
-                .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
+//                .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
             }
 
             Group {

@@ -22,8 +22,10 @@ struct MainView: View {
   #endif
 
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   @State private var confettiManager: ConfettiManager = .shared
+  @State private var isLandscape: Bool = UIDevice.current.orientation.isLandscape
 
   private var nextUncompletedLessonID: Int? {
     // Flatten all lessons in order and find the first that is not completed
@@ -40,7 +42,7 @@ struct MainView: View {
 
   var body: some View {
     Group {
-      if horizontalSizeClass == .regular {
+      if horizontalSizeClass == .regular && isLandscape {
         // iPad layout: keep existing horizontal carousels
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
@@ -59,7 +61,8 @@ struct MainView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                   LazyHStack(alignment: .top, spacing: 16) {
                     ForEach(course.lessons) { lesson in
-                      let expandedHeight = CGFloat(210 + ((lesson.slides.count) * 22))
+                      let baseExpandedHeight = CGFloat(210 + ((lesson.slides.count) * 22))
+                      let expandedHeight = baseExpandedHeight * dynamicTypeSize.scaleFactor
                       LessonCard(
                         lesson,
                         isNext: nextUncompletedLessonID == lesson.id
@@ -83,8 +86,8 @@ struct MainView: View {
                         }
                       #endif
                       .frame(
-                        width: expandedCardId == lesson.id ? 520 : 400,
-                        height: expandedCardId == lesson.id ? expandedHeight : 120
+                        width: expandedCardId == lesson.id ? 520 * dynamicTypeSize.scaleFactor : 400 * dynamicTypeSize.scaleFactor,
+                        height: expandedCardId == lesson.id ? expandedHeight : 120 * dynamicTypeSize.scaleFactor
                       )
                       .onTapGesture {
                         withAnimation(.bouncy(duration: 0.3)) {
@@ -97,7 +100,7 @@ struct MainView: View {
                   }
                   .padding()
                 }
-                .frame(height: expandedCardId != nil && course.lessons.contains(where: { $0.id == expandedCardId }) ? 300 + 32 : 120 + 32)
+                .frame(height: expandedCardId != nil && course.lessons.contains(where: { $0.id == expandedCardId }) ? (300 + 32) * dynamicTypeSize.scaleFactor : (120 + 32) * dynamicTypeSize.scaleFactor)
                 .animation(.bouncy(duration: 0.3), value: expandedCardId)
               }
               .scrollTransition { content, phase in
@@ -166,10 +169,17 @@ struct MainView: View {
                       lesson,
                       isNext: nextUncompletedLessonID == lesson.id
                     )
+                    .frame(
+                      maxWidth: .infinity,
+                      minHeight: expandedCardId == lesson.id ? CGFloat(100 + ((lesson.slides.count) * 22)) * dynamicTypeSize.scaleFactor : 100 * dynamicTypeSize.scaleFactor,
+                      maxHeight: expandedCardId == lesson.id ? CGFloat(300 + ((lesson.slides.count) * 22)) * dynamicTypeSize.scaleFactor : 120 * dynamicTypeSize.scaleFactor
+                    )
                     .onTapGesture {
-                      selectedLesson = lesson
-                      expandedCardId = nil
+                      withAnimation(.bouncy(duration: 0.3)) {
+                        expandedCardId = (expandedCardId == lesson.id) ? nil : lesson.id
+                      }
                     }
+                    .matchedTransitionSource(id: lesson.id, in: animation)
                     .padding(.horizontal)
                   }
                 }
@@ -218,6 +228,12 @@ struct MainView: View {
       }
       .interactiveDismissDisabled()
     }
+    .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+      isLandscape = UIDevice.current.orientation.isLandscape
+    }
+    .onAppear {
+      isLandscape = UIDevice.current.orientation.isLandscape
+    }
   }
 
   @ViewBuilder
@@ -227,27 +243,65 @@ struct MainView: View {
     let isCompleted = completedLessons.contains(where: {
       $0.lessonID == lesson.id
     })
-    HStack(alignment: .center, spacing: 12) {
-      Image(systemName: "\(lesson.icon, default: "book")")
-        .resizable()
-        .scaledToFit()
-        .frame(width: 28, height: 28)
-        .symbolColorRenderingMode(.gradient)
-      VStack(alignment: .leading, spacing: 2) {
-        HStack {
-          Text(lesson.title)
-            .font(.headline)
-            .lineLimit(2)
-          Spacer()
-          if isCompleted {
-            Label("Completed", systemImage: "checkmark.seal.fill")
-              .foregroundStyle(.green)
+    VStack(alignment: .leading) {
+      HStack(alignment: .center, spacing: 12) {
+        Image(systemName: "\(lesson.icon, default: "book")")
+          .resizable()
+          .scaledToFit()
+          .frame(width: 28, height: 28)
+          .symbolColorRenderingMode(.gradient)
+        VStack(alignment: .leading, spacing: 2) {
+          HStack {
+            Text(lesson.title)
+              .font(.headline)
+              .lineLimit(2)
+            Spacer()
+            if isCompleted {
+              Label("Completed", systemImage: "checkmark.seal.fill")
+                .foregroundStyle(.green)
+            }
+          }
+          Text(lesson.description)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .lineLimit(3)
+        }
+      }
+      
+      if expandedCardId == lesson.id {
+        VStack(alignment: .leading, spacing: 6) {
+          Text("Lesson Contents:")
+            .font(.subheadline.bold())
+          
+          ForEach(lesson.slides, id: \.id) { slide in
+            HStack(spacing: 8) {
+              Image(systemName: slide.icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 16, height: 16)
+                .symbolColorRenderingMode(.gradient)
+              Text(slide.title)
+                .font(.subheadline)
+            }
           }
         }
-        Text(lesson.description)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-          .lineLimit(3)
+        .padding(.top, 4)
+      }
+      
+      Spacer()
+      
+      if expandedCardId == lesson.id {
+        Button(action: {
+          selectedLesson = lesson
+          expandedCardId = nil
+        }) {
+          Text("Start Lesson")
+            .font(.headline)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial, in: Capsule())
+        }
+        .buttonStyle(.plain)
       }
     }
     .padding(12)
@@ -351,6 +405,26 @@ struct MainView: View {
         }
       }
     )
+  }
+}
+
+extension DynamicTypeSize {
+  var scaleFactor: CGFloat {
+    switch self {
+    case .xSmall: return 0.8
+    case .small: return 0.9
+    case .medium: return 1.0
+    case .large: return 1.1
+    case .xLarge: return 1.2
+    case .xxLarge: return 1.3
+    case .xxxLarge: return 1.4
+    case .accessibility1: return 1.5
+    case .accessibility2: return 1.6
+    case .accessibility3: return 1.7
+    case .accessibility4: return 1.8
+    case .accessibility5: return 1.9
+    @unknown default: return 1.0
+    }
   }
 }
 

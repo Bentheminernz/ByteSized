@@ -211,6 +211,7 @@ struct WhatIsAILesson3: View {
             .clipShape(.rect(cornerRadius: 15))
             .frame(height: 200)
             .padding()
+            .accessibilityLabel(currentImageName == "cat" ? "A photo of a cat" : "A photo of two palm trees on a sunny beach")
         }
 
         Image(systemName: "arrow.right")
@@ -227,6 +228,7 @@ struct WhatIsAILesson3: View {
               )
           }
         }
+        .accessibilityLabel("Random binary digits representing the machine learning model's internal state")
         .padding()
         .glassEffect(.regular, in: .rect(cornerRadius: 15))
 
@@ -351,12 +353,14 @@ struct WhatIsAILesson4: View {
           .onVideoTime(25.0, player) {
             vehicleState = .go
           }
+          .accessibilityLabel("Video showing the view from a self-driving car as it approaches an intersection, stops at a red light, and then proceeds when the light turns green")
 
         Image(systemName: "arrow.right")
           .font(.largeTitle)
 
         NeuralNetwork()
           .frame(width: 400, height: 200)
+          .accessibilityLabel("A simplified visualization of a neural network, showing how input data is processed through multiple connected layers to produce an output")
 
         Image(systemName: "arrow.right")
           .font(.largeTitle)

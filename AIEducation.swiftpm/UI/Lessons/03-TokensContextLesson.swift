@@ -359,6 +359,7 @@ struct TokenContextLesson3: View {
               .padding(.horizontal)
             
             ContextWindowDiagram(showAnimation: showAnimation)
+              .accessibilityLabel("Diagram showing the AI's context window as a circle containing tokens representing user messages, AI replies, and system instructions.")
           }
           .padding()
         }
@@ -391,7 +392,7 @@ struct TokenContextLesson3: View {
           }
         }
         
-        Text("⚠️ **Important:** When the context window fills up, the AI starts 'forgetting' older messages!")
+        Text("**Important:** When the context window fills up, the AI starts 'forgetting' older messages!")
           .font(.caption)
           .foregroundStyle(.secondary)
           .multilineTextAlignment(.center)
@@ -478,6 +479,7 @@ struct ContextWindowDiagram: View {
         .scaleEffect(showAnimation ? 1.05 : 1.0)
     }
     .frame(width: outerDiameter, height: outerDiameter)
+    .accessibilityHidden(true)
   }
   
   @ViewBuilder

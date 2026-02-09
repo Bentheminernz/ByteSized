@@ -94,6 +94,7 @@ struct CodeViewer: View {
           .padding(8)
       }
     }
+    .accessibilityLabel("A code block in \(language.name) with \(lineCount) lines")
     .task(id: taskID) {
       await highlightNow()
     }

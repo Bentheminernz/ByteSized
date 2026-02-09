@@ -109,6 +109,7 @@ struct HowDoMachinesLearn1: View {
         switch content {
         case .book(let book):
           BookView(book: book)
+            .accessibilityHidden(true)
 
         case .image(let filename):
           if let uiImage = imageCache[filename] {
@@ -117,9 +118,11 @@ struct HowDoMachinesLearn1: View {
               .aspectRatio(contentMode: .fill)
               .frame(width: 100, height: 100)
               .clipShape(RoundedRectangle(cornerRadius: 8))
+              .accessibilityHidden(true)
           }
         }
       }
+      .accessibilityLabel("Falling books and nature images representing examples machines learn from")
       .overlay(
         VStack(spacing: 20) {
           Text("Machines Learn by Example")
@@ -692,11 +695,14 @@ struct PixelGridView: View {
                   Text("\(value)")
                     .font(.system(size: 8))
                     .foregroundStyle(value > 127 ? .black : .white)
+                    .accessibilityHidden(true)
                 )
+                .accessibilityHidden(true)
             }
           }
         }
       }
+      .accessibilityLabel("Grid of 48 rectangles representing pixels, each with a number from 0 to 255 indicating brightness")
       
       Text("Just numbers representing brightness!")
         .font(.caption)

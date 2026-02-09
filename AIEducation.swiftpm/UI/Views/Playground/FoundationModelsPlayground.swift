@@ -303,6 +303,7 @@ struct FoundationModelsPlayground: View {
                     }
                     .buttonStyle(.glassProminent)
                     .labelStyle(.iconOnly)
+                    .accessibilityLabel("Edit Schema Guide Fields")
                   }
 
                   if schemaFields.isEmpty {
