@@ -32,7 +32,7 @@ struct RootView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-  @State private var showiPhoneWarning: Bool = false
+  @State private var showSmallScreenWarning: Bool = false
 
   let model: SystemLanguageModel = SystemLanguageModel.default
 
@@ -99,7 +99,7 @@ struct RootView: View {
         .adaptiveModal(
           isPresented: Binding(
             get: { !hasSeenWelcome },
-            set: { _ in }
+             set: { hasSeenWelcome = !$0 }
           ),
           interactiveDismissDisabled: true
         ) {
@@ -172,24 +172,24 @@ struct RootView: View {
       )
     }
     .adaptiveModal(
-      isPresented: $showiPhoneWarning,
+      isPresented: $showSmallScreenWarning,
       interactiveDismissDisabled: true
     ) {
       VStack {
         WelcomeComponents.WelcomePageHeader(
-          title: "iPhone Warning",
+          title: "Small Screen Warning",
           subtitle: "Limited Functionality",
-          imageName: "exclamationmark.triangle.fill",
-          imageColor: .yellow
+          symbolName: "exclamationmark.triangle.fill",
+          symbolBackgroundColor: .yellow
         )
         Text(
-          "AIEducation is best experienced on an iPad due to its larger screen size and enhanced capabilities. Some features may be limited or not function optimally on an iPhone."
+          "ByteSized is best experienced in full screen. On smaller windows, some features may not work properly. We recommend using ByteSized in full screen for the best experience!"
         )
 
         Spacer()
 
         Button(action: {
-          showiPhoneWarning = false
+          showSmallScreenWarning = false
         }) {
           Text("Understood")
             .font(.headline)
@@ -201,13 +201,18 @@ struct RootView: View {
       .padding()
     }
     .onAppear {
-      if horizontalSizeClass == .compact {
-        showiPhoneWarning = true
+      if horizontalSizeClass == .compact && hasSeenWelcome {
+        showSmallScreenWarning = true
       }
     }
     .onChange(of: horizontalSizeClass) {
-      if horizontalSizeClass == .compact {
-        showiPhoneWarning = true
+      if horizontalSizeClass == .compact && hasSeenWelcome {
+        showSmallScreenWarning = true
+      }
+    }
+    .onChange(of: hasSeenWelcome) {
+      if hasSeenWelcome && horizontalSizeClass == .compact {
+        showSmallScreenWarning = true
       }
     }
   }

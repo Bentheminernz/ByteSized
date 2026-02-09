@@ -70,6 +70,7 @@ struct PromptsAndParameters1: View {
             .resizable()
             .scaledToFit()
             .frame(height: 80)
+            .foregroundStyle(.yellow)
             .symbolColorRenderingMode(.gradient)
           
           Text("Great Output")
@@ -529,7 +530,7 @@ struct PromptsAndParameters3: View {
       }
 
       for try await content in response {
-        if content.content.contains("Attemped to call respond(to:)") {
+        if content.content.contains("Attempted to call respond(to:)") {
           
         }
         withAnimation(.bouncy) {
@@ -808,7 +809,7 @@ struct PromptsAndParameters4: View {
 // MARK: - Slide 5
 struct PromptsAndParameters5: View {
   @State private var showingSystemPrompt = false
-  @State private var userMessage: String = "What's your favorite food?"
+  @State private var userMessage: String = "What's your favourite food?"
   @State private var modelOutput: String = ""
   @State private var selectedPersonality: Int = 0
   

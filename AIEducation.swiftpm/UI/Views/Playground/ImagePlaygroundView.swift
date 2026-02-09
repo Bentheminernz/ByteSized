@@ -21,6 +21,8 @@ struct ImagePlaygroundView: View {
   @State private var generatedImages: [CGImage?] = []
 
   @State private var generationError: ImageCreator.Error?
+  
+  @State private var justCopied: Bool = false
 
   private var fullCode: String {
     """
@@ -285,11 +287,25 @@ struct ImagePlaygroundView: View {
 
                 Spacer()
 
-                Button("Copy", systemImage: "document.on.document") {
+                Button(
+                  justCopied ? "Copied!" : "Copy Code",
+                  systemImage: justCopied ? "checkmark" : "document.on.document"
+                ) {
                   UIPasteboard.general.string = fullCode
+                  
+                  withAnimation {
+                    justCopied = true
+                  }
+                  
+                  Task {
+                    try? await Task.sleep(for: .seconds(2))
+                    withAnimation {
+                      justCopied = false
+                    }
+                  }
                 }
+                .contentTransition(.symbolEffect(.replace))
                 .buttonStyle(.glassProminent)
-                .labelStyle(.iconOnly)
                 .accessibilityLabel("Copy Swift Code to Clipboard")
               }
 

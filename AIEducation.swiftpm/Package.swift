@@ -23,11 +23,15 @@ let package = Package(
       appIcon: .asset("AppIcon"),
       accentColor: .presetColor(.green),
       supportedDeviceFamilies: [
-        .pad
+        .pad,
+        // iPhone to come later, requires heaps of UI work.......
+//        .phone
       ],
       supportedInterfaceOrientations: [
         .landscapeRight,
         .landscapeLeft,
+        .portrait,
+        .portraitUpsideDown
       ],
       capabilities: [
         .photoLibraryAdd(

@@ -15,8 +15,8 @@ struct MainView: View {
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
   #if DEBUG
-  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first(where: { $0.id == 5 })
-//    @State private var selectedLesson: Lesson?
+//  @State private var selectedLesson: Lesson? = LessonCourses.allCourses.filter { $0.id == 2 }.first?.lessons.first(where: { $0.id == 5 })
+    @State private var selectedLesson: Lesson?
   #else
     @State private var selectedLesson: Lesson?
   #endif

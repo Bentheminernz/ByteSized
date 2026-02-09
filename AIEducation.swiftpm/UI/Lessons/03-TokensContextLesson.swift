@@ -134,7 +134,7 @@ struct TokenContextLesson1: View {
           }
         }
 
-        Text("**Fun Fact:** Each colored chip is a token! AI assigns each token a unique number (ID) to process it.")
+        Text("**Fun Fact:** Each coloured chip is a token! AI assigns each token a unique number (ID) to process it.")
           .font(.caption)
           .foregroundStyle(.secondary)
           .padding()
@@ -385,7 +385,7 @@ struct TokenContextLesson3: View {
             ContextItem(
               icon: "doc.text",
               title: "System Instructions",
-              description: "Hidden instructions that guide the AI's behavior",
+              description: "Hidden instructions that guide the AI's behaviour",
               color: .orange
             )
           }
@@ -504,9 +504,9 @@ struct TokenContextLesson4: View {
   @State private var fillPercentage: Double = 0
   
   let models = [
-    (name: "Small Model", limit: "4,000 tokens", pages: "~8 pages", color: Color.red),
-    (name: "Medium Model", limit: "16,000 tokens", pages: "~32 pages", color: Color.orange),
-    (name: "Large Model", limit: "128,000 tokens", pages: "~256 pages", color: Color.green),
+    (name: "Small Model", limit: "4,000 tokens", pages: "~8 pages", color: Color.red, scaleEffect: 1.0),
+    (name: "Medium Model", limit: "16,000 tokens", pages: "~32 pages", color: Color.orange, scaleEffect: 1.2),
+    (name: "Large Model", limit: "128,000 tokens", pages: "~256 pages", color: Color.green, scaleEffect: 1.5)
   ]
   
   var body: some View {
@@ -538,16 +538,20 @@ struct TokenContextLesson4: View {
             Image(systemName: "brain.head.profile")
               .font(.system(size: 60))
               .foregroundStyle(models[selectedModel].color)
+              .scaleEffect(models[selectedModel].scaleEffect)
             
             VStack(spacing: 10) {
               Text(models[selectedModel].name)
                 .font(.title2.bold())
+                .contentTransition(.interpolate)
               
               HStack(spacing: 20) {
                 VStack {
                   Text(models[selectedModel].limit)
                     .font(.headline)
                     .foregroundStyle(models[selectedModel].color)
+                    .contentTransition(.numericText(value: Double(models[selectedModel].limit.filter { $0.isNumber }) ?? 0))
+                  
                   Text("Max Tokens")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -560,6 +564,8 @@ struct TokenContextLesson4: View {
                   Text(models[selectedModel].pages)
                     .font(.headline)
                     .foregroundStyle(models[selectedModel].color)
+                    .contentTransition(.numericText(value: Double(models[selectedModel].pages.filter { $0.isNumber }) ?? 0))
+                  
                   Text("≈ of Text")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -617,6 +623,7 @@ struct TokenContextLesson4: View {
         )
       }
     }
+    .animation(.bouncy, value: selectedModel)
     .padding(.horizontal)
     .onChange(of: selectedModel) { _, _ in
       withAnimation(.bouncy) {

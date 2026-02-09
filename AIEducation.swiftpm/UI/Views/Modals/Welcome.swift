@@ -49,9 +49,10 @@ struct WelcomePage1: View {
   var body: some View {
     VStack {
       WelcomeComponents.WelcomePageHeader(
-        title: "Welcome to AIEducation",
-        subtitle: "Your gateway to learning about AI and its applications.",
-        imageName: "graduationcap.fill",
+        title: "Welcome to Bytesized",
+        subtitle: "Your bite-sized guide to learning AI concepts and technologies.",
+        imageName: "AppIcon",
+        withExtension: "jpg"
       )
 
       Spacer()
@@ -87,8 +88,9 @@ struct WelcomePage2: View {
     VStack {
       WelcomeComponents.WelcomePageHeader(
         title: "Just a quick heads up!",
-        subtitle: "lorem ipsum dolor sit amet",
-        imageName: "exclamationmark.triangle.fill",
+        subtitle: "AI generated content is used in this app",
+        symbolName: "exclamationmark.triangle.fill",
+        symbolBackgroundColor: .yellow
       )
 
       Spacer()
@@ -168,19 +170,21 @@ struct WelcomeComponents {
     }
   }
 
+  
+  /// Welcome page header with a symbol
   @ViewBuilder
   static func WelcomePageHeader(
     title: String,
     subtitle: String,
-    imageName: String,
-    imageColor: Color = .accentColor
+    symbolName: String,
+    symbolBackgroundColor: Color = .accentColor,
   ) -> some View {
     VStack(spacing: 16) {
-      Image(systemName: imageName)
+      Image(systemName: symbolName)
         .font(.system(size: 72))
         .foregroundStyle(.white)
         .frame(width: 114, height: 114)
-        .background(imageColor.gradient)
+        .background(symbolBackgroundColor.gradient)
         .cornerRadius(20)
         .padding(.bottom, 5)
 
@@ -197,5 +201,40 @@ struct WelcomeComponents {
       }
     }
     .padding()
+  }
+  
+  /// Welcome page header with an image
+  @ViewBuilder
+  static func WelcomePageHeader(
+    title: String,
+    subtitle: String,
+    imageName: String,
+    withExtension: String = "jpg"
+  ) -> some View {
+    VStack(spacing: 16) {
+      if let url = Bundle.main.url(
+        forResource: imageName,
+        withExtension: withExtension
+      ) {
+        Image(uiImage: UIImage(contentsOfFile: url.path)!)
+          .resizable()
+          .scaledToFit()
+          .frame(width: 114, height: 114)
+          .cornerRadius(20)
+          .padding(.bottom, 5)
+      }
+
+      VStack {
+        Text(title)
+          .font(.title)
+          .fontWeight(.bold)
+
+        Text(subtitle)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .multilineTextAlignment(.center)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+    }
   }
 }

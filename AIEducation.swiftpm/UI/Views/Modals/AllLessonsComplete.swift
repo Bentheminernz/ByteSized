@@ -19,8 +19,8 @@ struct AllLessonsCompleteModal: View {
       WelcomeComponents.WelcomePageHeader(
         title: "Congratulations!",
         subtitle: "You've completed all lessons.",
-        imageName: "trophy.fill",
-        imageColor: .yellow
+        symbolName: "trophy.fill",
+        symbolBackgroundColor: .yellow
       )
 
       Text(

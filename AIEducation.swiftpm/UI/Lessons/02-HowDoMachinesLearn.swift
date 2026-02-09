@@ -522,7 +522,7 @@ struct HowDoMachinesLearn3: View {
   let steps = [
     LearningStep(
       title: "Step 1: AI Sees Raw Data",
-      description: "When you show AI a picture, it doesn't \"see\" a cat like you do. It sees numbers - pixels with different colors and brightness.",
+      description: "When you show AI a picture, it doesn't \"see\" a cat like you do. It sees numbers - pixels with different colours and brightness.",
       visual: .pixelGrid
     ),
     LearningStep(
@@ -557,7 +557,7 @@ struct HowDoMachinesLearn3: View {
   
   var body: some View {
     VStack(spacing: 16) {
-      Text("How Does AI Recognize Patterns?")
+      Text("How Does AI Recognise Patterns?")
         .font(.title.bold())
       
       HStack(spacing: 10) {
@@ -1201,8 +1201,8 @@ struct HowDoMachinesLearn5: View {
     var description: String {
       switch self {
       case .small: return "Like learning basketball after 5 practice shots - you'll miss a lot!"
-      case .medium: return "Getting better! Like practicing for a few weeks."
-      case .large: return "Expert level! Like practicing for years - very accurate!"
+      case .medium: return "Getting better! Like practising for a few weeks."
+      case .large: return "Expert level! Like practising for years - very accurate!"
       }
     }
   }

@@ -1,6 +1,6 @@
 //
 //  Lessons.swift
-//  AIEduation
+//  AIEducation
 //
 //  Created by Ben Lawrence on 07/11/2025.
 //
@@ -213,7 +213,7 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Numbers representing pixel brightness and colors",
+                  answer: "Numbers representing pixel brightness and colours",
                   isCorrect: true
                 ),
                 LessonAnswer(
@@ -655,14 +655,14 @@ struct LessonCourses {
           slides: [
             Slide(
               id: 1,
-              title: "What affects AI outputs?",
+              title: "How do I improve AI responses??",
               icon: "slider.horizontal.3",
             ) {
               PromptsAndParameters1()
             },
             Slide(
               id: 2,
-              title: "The Perfect Prompt",
+              title: "Let's craft the perfect prompt!",
               icon: "character.cursor.ibeam"
             ) {
               PromptsAndParameters2()
@@ -676,14 +676,14 @@ struct LessonCourses {
             },
             Slide(
               id: 4,
-              title: "Build a Prompt",
+              title: "How do I limit the length of AI responses??",
               icon: "wand.and.stars"
             ) {
               PromptsAndParameters4()
             },
             Slide(
               id: 5,
-              title: "Friendly Dials",
+              title: "Yarrrr! How can I change the personality of the AI??",
               icon: "dial.low"
             ) {
               PromptsAndParameters5()
@@ -692,52 +692,130 @@ struct LessonCourses {
           questions: [
             LessonQuestion(
               id: 1,
-              question: "What does AI stand for?",
+              question: "What makes a good prompt for AI?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Artificial Intelligence",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
-                  answer: "Automated Interaction",
+                  answer: "Being vague and open-ended",
                   isCorrect: false
                 ),
                 LessonAnswer(
+                  id: 2,
+                  answer: "Being specific, clear, and including details about length and format",
+                  isCorrect: true
+                ),
+                LessonAnswer(
                   id: 3,
-                  answer: "Advanced Integration",
+                  answer: "Using as few words as possible",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Applied Informatics",
+                  answer: "Avoiding any structure or format",
                   isCorrect: false
                 ),
               ]
             ),
             LessonQuestion(
               id: 2,
-              question: "Which of the following is a subset of AI?",
+              question: "What does the temperature parameter control?",
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
+                  answer: "How hot your computer gets when running AI",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "Quantum Computing",
+                  answer: "The speed at which AI generates responses",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 3,
-                  answer: "Cloud Computing",
+                  answer: "How creative or focused the AI's responses are",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "The size of the AI model being used",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 3,
+              question: "What happens when you set a low max tokens value?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "The AI responds faster",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "The response might be cut off mid-sentence or incomplete",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "The AI becomes more creative",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 4,
-                  answer: "Internet of Things",
+                  answer: "The AI provides more detailed answers",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 4,
+              question: "What are system instructions used for?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "To tell the AI how to behave and what role to play",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "To make the AI run faster",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "To control how many tokens the AI uses",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "To delete the AI's memory",
+                  isCorrect: false
+                ),
+              ]
+            ),
+            LessonQuestion(
+              id: 5,
+              question: "If you want predictable, focused responses from AI, what should you do?",
+              answers: [
+                LessonAnswer(
+                  id: 1,
+                  answer: "Set temperature to a high value like 0.9",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 2,
+                  answer: "Set temperature to a low value like 0.2",
+                  isCorrect: true
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Increase the max tokens parameter",
+                  isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 4,
+                  answer: "Remove all system instructions",
                   isCorrect: false
                 ),
               ]
@@ -1019,13 +1097,13 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Only the colors in images",
+                  answer: "Only the colours in images",
                   isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
                   answer:
-                    "Patterns, colors, shapes, objects, and their relationships",
+                    "Patterns, colours, shapes, objects, and their relationships",
                   isCorrect: true
                 ),
                 LessonAnswer(
@@ -1053,7 +1131,7 @@ struct LessonCourses {
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "They tell the model what colors to use",
+                  answer: "They tell the model what colours to use",
                   isCorrect: false
                 ),
                 LessonAnswer(
@@ -1198,7 +1276,7 @@ struct LessonCourses {
             LessonQuestion(
               id: 4,
               question:
-                "What can you do as a user when you notice biased or unfair AI behavior?",
+                "What can you do as a user when you notice biased or unfair AI behaviour?",
               answers: [
                 LessonAnswer(
                   id: 1,
@@ -1326,7 +1404,7 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "You must be a math genius to work with AI",
+                  answer: "You must be a maths genius to work with AI",
                   isCorrect: false
                 ),
                 LessonAnswer(

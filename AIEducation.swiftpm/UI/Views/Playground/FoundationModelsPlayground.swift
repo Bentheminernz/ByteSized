@@ -31,6 +31,9 @@ struct FoundationModelsPlayground: View {
   // Generation options
   @State private var temperature: Double = 0.5
   @State private var maxTokens: Int = 2000
+  
+  // Copy feedback
+  @State private var justCopied: Bool = false
 
   enum GenerationMode {
     case stream
@@ -417,12 +420,25 @@ struct FoundationModelsPlayground: View {
 
               Spacer()
 
-              Button("Copy", systemImage: "document.on.document") {
+              Button(
+                justCopied ? "Copied!" : "Copy",
+                systemImage: justCopied ? "checkmark" : "document.on.document"
+              ) {
                 UIPasteboard.general.string = fullCode
+                withAnimation {
+                  justCopied = true
+                }
+                
+                Task {
+                  try? await Task.sleep(for: .seconds(2))
+                  withAnimation {
+                    justCopied = false
+                  }
+                }
               }
+              .contentTransition(.symbolEffect(.replace))
               .buttonStyle(.glassProminent)
-              .labelStyle(.iconOnly)
-              .accessibilityLabel("Copy Swift Code to Clipboard")
+              .accessibilityLabel(justCopied ? "Code Copied to Clipboard" : "Copy Swift Code to Clipboard")
             }
             VStack {
               CodeViewer(code: fullCode, language: .swift)
