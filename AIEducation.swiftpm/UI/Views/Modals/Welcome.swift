@@ -76,9 +76,9 @@ struct WelcomePage1: View {
         )
 
         WelcomeComponents.WelcomePoint(
-          title: "Hands-on Lessons",
+          title: "Hands-on Labs",
           description:
-            "Engage with interactive lessons that make learning AI fun and practical.",
+            "Engage with interactive labs that make learning AI fun and engaging.",
           imageName: "book.fill"
         )
 

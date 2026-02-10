@@ -30,6 +30,7 @@ struct WhatIsAILesson1: View {
             .resizable()
             .scaledToFit()
             .frame(height: 100)
+            .foregroundStyle(.purple.gradient)
 
           Text("Artificial Intelligence")
             .font(.headline)
@@ -47,6 +48,7 @@ struct WhatIsAILesson1: View {
             .resizable()
             .scaledToFit()
             .frame(height: 100)
+            .foregroundStyle(.blue.gradient)
 
           Text("Machine Learning")
             .font(.headline)
@@ -64,6 +66,7 @@ struct WhatIsAILesson1: View {
             .resizable()
             .scaledToFit()
             .frame(height: 100)
+            .foregroundStyle(.green.gradient)
 
           Text("Deep Learning")
             .font(.headline)
@@ -93,14 +96,6 @@ struct WhatIsAILesson2: View {
   // Using a variable where possible to eliminate spelling mistakes
   /// The session to use for this lesson
   let session: FoundationModelSession = .custom("WhatIsAILesson2")
-
-  init(
-    session: LanguageModelSession = LanguageModelSession(
-      instructions:
-        "You are a professional kids author, who specialises in writing short 130-150 word stories for children. Don't say anything like 'here is the story', just give it to me"
-    )
-  ) {
-  }
 
   var body: some View {
     VStack {
@@ -134,9 +129,27 @@ struct WhatIsAILesson2: View {
         .padding()
         .glassEffect(.regular, in: .rect(cornerRadius: 15))
         .intelligence(in: .rect(cornerRadius: 15))
+        
+        Button(action: {
+          Task {
+            await generateOutput()
+          }
+        }) {
+          Label("Regenerate Story", systemImage: "arrow.clockwise")
+            .symbolEffect(.rotate.byLayer, options: .nonRepeating, isActive: foundationModelsService.status(for: session) == .generating)
+        }
+        .padding()
+        .buttonStyle(.glassProminent)
+        .disabled(foundationModelsService.status(for: session) == .generating ||
+                  foundationModelsService.status(for: session) == .requested)
       }
     }
+    .padding(.horizontal)
     .onAppear {
+      foundationModelsService.createSession(for: session, instructions: """
+        You are a children's story writer. You excel in creative story writing about cats. 
+        Your novels are full of imagination and wonder, often featuring magical cats that embark on whimsical adventures.
+        """)
       Task {
         await generateOutput()
       }
@@ -175,6 +188,7 @@ struct WhatIsAILesson3: View {
   @State private var currentImageName: String = "cat"
   @State private var detectionMessage: String = "Detecting..."
   @State private var isCatDetected: Bool = false
+  @State private var initialAnimationDone: Bool = false
 
   let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
 
@@ -257,18 +271,30 @@ struct WhatIsAILesson3: View {
           }
         }
       }
+      
+      Button(action: {
+        resetAndReplayAnimation()
+      }) {
+        Label("Restart Detection", systemImage: "arrow.clockwise")
+      }
+      .opacity(initialAnimationDone ? 1 : 0)
+      .buttonStyle(.glassProminent)
     }
     .onAppear {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-        withAnimation(.bouncy) {
-          showCheckmark = true
-          isCatDetected = true
-          detectionMessage = "Cat Detected!"
-        }
+      startInitialAnimation()
+    }
+  }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-          restartBinaryAnimation()
-        }
+  func startInitialAnimation() {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+      withAnimation(.bouncy) {
+        showCheckmark = true
+        isCatDetected = true
+        detectionMessage = "Cat Detected!"
+      }
+
+      DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        restartBinaryAnimation()
       }
     }
   }
@@ -286,8 +312,23 @@ struct WhatIsAILesson3: View {
       withAnimation(.bouncy) {
         showCheckmark = true
         detectionMessage = "No Cat Detected"
+        initialAnimationDone = true
       }
     }
+  }
+
+  func resetAndReplayAnimation() {
+    // Reset to initial state
+    withAnimation(.bouncy) {
+      currentImageName = "cat"
+      showCheckmark = false
+      detectionMessage = "Detecting..."
+      isCatDetected = false
+      initialAnimationDone = false
+    }
+
+    // Replay the animation sequence
+    startInitialAnimation()
   }
 }
 

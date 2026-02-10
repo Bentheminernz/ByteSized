@@ -25,13 +25,15 @@ struct LessonSheet: View {
     @State var showHideSheetButton: Bool = true
   #endif
   
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  
   var body: some View {
     HorizontalView {
-      ContentUnavailableView {
-        Label("Please rotate your device to landscape to view the lesson content.", systemImage: "rectangle.portrait.rotate")
-      }
-    } content: {
       view
+    } placeholder: {
+      ContentUnavailableView {
+        Label("Please rotate your device to landscape to view the lab content.", systemImage: "rectangle.portrait.rotate")
+      }
     }
     .navigationTransition(.zoom(sourceID: lesson.id, in: animation))
   }

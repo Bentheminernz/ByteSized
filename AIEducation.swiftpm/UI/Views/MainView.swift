@@ -87,7 +87,8 @@ struct MainView: View {
                       #endif
                       .frame(
                         width: expandedCardId == lesson.id ? 520 * dynamicTypeSize.scaleFactor : 400 * dynamicTypeSize.scaleFactor,
-                        height: expandedCardId == lesson.id ? expandedHeight : 120 * dynamicTypeSize.scaleFactor
+                        height: expandedCardId == lesson.id ? expandedHeight : 120 * dynamicTypeSize.scaleFactor,
+                        alignment: .leading
                       )
                       .onTapGesture {
                         withAnimation(.bouncy(duration: 0.3)) {
@@ -270,7 +271,7 @@ struct MainView: View {
       
       if expandedCardId == lesson.id {
         VStack(alignment: .leading, spacing: 6) {
-          Text("Lesson Contents:")
+          Text("Lab Rundown:")
             .font(.subheadline.bold())
           
           ForEach(lesson.slides, id: \.id) { slide in
@@ -295,7 +296,7 @@ struct MainView: View {
           selectedLesson = lesson
           expandedCardId = nil
         }) {
-          Text("Start Lesson")
+          Text("Begin Experiment!")
             .font(.headline)
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
@@ -350,7 +351,7 @@ struct MainView: View {
       
       if expandedCardId == lesson.id {
         VStack(alignment: .leading) {
-          Text("Lesson Contents:")
+          Text("Lab Rundown:")
             .font(.subheadline.bold())
           
           ForEach(lesson.slides, id: \.id) { slide in
@@ -379,7 +380,7 @@ struct MainView: View {
             selectedLesson = lesson
             expandedCardId = nil
           }) {
-            Text("Start Lesson")
+            Text("Begin Experiment!")
               .font(.headline)
               .padding(.horizontal, 14)
               .padding(.vertical, 8)

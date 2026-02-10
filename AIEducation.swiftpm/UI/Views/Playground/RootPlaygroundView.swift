@@ -36,32 +36,38 @@ struct PlaygroundView: View {
   var body: some View {
     VStack {
       if showPlayground {
-        Picker("Select View", selection: $selectedView) {
-          Text("LLM Playground").tag(CurrentView.foundationModels)
-          Text("Image Generation Playground").tag(CurrentView.imagePlayground)
-        }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding(.horizontal)
-        .padding(.top)
-
-        //      Divider()
-
-        switch selectedView {
-        case .foundationModels:
-          FoundationModelsPlayground()
-        case .imagePlayground:
-          if let isSupported = imageCreatorService.isSupported,
-             isSupported {
-            ImagePlaygroundView()
-          } else {
-            ContentUnavailableView {
-              Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
-            } description: {
-              Text("Image Generation powered by Apple Intelligence is not supported on your device.")
-              #if targetEnvironment(simulator)
+        HorizontalView {
+          Picker("Select View", selection: $selectedView) {
+            Text("LLM Playground").tag(CurrentView.foundationModels)
+            Text("Image Generation Playground").tag(CurrentView.imagePlayground)
+          }
+          .pickerStyle(SegmentedPickerStyle())
+          .padding(.horizontal)
+          .padding(.top)
+          
+          //      Divider()
+          
+          switch selectedView {
+          case .foundationModels:
+            FoundationModelsPlayground()
+          case .imagePlayground:
+            if let isSupported = imageCreatorService.isSupported,
+               isSupported {
+              ImagePlaygroundView()
+            } else {
+              ContentUnavailableView {
+                Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
+              } description: {
+                Text("Image Generation powered by Apple Intelligence is not supported on your device.")
+#if targetEnvironment(simulator)
                 Text("Image Playground is not supported in the simulator :), Please test on a real device.")
-              #endif
+#endif
+              }
             }
+          }
+        } placeholder: {
+          ContentUnavailableView {
+            Label("Please Rotate Your Device", systemImage: "iphone.landscape")
           }
         }
       } else {
@@ -69,7 +75,7 @@ struct PlaygroundView: View {
           Label("Playground Locked", systemImage: "lock.fill")
         } description: {
           Text(
-            "Complete all lessons to unlock the playground features. You have completed \(completedLessonsCount) out of \(totalLessons) lessons."
+            "Complete all labs to unlock the Playground. You have completed \(completedLessonsCount) out of \(totalLessons)"
           )
         }
         #if DEBUG

@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Make sure to come back and rewrite the descriptions!
 @MainActor
 struct LessonCourses {
   static let allCourses: [LessonCourse] = [
@@ -87,18 +86,18 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer: "Machine Learning",
-                  isCorrect: true
-                ),
-                LessonAnswer(
-                  id: 2,
                   answer: "Quantum Computing",
                   isCorrect: false
                 ),
                 LessonAnswer(
-                  id: 3,
+                  id: 2,
                   answer: "Cloud Computing",
                   isCorrect: false
+                ),
+                LessonAnswer(
+                  id: 3,
+                  answer: "Machine Learning",
+                  isCorrect: true
                 ),
                 LessonAnswer(
                   id: 4,
@@ -113,14 +112,14 @@ struct LessonCourses {
               answers: [
                 LessonAnswer(
                   id: 1,
-                  answer:
-                    "A subset of Machine Learning that uses neural networks",
-                  isCorrect: true
+                  answer: "A type of cloud computing",
+                  isCorrect: false
                 ),
                 LessonAnswer(
                   id: 2,
-                  answer: "A type of cloud computing",
-                  isCorrect: false
+                  answer:
+                    "A subset of Machine Learning that uses neural networks",
+                  isCorrect: true
                 ),
                 LessonAnswer(
                   id: 3,
@@ -482,7 +481,7 @@ struct LessonCourses {
                   isCorrect: false
                 ),
                 LessonAnswer(
-                  id: 1,
+                  id: 4,
                   answer: "To save tokens and leave more room in the context window",
                   isCorrect: true
                 ),
@@ -1218,7 +1217,7 @@ struct LessonCourses {
             LessonQuestion(
               id: 2,
               question:
-                "According to the lesson, how does AI learn patterns and biases?",
+                "According to the lab, how does AI learn patterns and biases?",
               answers: [
                 LessonAnswer(
                   id: 1,
@@ -1343,7 +1342,7 @@ struct LessonCourses {
             LessonQuestion(
               id: 1,
               question:
-                "According to the lesson, how has AI changed in just the past 10 years?",
+                "According to the lab, how has AI changed in just the past 10 years?",
               answers: [
                 LessonAnswer(
                   id: 1,
@@ -1400,7 +1399,7 @@ struct LessonCourses {
             LessonQuestion(
               id: 3,
               question:
-                "According to the lesson, what's true about preparing for an AI future?",
+                "According to the lab, what's true about preparing for an AI future?",
               answers: [
                 LessonAnswer(
                   id: 1,
@@ -1429,7 +1428,7 @@ struct LessonCourses {
             LessonQuestion(
               id: 4,
               question:
-                "According to the lesson, who is shaping the future of AI?",
+                "According to the lab, who is shaping the future of AI?",
               answers: [
                 LessonAnswer(
                   id: 1,
@@ -1460,6 +1459,8 @@ struct LessonCourses {
   ]
 }
 
+// At the beginning of development Labs were originally called Lessons, but I changed the name since they sounded dry
+// I haven't updated the name internally to avoid breaking code and a lack of time
 struct LessonCourse: Identifiable {
   let id: Int
   let title: String

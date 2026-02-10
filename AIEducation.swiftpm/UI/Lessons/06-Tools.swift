@@ -23,7 +23,7 @@ struct Tools1: View {
         They're not also very good at being personal assistants on their own, so what if we gave it access to your calendar and contacts?
         This is what tools allow us to do, it transforms LLMs from just being text generators to being powerful assistants that can perform a wide range of tasks.
 
-        Heads up! The following lesson will provide examples of LLMs doing just this, the app will request permissions to access your calendar and contacts in order for the LLM to access that data. This is all processed on device and no data leaves your device.
+        Heads up! The following lab will provide examples of LLMs doing just this, the app will request permissions to access your calendar and contacts in order for the LLM to access that data. This is all processed on device and no data leaves your device.
         """
       )
       .foregroundStyle(.secondary)

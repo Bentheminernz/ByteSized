@@ -24,8 +24,6 @@ let package = Package(
       accentColor: .presetColor(.green),
       supportedDeviceFamilies: [
         .pad,
-        // iPhone to come later, requires heaps of UI work.......
-//        .phone
       ],
       supportedInterfaceOrientations: [
         .landscapeRight,

@@ -18,13 +18,13 @@ struct AllLessonsCompleteModal: View {
     VStack {
       WelcomeComponents.WelcomePageHeader(
         title: "Congratulations!",
-        subtitle: "You've completed all lessons.",
+        subtitle: "You've completed all labs.",
         symbolName: "trophy.fill",
         symbolBackgroundColor: .yellow
       )
 
       Text(
-        "Since you've completed all the lessons, you now have access to the AI Playground where you can experiment with prompts and parameters!"
+        "Since you've completed all the labs, you now have access to the Playground where you can experiment with prompts, parameters and guided generation!"
       )
 
       Spacer()

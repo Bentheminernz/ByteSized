@@ -45,7 +45,7 @@ struct RootView: View {
 
     var name: String {
       switch self {
-      case .lessons: return "Lessons"
+      case .lessons: return "Labs"
       case .playground: return "Playground"
       #if DEBUG
         case .schema: return "Schema"
@@ -55,7 +55,7 @@ struct RootView: View {
 
     var icon: String {
       switch self {
-      case .lessons: return "book.closed"
+      case .lessons: return "atom"
       case .playground: return "wand.and.stars.inverse"
       #if DEBUG
         case .schema: return "puzzlepiece.extension"
@@ -89,8 +89,8 @@ struct RootView: View {
       switch model.availability {
       case .available:
         TabView(selection: $selectedTab) {
-//          ForEach(Tabs.allCases, id: \.self) { tab in
-          ForEach(Tabs.allCases.filter { $0.name != "Schema" }, id: \.self) { tab in
+          ForEach(Tabs.allCases, id: \.self) { tab in
+//          ForEach(Tabs.allCases.filter { $0.name != "Schema" }, id: \.self) { tab in
             Tab(tab.name, systemImage: tab.icon, value: tab) {
               tab.view
             }

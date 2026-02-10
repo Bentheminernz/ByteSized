@@ -93,17 +93,35 @@ struct CascadingImagesView: View {
 
 struct ImageGeneration1: View {
   var body: some View {
-    VStack {
-      Text(
-        "Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text! They can also generate images!"
-      )
-      .font(.title.bold())
+    VStack(spacing: 32) {
+      VStack(spacing: 16) {
+        Image(systemName: "photo.on.rectangle.angled")
+          .font(.system(size: 60))
+          .foregroundStyle(.purple.gradient)
+        
+        Text("AI Image Generation")
+          .font(.largeTitle.bold())
+          .multilineTextAlignment(.center)
+      }
+      
+      VStack(alignment: .leading, spacing: 20) {
+        Text(
+          "Throughout this app we have looked at Large Language Models, which are designed to understand and generate text. But AI can do a lot more than generate text! They can also generate images!"
+        )
+        .font(.title3)
+        .multilineTextAlignment(.leading)
 
-      Text(
-        "You might be asking, but how?? How can it make images?? They're designed to work with text and are trained on text, so how can they create images??"
-      )
-      .foregroundStyle(.secondary)
+        Text(
+          "You might be asking, but how?? How can it make images?? They're designed to work with text and are trained on text, so how can they create images??"
+        )
+        .font(.body)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.leading)
+      }
+      .padding()
+      .glassEffect(.regular, in: .rect(cornerRadius: 20))
     }
+    .padding()
   }
 }
 
@@ -113,17 +131,29 @@ struct ImageGeneration2: View {
       CascadingImagesView()
         .ignoresSafeArea()
 
-      VStack {
-        Text("Well its the exact same principle as text generation!")
-          .font(.title.bold())
-          .bold()
+      VStack(spacing: 20) {
+        HStack(spacing: 12) {
+          Image(systemName: "sparkles")
+            .font(.title2)
+            .foregroundStyle(.purple)
+          
+          Text("Well its the exact same principle as text generation!")
+            .font(.title2.bold())
+            .multilineTextAlignment(.center)
+          
+          Image(systemName: "sparkles")
+            .font(.title2)
+            .foregroundStyle(.purple)
+        }
 
         Text(
           "Just like how Large Language Models are trained on vast amounts of text data to understand patterns and relationships between words, AI image generation models, also known as, Diffusion Models, are trained on huge datasets of images. They learn to recognize patterns, colors, shapes, and objects within those images. When given a prompt, they use that learned knowledge to generate new images that match the description."
         )
+        .font(.body)
+        .multilineTextAlignment(.center)
       }
-      .padding()
-      .glassEffect(.regular, in: .rect(cornerRadius: 15))
+      .padding(24)
+      .glassEffect(.regular, in: .rect(cornerRadius: 20))
       .padding()
     }
   }
@@ -131,21 +161,48 @@ struct ImageGeneration2: View {
 
 struct ImageGeneration3: View {
   var body: some View {
-    HStack {
-      VStack {
-        Text(
-          "That makes sense but, how can the diffusion model tell the difference between the sky and a cat or a tree?? Let alone know what a cat or a tree is??"
-        )
-        .font(.title.bold())
+    HStack(spacing: 32) {
+      VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 8) {
+            Image(systemName: "questionmark.circle.fill")
+              .foregroundStyle(.purple)
+              .font(.title2)
+            
+            Text("How Does It Know?")
+              .font(.title.bold())
+          }
+          
+          Text(
+            "That makes sense but, how can the diffusion model tell the difference between the sky and a cat or a tree?? Let alone know what a cat or a tree is??"
+          )
+          .font(.title3)
+          .foregroundStyle(.primary)
+        }
 
-        Text(
-          """
-          Fantastic Question! The answer lies in the training data, usually images are bundled with descriptive text captions. These captions provide context and meaning to certain elements within the images.
-          For example, an image might contain a car, streetlamp, and a tree, and the caption would describe their objects and their position within the image. By learning from these captions, the model can associate specific words with visual features in the images.
-
-          """
-        )
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 8) {
+            Image(systemName: "lightbulb.fill")
+              .foregroundStyle(.yellow)
+              .font(.title3)
+            
+            Text("The Answer")
+              .font(.headline)
+          }
+          
+          Text(
+            """
+            Fantastic Question! The answer lies in the training data, usually images are bundled with descriptive text captions. These captions provide context and meaning to certain elements within the images.
+            
+            For example, an image might contain a car, streetlamp, and a tree, and the caption would describe their objects and their position within the image. By learning from these captions, the model can associate specific words with visual features in the images.
+            """
+          )
+          .font(.body)
+          .foregroundStyle(.secondary)
+        }
       }
+      .padding()
+      .glassEffect(.regular, in: .rect(cornerRadius: 20))
 
       if let image = Bundle.main.url(
         forResource: "TrainingData",
@@ -157,9 +214,10 @@ struct ImageGeneration3: View {
           .resizable()
           .scaledToFit()
           .frame(width: 400, height: 400)
-          .cornerRadius(8)
+          .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
       }
     }
+    .padding()
   }
 }
 
@@ -168,7 +226,7 @@ struct ImageGeneration4: View {
 
   @State private var generatedImages: [CGImage?] = Array(
     repeating: nil,
-    count: 3
+    count: 5
   )
   @State private var imageStyle: ImagePlaygroundStyle = .animation
 
@@ -176,35 +234,84 @@ struct ImageGeneration4: View {
     if let isSupported = imageCreatorService.isSupported,
       isSupported
     {
-      VStack {
-        Text(
-          "Now that we know how image generation works, let's see it in action! Below, we'll generate some images based on this prompt: \"A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze\""
-        )
-        .font(.title.bold())
+      VStack(spacing: 24) {
+        VStack(spacing: 16) {
+          HStack(spacing: 8) {
+            Image(systemName: "wand.and.stars")
+              .foregroundStyle(.purple.gradient)
+              .font(.title2)
+            
+            Text("Let's See It In Action!")
+              .font(.title.bold())
+          }
+          
+          Text(
+            "Below, we'll generate some images based on this prompt:"
+          )
+          .font(.body)
+          
+          Text("\"A sunny day on a beach on a remote island. Various Palm Trees swaying in the breeze\"")
+            .font(.body)
+            .foregroundStyle(.purple)
+            .padding()
+            .background(
+              RoundedRectangle(cornerRadius: 12)
+                .fill(.purple.opacity(0.1))
+            )
+            .overlay(
+              RoundedRectangle(cornerRadius: 12)
+                .stroke(.purple.opacity(0.3), lineWidth: 1)
+            )
+        }
 
-        ScrollView(.horizontal) {
-          HStack(spacing: 16) {
+        ScrollView(.horizontal, showsIndicators: false) {
+          HStack(spacing: 40) {
             ForEach(generatedImages.indices, id: \.self) { idx in
               Group {
                 if let cgImage = generatedImages[idx] {
-                  Image(uiImage: UIImage(cgImage: cgImage))
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(.rect(cornerRadius: 8))
-                    .intelligence(in: .rect(cornerRadius: 8), spread: 4)
+                  VStack(spacing: 8) {
+                    Image(uiImage: UIImage(cgImage: cgImage))
+                      .resizable()
+                      .frame(width: 250, height: 250)
+                      .clipShape(RoundedRectangle(cornerRadius: 16))
+                      .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                      .intelligence(in: .rect(cornerRadius: 16), spread: 4)
+                      .contextMenu {
+                        Button(action: {
+                          UIImageWriteToSavedPhotosAlbum(
+                            UIImage(cgImage: cgImage),
+                            nil,
+                            nil,
+                            nil
+                          )
+                        }) {
+                          Label("Save Image", systemImage: "square.and.arrow.down")
+                        }
+                      }
+                    
+                    Text("Image \(idx + 1)")
+                      .font(.caption)
+                      .foregroundStyle(.secondary)
+                  }
                 } else {
                   ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                      .fill(Color.gray.opacity(0.15))
+                    RoundedRectangle(cornerRadius: 16)
+                      .fill(Color.purple.opacity(0.05))
+                      .frame(width: 250, height: 250)
                       .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                          .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 16)
+                          .stroke(Color.purple.opacity(0.2), lineWidth: 2)
+                          .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [8, 4]))
                       )
-                    VStack(spacing: 8) {
+                    VStack(spacing: 12) {
                       ProgressView()
-                      Text("Loading…")
-                        .font(.footnote)
+                        .tint(.purple)
+                      Text("Generating…")
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
+                      Text("Image \(idx + 1)")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                     }
                   }
                   .frame(width: 300, height: 300)
@@ -212,29 +319,39 @@ struct ImageGeneration4: View {
               }
             }
           }
-          .padding()
+          .padding(.horizontal)
         }
 
-        Text(
-          "We can even change the style of the generated images! Try selecting a different style below:"
-        )
-        .font(.headline)
-
-        Picker("Image Style", selection: $imageStyle) {
-          Text("Animation").tag(ImagePlaygroundStyle.animation)
-          Text("Illustration").tag(ImagePlaygroundStyle.illustration)
-          Text("Sketch").tag(ImagePlaygroundStyle.sketch)
+        VStack(spacing: 12) {
+          HStack(spacing: 8) {
+            Image(systemName: "paintpalette.fill")
+              .foregroundStyle(.purple)
+            
+            Text(
+              "Try selecting a different style below:"
+            )
+            .font(.headline)
+          }
+          
+          Picker("Image Style", selection: $imageStyle) {
+            Text("Animation").tag(ImagePlaygroundStyle.animation)
+            Text("Illustration").tag(ImagePlaygroundStyle.illustration)
+            Text("Sketch").tag(ImagePlaygroundStyle.sketch)
+          }
+          .pickerStyle(.segmented)
         }
-        .pickerStyle(.segmented)
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
       }
+      .padding()
       .onAppear {
-        generatedImages = Array(repeating: nil, count: 3)
+        generatedImages = Array(repeating: nil, count: 5)
         Task {
           await generateImages()
         }
       }
       .onChange(of: imageStyle) {
-        generatedImages = Array(repeating: nil, count: 3)
+        generatedImages = Array(repeating: nil, count: 5)
         Task {
           await generateImages()
         }
@@ -250,12 +367,12 @@ struct ImageGeneration4: View {
           "Sorry, Image Generation powered by Apple Intelligence is not supported on your device."
         )
         Text("Heres an example of what it would look like:")
-
+        
         if let url = Bundle.main.url(
           forResource: "AIExample",
           withExtension: "jpg"
         ),
-          let uiImage = UIImage(contentsOfFile: url.path)
+           let uiImage = UIImage(contentsOfFile: url.path)
         {
           Image(uiImage: uiImage)
             .resizable()
@@ -287,7 +404,7 @@ struct ImageGeneration4: View {
           )
         ],
         style: style,
-        limit: 3
+        limit: 5
       )
       for try await generated in imageSequence {
         if let emptyIndex = generatedImages.firstIndex(where: { $0 == nil }) {
@@ -341,36 +458,71 @@ struct ImageGeneration5: View {
     """
 
   var body: some View {
-    VStack {
-      Text(
-        "Just like with Apple's Foundation Models, using Image Playground is super simple! Here's an example of how to generate images programmatically:"
-      )
-      .font(.title.bold())
-      .padding(.bottom, 8)
+    VStack(spacing: 24) {
+      VStack(spacing: 12) {
+        HStack(spacing: 8) {
+          Image(systemName: "chevron.left.forwardslash.chevron.right")
+            .foregroundStyle(.purple.gradient)
+            .font(.title2)
+          
+          Text("Code Implementation")
+            .font(.title.bold())
+        }
+        
+        Text(
+          "Just like with Apple's Foundation Models, using Image Playground is super simple! Here's an example of how to generate images programmatically:"
+        )
+        .font(.body)
+        .multilineTextAlignment(.center)
+        .foregroundStyle(.secondary)
+      }
 
-      HStack(spacing: 16) {
-        VStack {
+      HStack(alignment: .top, spacing: 24) {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 8) {
+            Image(systemName: "1.circle.fill")
+              .foregroundStyle(.purple)
+              .font(.title3)
+            
+            Text("Generate Images")
+              .font(.headline)
+          }
+          
           Text(
             "First, you create an instance of the ImageCreator, and then you can call the images(for:style:limit:) method to generate images based on a text prompt:"
           )
+          .font(.subheadline)
           .foregroundStyle(.secondary)
           
           ScrollView {
             CodeViewer(code: code, language: .swift)
           }
         }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
         
-        Divider()
-        
-        VStack {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack(spacing: 8) {
+            Image(systemName: "2.circle.fill")
+              .foregroundStyle(.purple)
+              .font(.title3)
+            
+            Text("Display in SwiftUI")
+              .font(.headline)
+          }
+          
           Text("And then to display those images in a SwiftUI view, you can do something like this:")
+            .font(.subheadline)
             .foregroundStyle(.secondary)
           
           ScrollView {
             CodeViewer(code: uiCode, language: .swift)
           }
         }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
       }
     }
+    .padding()
   }
 }

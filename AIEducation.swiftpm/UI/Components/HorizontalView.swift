@@ -7,18 +7,22 @@
 
 import SwiftUI
 
-struct HorizontalView<PlaceholderContent: View, Content: View>: View {
+/// A view that displays different content based on device orientation (landscape or portrait).
+/// - Parameters:
+///   - content: The view to display when the device is in landscape orientation.
+///   - placeholderContent: The view to display when the device is in portrait orientation.
+struct HorizontalView<Content: View, PlaceholderContent: View>: View {
   @State private var isLandscape = UIDevice.current.orientation.isLandscape
   
-  let placeholderContent: PlaceholderContent
   let content: Content
+  let placeholderContent: PlaceholderContent
   
   init(
+    @ViewBuilder content: () -> Content,
     @ViewBuilder placeholder: () -> PlaceholderContent,
-    @ViewBuilder content: () -> Content
   ) {
-    self.placeholderContent = placeholder()
     self.content = content()
+    self.placeholderContent = placeholder()
   }
   
   var body: some View {
@@ -37,3 +41,5 @@ struct HorizontalView<PlaceholderContent: View, Content: View>: View {
     }
   }
 }
+
+//struct SmallWindowView<Content: View, PlaceholderContent

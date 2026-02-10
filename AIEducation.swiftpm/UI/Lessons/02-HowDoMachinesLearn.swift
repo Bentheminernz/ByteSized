@@ -178,13 +178,47 @@ struct HowDoMachinesLearn2: View {
   @State private var typingText = ""
   @State private var isTyping = false
   
-  let steps = [
-    ("Reading Text", "AI reads millions of books, websites, and conversations"),
-    ("Finding Patterns", "AI notices: 'Hello' → Name, 'Thank you' → You're welcome"),
-    ("Understanding Context", "'Bank' = money place OR river side, depending on context"),
-    ("Predicting Words", "AI predicts next word: 'The cat sat on the ___' → mat/chair"),
-    ("Responding to You", "AI generates helpful responses word by word!")
+  let steps: [LearningStep] = [
+    LearningStep(
+      title: "Reading Text",
+      description: "AI reads millions of books, websites, and conversations",
+      visual: .reading
+    ),
+    LearningStep(
+      title: "Finding Patterns",
+      description: "AI notices: 'Hello' → Name, 'Thank you' → You're welcome",
+      visual: .patterns
+    ),
+    LearningStep(
+      title: "Understanding Context",
+      description: "'Bank' = money place OR river side, depending on context",
+      visual: .context
+    ),
+    LearningStep(
+      title: "Predicting Words",
+      description: "AI predicts next word: 'The cat sat on the ___' → mat/chair",
+      visual: .prediction
+    ),
+    LearningStep(
+      title: "Responding to You",
+      description: "AI generates helpful responses word by word!",
+      visual: .response
+    )
   ]
+  
+  struct LearningStep {
+    let title: String
+    let description: String
+    let visual: VisualType
+    
+    enum VisualType {
+      case reading
+      case patterns
+      case context
+      case prediction
+      case response
+    }
+  }
   
   var body: some View {
     VStack(spacing: 20) {
@@ -199,86 +233,58 @@ struct HowDoMachinesLearn2: View {
         }
       }
       
-      ZStack {
-        RoundedRectangle(cornerRadius: 20)
-          .fill(Color.purple.opacity(0.05))
-          .frame(height: 400)
-        
-        VStack(spacing: 20) {
-          Group {
-            switch currentStep {
-            case 0: ReadingVisual()
-            case 1: PatternsVisual()
-            case 2: ContextVisual()
-            case 3: PredictionVisual()
-            case 4: ResponseVisual(typingText: $typingText, isTyping: $isTyping)
-            default: EmptyView()
-            }
-          }
-          .frame(height: 200)
-          
-          Divider()
-          
-          VStack(spacing: 10) {
-            Text(steps[currentStep].0)
-              .font(.headline)
-            Text(steps[currentStep].1)
-              .font(.body)
-              .foregroundStyle(.secondary)
-              .multilineTextAlignment(.center)
-          }
-          .padding(.horizontal)
-        }
-        .padding()
+      HStack(spacing: 6) {
+        Image(systemName: "chevron.left")
+        Text("Swipe to navigate")
+        Image(systemName: "chevron.right")
       }
+      .font(.caption)
+      .foregroundStyle(.secondary)
+      .opacity(currentStep == 0 ? 1.0 : 0.0)
+      .animation(.easeInOut(duration: 0.3), value: currentStep)
       
-      HStack(spacing: 20) {
-        Button {
-          withAnimation {
-            if currentStep > 0 {
-              currentStep -= 1
-              resetAnimations()
+      TabView(selection: $currentStep) {
+        ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+          ZStack {
+            RoundedRectangle(cornerRadius: 20)
+              .fill(Color.purple.opacity(0.05))
+              .frame(height: 400)
+            
+            VStack(spacing: 20) {
+              Group {
+                switch step.visual {
+                case .reading:
+                  ReadingVisual()
+                case .patterns:
+                  PatternsVisual()
+                case .context:
+                  ContextVisual()
+                case .prediction:
+                  PredictionVisual()
+                case .response:
+                  ResponseVisual(typingText: $typingText, isTyping: $isTyping)
+                }
+              }
+              .frame(height: 200)
+              
+              Divider()
+              
+              VStack(spacing: 10) {
+                Text(steps[currentStep].title)
+                  .font(.headline)
+                Text(steps[currentStep].description)
+                  .font(.body)
+                  .foregroundStyle(.secondary)
+                  .multilineTextAlignment(.center)
+              }
+              .padding(.horizontal)
             }
+            .padding()
           }
-        } label: {
-          HStack {
-            Image(systemName: "chevron.left")
-            Text("Previous")
-          }
-          .foregroundStyle(currentStep == 0 ? .gray : .purple)
-          .padding()
-          .frame(width: 150)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(currentStep == 0 ? Color.gray.opacity(0.1) : Color.purple.opacity(0.1))
-          )
         }
-        .buttonStyle(.plain)
-        .disabled(currentStep == 0)
-        
-        Button {
-          withAnimation {
-            if currentStep < steps.count - 1 {
-              currentStep += 1
-              resetAnimations()
-            }
-          }
-        } label: {
-          HStack {
-            Text("Next")
-            Image(systemName: "chevron.right")
-          }
-          .foregroundStyle(currentStep == steps.count - 1 ? .gray : .purple)
-          .padding()
-          .frame(width: 150)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(currentStep == steps.count - 1 ? Color.gray.opacity(0.1) : Color.purple.opacity(0.1))
-          )
-        }
-        .buttonStyle(.plain)
-        .disabled(currentStep == steps.count - 1)
       }
+      .tabViewStyle(.page(indexDisplayMode: .never))
+      .frame(height: 450)
     }
     .padding()
     .onChange(of: currentStep) { _, _ in
@@ -566,96 +572,65 @@ struct HowDoMachinesLearn3: View {
       HStack(spacing: 10) {
         ForEach(0..<steps.count, id: \.self) { index in
           Circle()
-            .fill(index <= currentStep ? Color.blue : Color.gray.opacity(0.3))
+            .fill(index == currentStep ? Color.blue : Color.gray.opacity(0.3))
             .frame(width: 12, height: 12)
         }
       }
       
-      ZStack {
-        RoundedRectangle(cornerRadius: 20)
-          .fill(Color.blue.opacity(0.05))
-          .frame(height: 450)
-        
-        VStack(spacing: 20) {
-          Group {
-            switch steps[currentStep].visual {
-            case .pixelGrid:
-              PixelGridView()
-            case .patterns:
-              PatternDetectionView(showPattern: $showPattern)
-            case .recognition:
-              RecognitionView()
-            case .insight:
-              InsightView()
-            }
-          }
-          .frame(height: 250)
-          
-          Divider()
-            .padding(.horizontal)
-          
-          VStack(spacing: 12) {
-            Text(steps[currentStep].title)
-              .font(.headline)
-            
-            Text(steps[currentStep].description)
-              .font(.body)
-              .foregroundStyle(.secondary)
-              .multilineTextAlignment(.center)
-              .fixedSize(horizontal: false, vertical: true)
-          }
-          .padding(.horizontal)
-        }
-        .padding()
+      HStack(spacing: 6) {
+        Image(systemName: "chevron.left")
+        Text("Swipe to navigate")
+        Image(systemName: "chevron.right")
       }
+      .font(.caption)
+      .foregroundStyle(.secondary)
+      .opacity(currentStep == 0 ? 1.0 : 0.0)
+      .animation(.easeInOut(duration: 0.3), value: currentStep)
       
-      HStack(spacing: 20) {
-        Button {
-          withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            if currentStep > 0 {
-              currentStep -= 1
-              showPattern = false
+      TabView(selection: $currentStep) {
+        ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+          ZStack {
+            RoundedRectangle(cornerRadius: 20)
+              .fill(Color.blue.opacity(0.05))
+              .frame(height: 450)
+            
+            VStack(spacing: 20) {
+              Group {
+                switch step.visual {
+                case .pixelGrid:
+                  PixelGridView()
+                case .patterns:
+                  PatternDetectionView(showPattern: $showPattern)
+                case .recognition:
+                  RecognitionView()
+                case .insight:
+                  InsightView()
+                }
+              }
+              .frame(height: 250)
+              
+              Divider()
+                .padding(.horizontal)
+              
+              VStack(spacing: 12) {
+                Text(step.title)
+                  .font(.headline)
+                
+                Text(step.description)
+                  .font(.body)
+                  .foregroundStyle(.secondary)
+                  .multilineTextAlignment(.center)
+                  .fixedSize(horizontal: false, vertical: true)
+              }
+              .padding(.horizontal)
             }
+            .padding()
           }
-        } label: {
-          HStack {
-            Image(systemName: "chevron.left")
-            Text("Previous")
-          }
-          .foregroundStyle(currentStep == 0 ? .gray : .blue)
-          .padding()
-          .frame(width: 150)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(currentStep == 0 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
-          )
+          .tag(index)
         }
-        .buttonStyle(.plain)
-        .disabled(currentStep == 0)
-        
-        Button {
-          withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            if currentStep < steps.count - 1 {
-              currentStep += 1
-              showPattern = false
-            }
-          }
-        } label: {
-          HStack {
-            Text("Next")
-            Image(systemName: "chevron.right")
-          }
-          .foregroundStyle(currentStep == steps.count - 1 ? .gray : .blue)
-          .padding()
-          .frame(width: 150)
-          .background(
-            RoundedRectangle(cornerRadius: 10)
-              .fill(currentStep == steps.count - 1 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
-          )
-        }
-        .buttonStyle(.plain)
-        .disabled(currentStep == steps.count - 1)
       }
+      .tabViewStyle(.page(indexDisplayMode: .never))
+      .frame(height: 450)
     }
     .padding()
     .onAppear {
@@ -664,6 +639,8 @@ struct HowDoMachinesLearn3: View {
       }
     }
     .onChange(of: currentStep) { _, newValue in
+      showPattern = false
+      
       if newValue == 1 {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
           showPattern = true
@@ -673,7 +650,7 @@ struct HowDoMachinesLearn3: View {
   }
 }
 
-
+// MARK: - Components for Slide 3
 struct PixelGridView: View {
   var body: some View {
     VStack(spacing: 15) {
@@ -909,8 +886,7 @@ struct InsightView: View {
   }
 }
 
-
-// MARK: - Slide 3: Training vs Testing
+// MARK: - Slide 4: Training vs Testing
 struct HowDoMachinesLearn4: View {
   @State private var currentPhase: LearningPhase = .training
   @State private var trainingProgress: Double = 0
@@ -1162,7 +1138,7 @@ struct PhaseCard: View {
   }
 }
 
-// MARK: - Slide 4: More Data = Better Results
+// MARK: - Slide 5: The Importance of Data
 struct HowDoMachinesLearn5: View {
   @State private var selectedBrain: BrainSize = .small
   @State private var showComparison = false
@@ -1353,4 +1329,3 @@ struct HowDoMachinesLearn5: View {
     }
   }
 }
-
