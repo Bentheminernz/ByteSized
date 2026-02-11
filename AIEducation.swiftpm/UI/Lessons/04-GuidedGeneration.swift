@@ -128,180 +128,39 @@ struct GuidedGeneration2: View {
   }
 
   var body: some View {
-    HStack(spacing: 24) {
-      VStack(alignment: .leading, spacing: 16) {
-        HStack {
-          Image(systemName: "text.alignleft")
-            .font(.title2)
-            .foregroundStyle(.orange)
-          Text("Free-Form Text Output")
-            .font(.title2.bold())
-        }
-        
-        DefinableText(
-          "If you wanted to get an LLM to generate you a recipe, it would return something like this:"
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-
-        if !plainTextRecipe.isEmpty {
-          ScrollView {
-            Text(plainTextRecipe)
-              .font(.body)
+    VStack {
+      HStack(spacing: 24) {
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Image(systemName: "text.alignleft")
+              .font(.title2)
+              .foregroundStyle(.orange)
+            Text("Free-Form Text Output")
+              .font(.title2.bold())
           }
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-          .padding()
-          .glassEffect(in: .rect(cornerRadius: 10))
-          .intelligence(in: .rect(cornerRadius: 10))
-        }
-
-        HStack(alignment: .top, spacing: 8) {
-          Image(systemName: "exclamationmark.triangle.fill")
-            .foregroundStyle(.yellow)
-          Text(
-            "This output is easy to read as a human, but really hard to use in your app! You'd need to write fragile code that tries to pick out the specific pieces of information you need—and it breaks easily when the response changes even slightly."
+          
+          DefinableText(
+            "If you wanted an LLM to generate a recipe, it would return something like this:"
           )
-          .font(.caption)
+          .font(.subheadline)
           .foregroundStyle(.secondary)
-        }
-        .padding(12)
-        .glassEffect(.regular, in: .rect(cornerRadius: 8))
-      }
-
-      Divider()
-
-      VStack(alignment: .leading, spacing: 12) {
-        HStack {
-          Image(systemName: "doc.text.below.ecg")
-            .font(.title2)
-            .foregroundStyle(.green)
-          Text("Structured Output")
-            .font(.title2.bold())
-        }
-        if let recipe = structuredRecipe {
-          VStack(spacing: 12) {
-            Text("Formatted as a user-friendly display:")
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-              .frame(maxWidth: .infinity, alignment: .leading)
-
+          
+          if !plainTextRecipe.isEmpty {
             ScrollView {
-              VStack(alignment: .leading, spacing: 12) {
-                if let name = recipe.name {
-                  HStack {
-                    Image(systemName: "fork.knife")
-                      .foregroundStyle(.green)
-                    Text(name)
-                      .font(.title3.bold())
-                  }
-                }
-
-                if let description = recipe.description {
-                  Text(description)
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline)
-                }
-
-                if let ingredients = recipe.ingredients {
-                  VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                      Image(systemName: "list.bullet")
-                        .foregroundStyle(.green)
-                      Text("Ingredients")
-                        .font(.headline)
-                    }
-
-                    ForEach(ingredients.indices, id: \.self) { idx in
-                      let ingredient = ingredients[idx]
-                      if let ingredientName = ingredient.name,
-                        let quantity = ingredient.quantity
-                      {
-                        HStack(alignment: .top, spacing: 8) {
-                          Circle()
-                            .fill(.green)
-                            .frame(width: 6, height: 6)
-                            .padding(.top, 6)
-                          Text("\(quantity) of \(ingredientName)")
-                            .font(.subheadline)
-                        }
-                      }
-                    }
-                  }
-                  .padding(.top, 8)
-                }
-
-                if let instructions = recipe.instructions {
-                  VStack(alignment: .leading, spacing: 6) {
-                    HStack {
-                      Image(systemName: "number")
-                        .foregroundStyle(.green)
-                      Text("Instructions")
-                        .font(.headline)
-                    }
-
-                    ForEach(instructions.indices, id: \.self) { idx in
-                      let instruction = instructions[idx]
-                      if let stepNumber = instruction.stepNumber,
-                        let description = instruction.description
-                      {
-                        HStack(alignment: .top, spacing: 8) {
-                          Text("\(stepNumber)")
-                            .font(.caption.bold())
-                            .foregroundStyle(.white)
-                            .frame(width: 24, height: 24)
-                            .background(Circle().fill(.green))
-                          Text(description)
-                            .font(.subheadline)
-                        }
-                      }
-                    }
-                  }
-                  .padding(.top, 8)
-                }
-              }
-              .padding(4)
+              Text(plainTextRecipe)
+                .font(.body)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding()
             .glassEffect(in: .rect(cornerRadius: 10))
             .intelligence(in: .rect(cornerRadius: 10))
           }
-        }
-
-        if structuredRecipe != nil {
-          VStack(spacing: 12) {
-            HStack {
-              Image(systemName: "chevron.left.forwardslash.chevron.right")
-                .foregroundStyle(.green)
-              DefinableText(
-                "Or export as JSON for other software:"
-              )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            ScrollView {
-              CodeViewer(
-                code: buildJsonString(),
-                language: .json,
-                fontSize: 12,
-                lineFontSize: 14
-              )
-              .accessibilityLabel("Generated recipe in JSON format")
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .glassEffect(in: .rect(cornerRadius: 10))
-            .intelligence(in: .rect(cornerRadius: 10))
-          }
-        }
-        
-        if structuredRecipe != nil {
+          
           HStack(alignment: .top, spacing: 8) {
-            Image(systemName: "checkmark.circle.fill")
-              .foregroundStyle(.green)
+            Image(systemName: "exclamationmark.triangle.fill")
+              .foregroundStyle(.yellow)
             Text(
-              "By telling the model to return organized data in a specific format, you get consistent, predictable results that your app can actually use!"
+              "This output is easy to read as a human, but really hard to use in an app! You'd need to write fragile parsing code that tries to pick out the specific pieces of information, which breaks very easily when the response format changes even slightly."
             )
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -309,6 +168,164 @@ struct GuidedGeneration2: View {
           .padding(12)
           .glassEffect(.regular, in: .rect(cornerRadius: 8))
         }
+        
+        Divider()
+        
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Image(systemName: "doc.text.below.ecg")
+              .font(.title2)
+              .foregroundStyle(.green)
+            Text("Structured Output")
+              .font(.title2.bold())
+          }
+          if let recipe = structuredRecipe {
+            VStack(spacing: 12) {
+              Text("Formatted as a user-friendly display:")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+              
+              ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                  if let name = recipe.name {
+                    HStack {
+                      Image(systemName: "fork.knife")
+                        .foregroundStyle(.green)
+                      Text(name)
+                        .font(.title3.bold())
+                    }
+                  }
+                  
+                  if let description = recipe.description {
+                    Text(description)
+                      .foregroundStyle(.secondary)
+                      .font(.subheadline)
+                  }
+                  
+                  if let ingredients = recipe.ingredients {
+                    VStack(alignment: .leading, spacing: 6) {
+                      HStack {
+                        Image(systemName: "list.bullet")
+                          .foregroundStyle(.green)
+                        Text("Ingredients")
+                          .font(.headline)
+                      }
+                      
+                      ForEach(ingredients.indices, id: \.self) { idx in
+                        let ingredient = ingredients[idx]
+                        if let ingredientName = ingredient.name,
+                           let quantity = ingredient.quantity
+                        {
+                          HStack(alignment: .top, spacing: 8) {
+                            Circle()
+                              .fill(.green)
+                              .frame(width: 6, height: 6)
+                              .padding(.top, 6)
+                            Text("\(quantity) of \(ingredientName)")
+                              .font(.subheadline)
+                          }
+                        }
+                      }
+                    }
+                    .padding(.top, 8)
+                  }
+                  
+                  if let instructions = recipe.instructions {
+                    VStack(alignment: .leading, spacing: 6) {
+                      HStack {
+                        Image(systemName: "number")
+                          .foregroundStyle(.green)
+                        Text("Instructions")
+                          .font(.headline)
+                      }
+                      
+                      ForEach(instructions.indices, id: \.self) { idx in
+                        let instruction = instructions[idx]
+                        if let stepNumber = instruction.stepNumber,
+                           let description = instruction.description
+                        {
+                          HStack(alignment: .top, spacing: 8) {
+                            Text("\(stepNumber)")
+                              .font(.caption.bold())
+                              .foregroundStyle(.white)
+                              .frame(width: 24, height: 24)
+                              .background(Circle().fill(.green))
+                            Text(description)
+                              .font(.subheadline)
+                          }
+                        }
+                      }
+                    }
+                    .padding(.top, 8)
+                  }
+                }
+                .padding(4)
+              }
+              .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+              .padding()
+              .glassEffect(in: .rect(cornerRadius: 10))
+              .intelligence(in: .rect(cornerRadius: 10))
+            }
+          }
+          
+          // I really want to include this but I don't think it fits the app...
+          //        if structuredRecipe != nil {
+          //          VStack(spacing: 12) {
+          //            HStack {
+          //              Image(systemName: "chevron.left.forwardslash.chevron.right")
+          //                .foregroundStyle(.green)
+          //              DefinableText(
+          //                "Or export as JSON for other software:"
+          //              )
+          //              .font(.subheadline)
+          //              .foregroundStyle(.secondary)
+          //            }
+          //            .frame(maxWidth: .infinity, alignment: .leading)
+          //
+          //            ScrollView {
+          //              CodeViewer(
+          //                code: buildJsonString(),
+          //                language: .json,
+          //                fontSize: 12,
+          //                lineFontSize: 14
+          //              )
+          //              .accessibilityLabel("Generated recipe in JSON format")
+          //            }
+          //            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+          //            .glassEffect(in: .rect(cornerRadius: 10))
+          //            .intelligence(in: .rect(cornerRadius: 10))
+          //          }
+          //        }
+          
+          if structuredRecipe != nil {
+            HStack(alignment: .top, spacing: 8) {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+              Text(
+                "By telling the model to return organized data in a specific format, you get consistent, predictable results that your app can actually use!"
+              )
+              .font(.caption)
+              .foregroundStyle(.secondary)
+            }
+            .padding(12)
+            .glassEffect(.regular, in: .rect(cornerRadius: 8))
+          }
+        }
+      }
+      
+      if !plainTextRecipe.isEmpty && structuredRecipe != nil {
+        Button(action: {
+          Task {
+            try? await generateRecipes()
+          }
+        }) {
+          Label("Regenerate Recipes", systemImage: "arrow.clockwise.circle.fill")
+            .font(.headline)
+            .foregroundStyle(.blue)
+        }
+        .buttonStyle(.glass)
+        .disabled(foundationModelsService.status(for: sessionPlainText) == .generating || foundationModelsService.status(for: sessionStructured) == .generating || foundationModelsService.status(for: sessionPlainText) == .requested || foundationModelsService.status(for: sessionStructured) == .requested)
       }
     }
     .onAppear {
@@ -330,20 +347,11 @@ struct GuidedGeneration2: View {
     do {
       let response = foundationModelsService.streamResponse(
         from: sessionPlainText,
-        options: GenerationOptions(maximumResponseTokens: 300)
+        options: GenerationOptions(maximumResponseTokens: 400)
       ) {
         """
-        Create a family-friendly gourmet recipe that is safe to prepare at home.
-
-        Requirements:
-        - No alcohol
-        - No raw or undercooked ingredients
-        - Suitable for all ages
-        - Uses common kitchen equipment
-        - Includes a name, short description, ingredient list, and clear step-by-step instructions
-        - Follow basic food safety practices
-
-        The meal should be impressive but simple and safe.
+        Create me a recipe for homemade herb crusted chicken with roasted vegetables.
+        Just return the recipe, don't include any extra commentary or fluff. Make sure the recipe is safe and practical for home cooks, with clear instructions and realistic ingredient quantities.
         """
       }
 
@@ -359,16 +367,7 @@ struct GuidedGeneration2: View {
         generating: Recipe.self
       ) {
         """
-        Create a family-friendly gourmet-style meal that is safe to prepare at home.
-
-        Constraints:
-        - No alcohol
-        - No raw or undercooked meat, eggs, or seafood
-        - Appropriate for all ages
-        - Clear, safe cooking steps
-        - Realistic ingredient quantities
-
-        The recipe should be impressive but safe and practical.
+        Create me a recipe for homemade herb crusted chicken with roasted vegetables.
         """
       }
 
@@ -453,24 +452,24 @@ struct GuidedGeneration3: View {
       .foregroundStyle(.secondary)
 
       Text(
-        "That is a great question! Structured data outputs are incredibly useful when you want to do more than just show text to a user."
+        "That is a great question! Structured data outputs are incredibly useful when apps need to work with AI's responses, not just display them."
       )
       .font(.title3)
       .multilineTextAlignment(.center)
       
       HStack(spacing: 20) {
         VStack(spacing: 12) {
-          Image(systemName: "gamecontroller.fill")
+          Image(systemName: "calendar.badge.clock")
             .resizable()
             .scaledToFit()
             .frame(height: 60)
             .foregroundStyle(.purple)
             .symbolColorRenderingMode(.gradient)
           
-          Text("Game Characters")
+          Text("Smart Scheduling")
             .font(.headline)
           
-          Text("Generate unique NPCs with stats, personalities, and dialogue trees")
+          Text("Create organized calendars with times, locations, and reminders all ready to use")
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
             .font(.subheadline)
@@ -480,17 +479,17 @@ struct GuidedGeneration3: View {
         .frame(width: 280)
         
         VStack(spacing: 12) {
-          Image(systemName: "cart.fill")
+          Image(systemName: "fork.knife")
             .resizable()
             .scaledToFit()
             .frame(height: 60)
             .foregroundStyle(.blue)
             .symbolColorRenderingMode(.gradient)
           
-          Text("E-Commerce")
+          Text("Meal Planning")
             .font(.headline)
           
-          Text("Create dynamic product descriptions with prices, features, and specs")
+          Text("Generate shopping lists and step-by-step cooking instructions your kitchen app can follow")
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
             .font(.subheadline)
@@ -500,17 +499,17 @@ struct GuidedGeneration3: View {
         .frame(width: 280)
         
         VStack(spacing: 12) {
-          Image(systemName: "figure.run")
+          Image(systemName: "chart.line.uptrend.xyaxis")
             .resizable()
             .scaledToFit()
             .frame(height: 60)
             .foregroundStyle(.green)
             .symbolColorRenderingMode(.gradient)
           
-          Text("Fitness Plans")
+          Text("Budget Tracking")
             .font(.headline)
           
-          Text("Build personalized workout routines with exercises, sets, and reps")
+          Text("Organize expenses into categories with amounts that can be graphed and analyzed")
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
             .font(.subheadline)
@@ -521,13 +520,13 @@ struct GuidedGeneration3: View {
       }
       
       Text(
-        "All of these require your app to actually use and work with the AI's output—not just display it."
+        "All of these require apps to actually process and use the AI's output in meaningful ways."
       )
       .font(.title3)
       .multilineTextAlignment(.center)
       .foregroundStyle(.secondary)
       
-      Text("Let's look at how we can achieve this using the Apple Foundation Models framework.")
+      Text("Let's look at how this works using the Apple Foundation Models framework.")
         .font(.body)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)

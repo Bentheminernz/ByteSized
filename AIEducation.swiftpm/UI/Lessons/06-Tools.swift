@@ -11,78 +11,356 @@ import SwiftUI
 // MARK: -Complete
 struct Tools1: View {
   var body: some View {
-    VStack {
+    VStack(alignment: .center, spacing: 30) {
+      Text("Extending AI with Tools")
+        .font(.largeTitle.bold())
+        .multilineTextAlignment(.center)
+      
       Text(
-        "Well yeah, it sounds weird but just like humans need tools to extend their abilities, AI models also benefit from specialized tools to enhance their performance and capabilities."
+        "Just like humans need tools to extend their abilities, AI models also benefit from specialized tools to enhance their performance and capabilities."
       )
-      .font(.title.bold())
-
-      Text(
-        """
-        For example, a common issue with LLMs is that their training data only goes up to a certain date, meaning they can't provide real-time information or updates. To solve this, why don't we just give them access to the internet?
-        They're not also very good at being personal assistants on their own, so what if we gave it access to your calendar and contacts?
-        This is what tools allow us to do, it transforms LLMs from just being text generators to being powerful assistants that can perform a wide range of tasks.
-
-        Heads up! The following lab will provide examples of LLMs doing just this, the app will request permissions to access your calendar and contacts in order for the LLM to access that data. This is all processed on device and no data leaves your device.
-        """
-      )
+      .font(.title3)
+      .multilineTextAlignment(.center)
       .foregroundStyle(.secondary)
+      
+      HStack(spacing: 20) {
+        VStack(spacing: 12) {
+          Image(systemName: "calendar")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 60)
+            .foregroundStyle(.red.gradient)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("Calendar Access")
+            .font(.headline)
+          
+          Text("Check events and manage schedules on your behalf")
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+            .font(.subheadline)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 280)
+        
+        VStack(spacing: 12) {
+          Image(systemName: "network")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 60)
+            .foregroundStyle(.blue.gradient)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("Internet Access")
+            .font(.headline)
+          
+          Text("Fetch real-time data beyond training cutoff dates")
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+            .font(.subheadline)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 280)
+        
+        VStack(spacing: 12) {
+          Image(systemName: "person.text.rectangle")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 60)
+            .foregroundStyle(.purple.gradient)
+            .symbolColorRenderingMode(.gradient)
+          
+          Text("Contacts Access")
+            .font(.headline)
+          
+          Text("Look up contact details and relevant information")
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+            .font(.subheadline)
+        }
+        .padding()
+        .glassEffect(.regular, in: .rect(cornerRadius: 15))
+        .frame(width: 280)
+      }
+      
+      Text(
+        "Tools transform LLMs from just being text generators to being powerful assistants that can perform a wide range of tasks."
+      )
+      .font(.title3)
+      .multilineTextAlignment(.center)
+      .foregroundStyle(.secondary)
+      
+      HStack(alignment: .top, spacing: 8) {
+        Image(systemName: "info.circle.fill")
+          .foregroundStyle(.blue)
+        Text(
+          "Heads up! The following lab will request permissions to access your calendar and contacts. This is all processed on device and no data leaves your device."
+        )
+        .font(.caption)
+        .foregroundStyle(.secondary)
+      }
+      .padding(12)
+      .glassEffect(.regular, in: .rect(cornerRadius: 8))
     }
     .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
   }
 }
 
 struct Tools2: View {
   @Environment(FoundationModelsService.self) private var foundationModelsService
   @State private var modelResponse: String = ""
+  @State private var modelStructuredResponse: EventResponse.PartiallyGenerated? = nil
   @State private var showFakeResponse: Bool = false
 
   let session = FoundationModelSession.custom("ToolsExampleSession")
   let prompt =
     "What's my next calendar event? And what is the weather like there currently? If anyone in my contacts is attending, get their relevant contact details for me."
-
-  var body: some View {
-    VStack {
-      Text("In this example, the model has been asked \"\(prompt)\"")
-        .font(.headline)
-
-      Text(
-        "If provided access and there are relevant events/contacts, it should be able to provide a detailed response."
-      )
-      .foregroundStyle(.secondary)
-
-      Text(.init(modelResponse))
-        .padding()
-        .glassEffect(in: .rect(cornerRadius: 8))
-        .intelligence(in: .rect(cornerRadius: 8))
-
-      if modelResponse != "" && !showFakeResponse {
-        Button(
-          "If you didn't get a proper response, click here to see an example."
-        ) {
-          showFakeResponse = true
+  
+  var isEventFake: Bool {
+    if let contacts = modelStructuredResponse?.contacts, !contacts.isEmpty {
+      for contact in contacts {
+        if contact.email?.contains("example") == true || contact.phone?.contains("555") == true {
+          return true
         }
       }
+    }
+    return false
+  }
+  
+  @Generable
+  struct EventResponse {
+    @Guide(description: "The next upcoming calendar event for the user")
+    var event: CalendarInfo
+    
+    @Guide(description: "The current weather conditions for the location of the event, if location information is available from the calendar event")
+    var weather: WeatherInfo
+    
+    @Guide(description: "Relevant contact details for any attendees of the event that are in the user's contacts, if any information about attendees is available from the calendar event")
+    var contacts: [ContactInfo]?
+    
+    @Generable
+    struct CalendarInfo {
+      var title: String
+      
+      @Guide(description: "The date of the event in a human readable format. For example, 'Sunday, February 1st, 2026'")
+      var date: String
+      var duration: TimeInterval
+      var location: String?
+      var notes: String?
+    }
+    
+    @Generable
+    struct WeatherInfo {
+      @Guide(description: "The current conditions in the city, sunny, cloudy, raining etc")
+      var conditions: String
+      
+      var temperature: Int
+      var windSpeed: Int
+      var humidity: Int
+    }
+    
+    @Generable
+    struct ContactInfo {
+      var name: String
+      var phone: String?
+      var email: String?
+    }
+  }
 
-      if showFakeResponse {
-        Text(
-          """
-          Your next calendar even is:
-          - Meeting with John Appleseed
-          - Date and Time: Sunday, February 1st, 2026, 10:00AM - 1:00PM (3h)
-          - Location: Te Pae, Christchurch, New Zealand
-          - Notes: Fictitious Apple Keynote discussing latest technologies and empowering Kiwi Developers.
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 20) {
+        VStack(spacing: 12) {
+          HStack {
+            Image(systemName: "wrench.and.screwdriver.fill")
+              .font(.largeTitle)
+              .foregroundStyle(.blue)
+              .symbolColorRenderingMode(.gradient)
+            
+            Text("Tools in Action")
+              .font(.largeTitle.bold())
+          }
           
-          The weather in Christchurch is currently 22°C with clear skies and a gentle breeze.
+          Text("Watch how the AI uses multiple tools to answer a complex question")
+            .font(.title3)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.secondary)
+        }
+        
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Image(systemName: "text.bubble.fill")
+              .foregroundStyle(.blue)
+            Text("The Question:")
+              .font(.headline)
+          }
           
-          For John Appleseed (A contact who is attending):
-          - Phone: (555) 123-4567
-          - Email: johnappleseed@example.com
-          """
-        )
-        .padding()
-        .glassEffect(in: .rect(cornerRadius: 8))
+          Text("\"\(prompt)\"")
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .glassEffect(in: .rect(cornerRadius: 10))
+        }
+        
+        VStack(alignment: .leading, spacing: 12) {
+          HStack {
+            Image(systemName: "sparkles")
+              .foregroundStyle(.yellow)
+            Text("AI Response:")
+              .font(.headline)
+          }
+          
+          if modelStructuredResponse != nil {
+            ScrollView {
+              if let response = modelStructuredResponse {
+                VStack(alignment: .leading, spacing: 16) {
+                  if isEventFake {
+                    Text("The AI hit a snag with its tools, so here's a preview of what the response would look like if everything worked correctly.")
+                      .font(.caption)
+                  }
+                  
+                  if let event = response.event {
+                    VStack(alignment: .leading, spacing: 8) {
+                      HStack {
+                        Image(systemName: "calendar")
+                          .foregroundStyle(.blue)
+                        Text("Next Calendar Event")
+                          .font(.subheadline.bold())
+                      }
+                      
+                      VStack(alignment: .leading, spacing: 4) {
+                        if let title = event.title {
+                          Text(title)
+                            .font(.body.bold())
+                        }
+                        if let date = event.date {
+                          Text(date)
+                            .font(.caption)
+                        }
+                        if let duration = event.duration {
+                          Text("Duration: \(Int(duration / 60)) mins")
+                            .font(.caption)
+                        }
+                        if let location = event.location {
+                          Text(location)
+                            .font(.caption)
+                        }
+                        if let notes = event.notes {
+                          Text("Notes: \(notes)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        }
+                      }
+                      .padding(.leading, 24)
+                    }
+                  }
+                  
+                  if let _ = response.event, let _ = response.weather {
+                    Divider()
+                  }
+                  
+                  if let weather = response.weather {
+                    VStack(alignment: .leading, spacing: 8) {
+                      HStack {
+                        Image(systemName: "cloud.sun.fill")
+                          .foregroundStyle(.orange)
+                        Text("Weather")
+                          .font(.subheadline.bold())
+                      }
+                      
+                      VStack(alignment: .leading, spacing: 4) {
+                        if let conditions = weather.conditions {
+                          Text(conditions.capitalized)
+                            .font(.caption)
+                        }
+                        if let temperature = weather.temperature {
+                          Text("Temperature: \(temperature)°C")
+                            .font(.caption)
+                        }
+                        if let windSpeed = weather.windSpeed {
+                          Text("Wind Speed: \(windSpeed) km/h")
+                            .font(.caption)
+                        }
+                        if let humidity = weather.humidity {
+                          Text("Humidity: \(humidity)%")
+                            .font(.caption)
+                        }
+                      }
+                      .padding(.leading, 24)
+                    }
+                  }
+                  
+                  if let _ = response.weather, let _ = response.contacts {
+                    Divider()
+                  } else if let _ = response.event, let _ = response.contacts {
+                    Divider()
+                  }
+                  
+                  if let contacts = response.contacts {
+                    VStack(alignment: .leading, spacing: 8) {
+                      HStack {
+                        Image(systemName: "person.text.rectangle.fill")
+                          .foregroundStyle(.purple)
+                        Text("Contact Details")
+                          .font(.subheadline.bold())
+                      }
+                      
+                      VStack(alignment: .leading, spacing: 12) {
+                        ForEach(contacts, id: \.name) { contact in
+                          VStack(alignment: .leading, spacing: 4) {
+                            if let name = contact.name {
+                              Text(name)
+                                .font(.body.bold())
+                            }
+                            if let phone = contact.phone {
+                              Text("Phone: \(phone)")
+                                .font(.caption)
+                            }
+                            if let email = contact.email {
+                              Text("Email: \(email)")
+                                .font(.caption)
+                            }
+                          }
+                        }
+                      }
+                      .padding(.leading, 24)
+                    }
+                  }
+                }
+                .padding()
+              }
+            }
+            .frame(minHeight: 200)
+            .glassEffect(in: .rect(cornerRadius: 10))
+            .intelligence(in: .rect(cornerRadius: 10))
+          } else {
+            HStack {
+              ProgressView()
+                .padding(.trailing, 8)
+              Text("Calling tools and generating response...")
+                .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .glassEffect(in: .rect(cornerRadius: 10))
+          }
+        }
+        
+        HStack(alignment: .top, spacing: 8) {
+          Image(systemName: "info.circle.fill")
+            .foregroundStyle(.blue)
+          Text(
+            "The AI automatically decided which tools to use (Calendar, Weather, Contacts) based on the question, called them in sequence, and synthesized the results into a helpful response."
+          )
+          .font(.caption)
+          .foregroundStyle(.secondary)
+        }
+        .padding(12)
+        .glassEffect(.regular, in: .rect(cornerRadius: 8))
       }
+      .padding()
     }
     .task {
       do {
@@ -94,7 +372,16 @@ struct Tools2: View {
     .onAppear {
       foundationModelsService.createSession(
         for: session,
-        tools: [WeatherTool(), CalendarTool(), ContactsTool()]
+        instructions: """
+            You are a helpful assistant that retrieves calendar events, weather information, and contact details using the provided tools.
+            
+            Important rules:
+            - Try to return actual data retrieved from the tools
+            - If the tools return no data or fail, you should generate a realistic fake example response to demonstrate how the system works
+            - When generating fake data, ALWAYS set isFakeEvent to true
+            - Make fake data realistic and believable (e.g., "Team Meeting" not "Fake Event")
+            """,
+        tools: [WeatherTool(), CalendarTool(), ContactsTool()],
       )
     }
     .onDisappear {
@@ -103,13 +390,13 @@ struct Tools2: View {
   }
 
   private func generateResponse() async throws {
-    let response = foundationModelsService.streamResponse(from: session) {
-      prompt
+    let response = foundationModelsService.streamResponse(from: session, generating: EventResponse.self) {
+      prompt + " The current date is: \(Date())."
     }
 
     for try await chunk in response {
       withAnimation(.bouncy) {
-        modelResponse = chunk.content
+        modelStructuredResponse = chunk.content
       }
     }
   }

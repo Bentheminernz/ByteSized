@@ -287,94 +287,87 @@ struct PromptsAndParameters3: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 20) {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
           HStack {
             Image(systemName: "thermometer.medium")
-              .font(.largeTitle)
+              .font(.title)
               .foregroundStyle(.orange)
             
             Text("Temperature Control")
-              .font(.largeTitle.bold())
+              .font(.title.bold())
           }
           
           Text(
             "Think of temperature like a creativity dial. Turn it low for focused answers, or high for wild ideas!"
           )
-          .font(.title3)
+          .font(.subheadline)
           .multilineTextAlignment(.center)
           .foregroundStyle(.secondary)
         }
         
-        HStack(spacing: 30) {
-          VStack {
+        HStack(spacing: 20) {
+          VStack(spacing: 6) {
             Image(systemName: "snowflake")
-              .font(.system(size: 50))
+              .font(.system(size: 30))
               .foregroundStyle(.cyan)
             
-            Text("Low Temperature")
-              .font(.headline)
+            Text("Low Temp")
+              .font(.subheadline.bold())
             
-            Text("Predictable & Focused")
-              .font(.caption)
+            Text("Focused")
+              .font(.caption2)
               .foregroundStyle(.secondary)
           }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 12))
+          .padding(12)
+          .glassEffect(.regular, in: .rect(cornerRadius: 10))
           
           Image(systemName: "arrow.right")
-            .font(.title)
+            .font(.title3)
             .foregroundStyle(.secondary)
           
-          VStack {
+          VStack(spacing: 6) {
             Image(systemName: "flame.fill")
-              .font(.system(size: 50))
+              .font(.system(size: 30))
               .foregroundStyle(.orange)
             
-            Text("High Temperature")
-              .font(.headline)
+            Text("High Temp")
+              .font(.subheadline.bold())
             
-            Text("Creative & Random")
-              .font(.caption)
+            Text("Creative")
+              .font(.caption2)
               .foregroundStyle(.secondary)
           }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 12))
+          .padding(12)
+          .glassEffect(.regular, in: .rect(cornerRadius: 10))
         }
         
-        VStack(spacing: 12) {
-          HStack {
-            Spacer()
-            VStack {
-              Text("\(String(format: "%.1f", temperature))")
-                .font(.system(size: 50, weight: .bold, design: .rounded))
-                .contentTransition(.numericText(value: temperature))
-              
-              Text(temperatureText())
-                .font(.headline)
-                .foregroundStyle(temperatureColor())
-            }
-            .padding()
-            .glassEffect(.regular, in: .rect(cornerRadius: 15))
-            Spacer()
-          }
-          
+        VStack(spacing: 8) {
           HStack(spacing: 12) {
             Image(systemName: "snowflake")
               .foregroundStyle(.cyan)
+              .font(.title3)
             
             Slider(value: $temperature, in: 0...1, step: 0.1) {
               Text("Temperature: \(String(format: "%.1f", temperature))")
-            } minimumValueLabel: {
-              Text("0.0")
-                .font(.caption)
-            } maximumValueLabel: {
-              Text("1.0")
-                .font(.caption)
             }
             .tint(temperatureColor())
             
             Image(systemName: "flame.fill")
               .foregroundStyle(.orange)
+              .font(.title3)
+            
+            VStack(spacing: 2) {
+              Text("\(String(format: "%.1f", temperature))")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .contentTransition(.numericText(value: temperature))
+              
+              Text(temperatureText())
+                .font(.caption)
+                .foregroundStyle(temperatureColor())
+            }
+            .frame(width: 120)
+            .padding(8)
+            .glassEffect(.regular, in: .rect(cornerRadius: 10))
           }
         }
         
@@ -412,6 +405,10 @@ struct PromptsAndParameters3: View {
           }
           .padding(.top)
           
+          Text("Edit me! Try asking the same question with different temperatures to see how the response changes.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+          
           TextField("Enter your prompt here", text: $prompt)
             .padding()
             .glassEffect(in: .rect(cornerRadius: 10))
@@ -436,7 +433,7 @@ struct PromptsAndParameters3: View {
                 .padding()
                 .foregroundStyle(oldModelOutput.isEmpty ? .tertiary : .primary)
             }
-            .frame(minHeight: 150)
+            .frame(minHeight: 100)
             .glassEffect(in: .rect(cornerRadius: 10))
             .intelligence(in: .rect(cornerRadius: 10))
           }
@@ -455,7 +452,7 @@ struct PromptsAndParameters3: View {
                 .padding()
                 .foregroundStyle(modelOutput.isEmpty ? .tertiary : .primary)
             }
-            .frame(minHeight: 150)
+            .frame(minHeight: 100)
             .glassEffect(in: .rect(cornerRadius: 10))
             .intelligence(in: .rect(cornerRadius: 10))
           }
@@ -480,12 +477,12 @@ struct PromptsAndParameters3: View {
       }
       .padding(.horizontal)
       .animation(.bouncy, value: temperature)
-      .onChange(of: temperature) {
+      .onChange(of: temperature) { oldValue, newValue in
         if foundationModelsService.statuses[session] != .generating
             && foundationModelsService.statuses[session] != .requested
         {
-          //        modelOutput = ""
           Task {
+            try? await Task.sleep(for: .milliseconds(300))
             await generateResponse()
           }
         }
@@ -579,96 +576,81 @@ struct PromptsAndParameters4: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 20) {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
           HStack {
             Image(systemName: "text.alignleft")
-              .font(.largeTitle)
+              .font(.title)
               .foregroundStyle(.green)
             
             Text("Max Tokens")
-              .font(.largeTitle.bold())
+              .font(.title.bold())
           }
           
           Text("Control How Long the AI's Response Should Be")
-            .font(.title3)
+            .font(.subheadline)
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
         }
         
-        HStack(spacing: 30) {
-          VStack(spacing: 12) {
+        HStack(spacing: 16) {
+          VStack(spacing: 6) {
             Image(systemName: "text.word.spacing")
-              .font(.system(size: 50))
+              .font(.system(size: 30))
               .foregroundStyle(.blue)
             
             Text("What are Tokens?")
-              .font(.headline)
+              .font(.subheadline.bold())
             
-            Text("Tokens are like building blocks of text. A word can be 1-2 tokens.")
+            Text("Building blocks of text")
               .multilineTextAlignment(.center)
-              .font(.subheadline)
+              .font(.caption2)
               .foregroundStyle(.secondary)
           }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 15))
-          .frame(width: 300)
+          .padding(12)
+          .glassEffect(.regular, in: .rect(cornerRadius: 10))
+          .frame(maxWidth: .infinity)
           
-          VStack(spacing: 12) {
+          VStack(spacing: 6) {
             Image(systemName: "ruler")
-              .font(.system(size: 50))
+              .font(.system(size: 30))
               .foregroundStyle(.purple)
             
             Text("Max Tokens")
-              .font(.headline)
+              .font(.subheadline.bold())
             
-            Text("Sets a limit on how many tokens (words) the AI can use in its response.")
+            Text("Limits response length")
               .multilineTextAlignment(.center)
-              .font(.subheadline)
+              .font(.caption2)
               .foregroundStyle(.secondary)
           }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 15))
-          .frame(width: 300)
+          .padding(12)
+          .glassEffect(.regular, in: .rect(cornerRadius: 10))
+          .frame(maxWidth: .infinity)
           
-          VStack(spacing: 12) {
+          VStack(spacing: 6) {
             Image(systemName: "scissors")
-              .font(.system(size: 50))
+              .font(.system(size: 30))
               .foregroundStyle(.orange)
             
             Text("Why Limit?")
-              .font(.headline)
+              .font(.subheadline.bold())
             
-            Text("Helps control costs and keeps responses short when you don't need long answers.")
+            Text("Control costs & brevity")
               .multilineTextAlignment(.center)
-              .font(.subheadline)
+              .font(.caption2)
               .foregroundStyle(.secondary)
           }
-          .padding()
-          .glassEffect(.regular, in: .rect(cornerRadius: 15))
-          .frame(width: 300)
+          .padding(12)
+          .glassEffect(.regular, in: .rect(cornerRadius: 10))
+          .frame(maxWidth: .infinity)
         }
         
-        VStack(spacing: 12) {
-          HStack {
-            Spacer()
-            VStack {
-              Text(String(format: "%.0f", maxTokens))
-                .font(.system(size: 50, weight: .bold, design: .rounded))
-                .contentTransition(.numericText(value: maxTokens))
-              
-              Text("tokens")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            }
-            .padding()
-            .glassEffect(.regular, in: .rect(cornerRadius: 15))
-            Spacer()
-          }
-          
+        VStack(spacing: 8) {
           HStack(spacing: 12) {
             Text("Short")
               .font(.caption)
               .foregroundStyle(.secondary)
+              .frame(width: 40)
             
             Slider(value: $maxTokens, in: 20...200, step: 10) {
               Text("Max Tokens: \(Int(maxTokens))")
@@ -678,6 +660,20 @@ struct PromptsAndParameters4: View {
             Text("Long")
               .font(.caption)
               .foregroundStyle(.secondary)
+              .frame(width: 40)
+            
+            VStack(spacing: 2) {
+              Text(String(format: "%.0f", maxTokens))
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .contentTransition(.numericText(value: maxTokens))
+              
+              Text("tokens")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            .frame(width: 100)
+            .padding(8)
+            .glassEffect(.regular, in: .rect(cornerRadius: 10))
           }
         }
         
@@ -714,6 +710,10 @@ struct PromptsAndParameters4: View {
               .font(.headline)
           }
           
+          Text("Edit me! Try asking the same question with different max token limits to see how the response length changes.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+          
           TextField("Enter your prompt here", text: $prompt)
             .padding()
             .glassEffect(in: .rect(cornerRadius: 10))
@@ -736,7 +736,7 @@ struct PromptsAndParameters4: View {
               .padding()
               .foregroundStyle(modelOutput.isEmpty ? .tertiary : .primary)
           }
-          .frame(minHeight: 200)
+          .frame(minHeight: 120)
           .glassEffect(in: .rect(cornerRadius: 10))
           .intelligence(in: .rect(cornerRadius: 10))
         }
@@ -767,11 +767,12 @@ struct PromptsAndParameters4: View {
     .task {
       foundationModelsService.createSession(for: session)
     }
-    .onChange(of: maxTokens) {
+    .onChange(of: maxTokens) { oldValue, newValue in
       if foundationModelsService.statuses[session] != .generating
           && foundationModelsService.statuses[session] != .requested
       {
         Task {
+          try? await Task.sleep(for: .milliseconds(300))
           await generateResponse()
         }
       }

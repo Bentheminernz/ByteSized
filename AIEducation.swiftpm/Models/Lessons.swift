@@ -831,7 +831,7 @@ struct LessonCourses {
           slides: [
             Slide(
               id: 1,
-              title: "A tool?? For an AI?",
+              title: "AI can use tools??",
               icon: "hammer",
             ) {
               Tools1()

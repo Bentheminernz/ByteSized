@@ -211,6 +211,9 @@ struct MainView: View {
             lessonID: lesson.id,
             in: modelContext
           )
+        },
+        earlyClose: {
+          selectedLesson = nil
         }
       )
       .confettiOverlay(

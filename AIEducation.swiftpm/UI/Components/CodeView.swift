@@ -89,8 +89,9 @@ struct CodeViewer: View {
       }
       .overlay(alignment: .topTrailing) {
         Label(language.name, systemImage: language.icon)
+          .foregroundStyle(.white)
           .padding(8)
-          .glassEffect(.regular.tint(language.color).interactive(), in: .capsule)
+          .glassEffect(.regular.tint(language.color), in: .capsule)
           .padding(8)
       }
     }

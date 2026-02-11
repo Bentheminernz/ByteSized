@@ -11,6 +11,7 @@ struct LessonSheet: View {
   let lesson: Lesson
   let animation: Namespace.ID
   let onClose: () -> Void
+  let earlyClose: () -> Void
 
   @State private var currentIndex: Int = 0
   @State private var quizIndex: Int = 0
@@ -452,7 +453,7 @@ struct SlideHeaderCard: View {
       }
     }
     .padding()
-    .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 15))
+    .glassEffect(.clear, in: .rect(cornerRadius: 15))
   }
 }
 
@@ -513,7 +514,8 @@ struct LessonCompletionView: View {
   LessonSheet(
     lesson: LessonCourses.allCourses[2].lessons[0],
     animation: Namespace().wrappedValue,
-    onClose: {}
+    onClose: {},
+    earlyClose: {}
   )
 }
 
