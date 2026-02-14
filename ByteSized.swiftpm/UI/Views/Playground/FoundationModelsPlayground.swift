@@ -1,6 +1,6 @@
 //
 //  FoundationModelsPlayground.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 14/11/2025.
 //

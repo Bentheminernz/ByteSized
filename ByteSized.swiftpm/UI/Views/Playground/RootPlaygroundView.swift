@@ -1,6 +1,6 @@
 //
 //  PlaygroundView.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 13/11/2025.
 //

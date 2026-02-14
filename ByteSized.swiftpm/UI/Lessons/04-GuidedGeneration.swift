@@ -1,6 +1,6 @@
 //
 //  04-GuidedGeneration.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 28/11/2025.
 //
@@ -509,7 +509,7 @@ struct GuidedGeneration3: View {
           Text("Budget Tracking")
             .font(.headline)
           
-          Text("Organize expenses into categories with amounts that can be graphed and analyzed")
+          Text("Organize expenses into categories with amounts that can be graphed and analysed")
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
             .font(.subheadline)

@@ -1,6 +1,6 @@
 //
 //  ConfettiManager.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 30/11/2025.
 //

@@ -1,11 +1,11 @@
 //
 //  listofcredits.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 05/11/2025.
 //
 
-/// Nature Images https://archive.org/details/various-nature-images-zip
+/// Nature Images https://archive.org/details/various-nature-images-zip (Specifically: https://archive.org/download/various-nature-images-zip/Palm%20Tree%20images.zip)
 /// cat https://unsplash.com/photos/silver-tabby-kitten-on-floor-7AIDE8PrvA0
 /// driving - recorded by me (Ben Lawrence)
 /// TrainingData - photo by me (Ben Lawrence)

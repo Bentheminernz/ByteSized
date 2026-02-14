@@ -1,6 +1,6 @@
 //
 //  DynamicSchemaBuilder.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 10/01/2026.
 //
@@ -162,9 +162,9 @@ struct ExampleSchema {
       description: "Whether the dog is trained"
     ),
     SchemaField(
-      name: "favoriteToys",
+      name: "favouriteToys",
       type: .stringArray,
-      description: "A list of the dog's favorite toys",
+      description: "A list of the dog's favourite toys",
       arrayCount: 5
     ),
   ]

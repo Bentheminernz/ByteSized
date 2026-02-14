@@ -1,6 +1,6 @@
 //
 //  LessonSheet.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 29/11/2025.
 //
@@ -22,7 +22,7 @@ struct LessonSheet: View {
   @State private var answersCorrect: Int = 0
   @State private var selectedAnswerIDsByQuestion: [Int?] = []
 
-  #if targetEnvironment(simulator)
+  #if targetEnvironment(simulator) && DEBUG
     @State var showHideSheetButton: Bool = true
   #endif
   
@@ -400,7 +400,8 @@ struct LessonSheet: View {
         onClose()
       }
     #endif
-    #if targetEnvironment(simulator)
+    #if targetEnvironment(simulator) && DEBUG
+
       .overlay {
         if showHideSheetButton {
           VStack {

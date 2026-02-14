@@ -1,6 +1,6 @@
 //
 //  FallingItem.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 04/12/2025.
 //
@@ -81,10 +81,13 @@ struct FallingItemsView<Content, ItemView: View>: View {
   func startContinuousFlow() {
     timer = Timer.scheduledTimer(withTimeInterval: spawnInterval, repeats: true)
     { _ in
-      addNewItem(delay: 0)
+      Task { @MainActor in
+        addNewItem(delay: 0)
+      }
     }
   }
 
+  @MainActor
   func addNewItem(delay: Double) {
     guard let randomContent = items.randomElement() else { return }
 

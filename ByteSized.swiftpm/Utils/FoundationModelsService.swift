@@ -1,6 +1,6 @@
 //
 //  FoundationModelsService.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 05/01/2026.
 //

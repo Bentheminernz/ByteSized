@@ -1,6 +1,6 @@
 //
 //  CodeView.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 23/11/2025.
 //

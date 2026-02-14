@@ -1,6 +1,6 @@
 //
 //  08-AISafetyBias.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 28/11/2025.
 //
@@ -92,7 +92,7 @@ struct AISafetyBias2: View {
           icon: "briefcase.fill",
           color: .green,
           title: "Job Applications",
-          description: "An AI screening resumes might favor candidates from certain schools or backgrounds if the training data mostly included people from those backgrounds who were hired in the past.",
+          description: "An AI screening resumes might favour candidates from certain schools or backgrounds if the training data mostly included people from those backgrounds who were hired in the past.",
           impact: "Qualified candidates might be unfairly overlooked"
         )
         
@@ -256,7 +256,7 @@ struct AISafetyBias4: View {
             color: .red,
             title: "Take Action",
             points: [
-              "Report biased or unfair AI behavior when you see it",
+              "Report biased or unfair AI behaviour when you see it",
               "Support companies and products that prioritize fairness",
               "Learn about AI ethics if you're interested in tech careers"
             ]

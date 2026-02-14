@@ -1,6 +1,6 @@
 //
 //  GenerationState.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 09/12/2025.
 //

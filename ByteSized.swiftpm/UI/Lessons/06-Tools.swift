@@ -1,6 +1,6 @@
 //
 //  06-Tools.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 09/12/2025.
 //
@@ -55,7 +55,7 @@ struct Tools1: View {
           Text("Internet Access")
             .font(.headline)
           
-          Text("Fetch real-time data beyond training cutoff dates")
+          Text("Fetch real-time data beyond training cut-off dates")
             .multilineTextAlignment(.center)
             .foregroundStyle(.secondary)
             .font(.subheadline)

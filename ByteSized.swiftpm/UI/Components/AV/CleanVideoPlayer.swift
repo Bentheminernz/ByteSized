@@ -1,6 +1,6 @@
 //
 //  CleanVideoPlayer.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 16/11/2025.
 //

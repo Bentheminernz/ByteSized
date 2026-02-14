@@ -1,6 +1,6 @@
 //
 //  09-WhereToUseAI.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 28/11/2025.
 //
@@ -217,7 +217,7 @@ struct AIFutureCareers3: View {
             color: .blue,
             title: "AI/ML Engineer",
             description: "Build and train AI models that can learn and make predictions",
-            skills: ["Programming", "Math", "Problem-solving"],
+            skills: ["Programming", "Maths", "Problem-solving"],
             funFact: "This is one of the fastest-growing jobs in tech!"
           )
           
@@ -341,7 +341,7 @@ struct AIFutureCareers4: View {
           .font(.title.bold())
         
         Text(
-          "Good news: you don't need to be a math genius or coding expert to work with AI! Here's how you can start preparing today, no matter what you're interested in:"
+          "Good news: you don't need to be a maths genius or coding expert to work with AI! Here's how you can start preparing today, no matter what you're interested in:"
         )
         
         VStack(spacing: 20) {

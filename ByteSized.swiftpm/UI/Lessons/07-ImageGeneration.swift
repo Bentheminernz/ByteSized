@@ -1,6 +1,6 @@
 //
 //  ImageView.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 05/11/2025.
 //
@@ -147,7 +147,7 @@ struct ImageGeneration2: View {
         }
 
         Text(
-          "Just like how Large Language Models are trained on vast amounts of text data to understand patterns and relationships between words, AI image generation models, also known as, Diffusion Models, are trained on huge datasets of images. They learn to recognize patterns, colors, shapes, and objects within those images. When given a prompt, they use that learned knowledge to generate new images that match the description."
+          "Just like how Large Language Models are trained on vast amounts of text data to understand patterns and relationships between words, AI image generation models, also known as, Diffusion Models, are trained on huge datasets of images. They learn to recognize patterns, colours, shapes, and objects within those images. When given a prompt, they use that learned knowledge to generate new images that match the description."
         )
         .font(.body)
         .multilineTextAlignment(.center)
@@ -366,7 +366,7 @@ struct ImageGeneration4: View {
         Text(
           "Sorry, Image Generation powered by Apple Intelligence is not supported on your device."
         )
-        Text("Heres an example of what it would look like:")
+        Text("Here is an example of what it would look like:")
         
         #if targetEnvironment(simulator)
           Text("Image Playground is not supported in the simulator. If possible could you test this feature on a physical device?")

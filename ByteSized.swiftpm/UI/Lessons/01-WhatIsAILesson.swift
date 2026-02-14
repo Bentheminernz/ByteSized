@@ -1,6 +1,6 @@
 //
 //  WhatIsAILesson.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 14/11/2025.
 //
@@ -206,7 +206,7 @@ struct WhatIsAILesson3: View {
       .padding()
 
       Text(
-        "Behind the scenes, it's basically a giant math equation. The computer looks at thousands of cat pictures and keeps tweaking the numbers in its equation—trying over and over until it gets really accurate at spotting cats. It's like practicing until you get perfect!"
+        "Behind the scenes, it's basically a giant maths equation. The computer looks at thousands of cat pictures and keeps tweaking the numbers in its equation—trying over and over until it gets really accurate at spotting cats. It's like practicing until you get perfect!"
       )
       .font(.body)
       .padding()

@@ -1,6 +1,6 @@
 //
 //  ImagePlaygroundView.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 14/11/2025.
 //
@@ -398,7 +398,7 @@ struct ImagePlaygroundView: View {
       return "Error: Image creation was cancelled."
     case .creationFailed:
       return
-        "Error: Creation of the image failed. This could be caused by a bad reference isssue or prompt, try play around with different images and prompts. Sorry!"
+        "Error: Creation of the image failed. This could be caused by a bad reference issue or prompt, try play around with different images and prompts. Sorry!"
     case .faceInImageTooSmall:
       return
         "Error: Face in image is too small. Try using a higher resolution reference image."

@@ -1,6 +1,6 @@
 //
 //  DefinableText.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 21/11/2025.
 //
@@ -52,7 +52,7 @@ struct DefinableText: View {
     "json":
       "JavaScript Object Notation, a lightweight data format that is easy for humans to read and write, and easy for machines to parse and generate.",
     "system instruction":
-      "A special prompt that sets the behavior and guidelines for how the model should respond.",
+      "A special prompt that sets the behaviour and guidelines for how the model should respond.",
   ]
 
   init(_ text: String, definitions: [String: String]? = nil) {

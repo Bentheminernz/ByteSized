@@ -1,6 +1,6 @@
 //
 //  Welcome.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 14/11/2025.
 //
@@ -59,7 +59,7 @@ struct WelcomePage1: View {
   var body: some View {
     VStack {
       WelcomeComponents.WelcomePageHeader(
-        title: "Welcome to Bytesized",
+        title: "Welcome to ByteSized",
         subtitle: "Your bite-sized guide to learning AI concepts and technologies.",
         imageName: "AppIcon",
         withExtension: "jpg"

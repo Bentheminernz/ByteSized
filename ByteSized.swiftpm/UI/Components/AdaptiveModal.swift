@@ -1,6 +1,6 @@
 //
 //  AdaptiveModal.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 28/11/2025.
 //

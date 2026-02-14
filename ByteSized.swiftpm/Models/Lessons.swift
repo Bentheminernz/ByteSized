@@ -1,6 +1,6 @@
 //
 //  Lessons.swift
-//  AIEducation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 07/11/2025.
 //

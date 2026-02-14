@@ -1,5 +1,6 @@
+//
 //  MainView.swift
-//  AIEduation
+//  ByteSized
 //
 //  Created by Ben Lawrence on 06/11/2025.
 //
