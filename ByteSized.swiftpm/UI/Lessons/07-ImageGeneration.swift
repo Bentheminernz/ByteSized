@@ -368,6 +368,10 @@ struct ImageGeneration4: View {
         )
         Text("Heres an example of what it would look like:")
         
+        #if targetEnvironment(simulator)
+          Text("Image Playground is not supported in the simulator. If possible could you test this feature on a physical device?")
+        #endif
+        
         if let url = Bundle.main.url(
           forResource: "AIExample",
           withExtension: "jpg"

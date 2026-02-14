@@ -9,8 +9,6 @@ import SwiftData
 import SwiftUI
 
 struct MainView: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
   @Namespace private var animation
   @State private var expandedCardId: Int?
   @Query private var completedLessons: [CompletedLesson]
@@ -25,7 +23,6 @@ struct MainView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   @State private var confettiManager: ConfettiManager = .shared
-  @State private var isLandscape: Bool = UIDevice.current.orientation.isLandscape
 
   private var nextUncompletedLessonID: Int? {
     // Flatten all lessons in order and find the first that is not completed
@@ -42,7 +39,9 @@ struct MainView: View {
 
   var body: some View {
     Group {
-      if horizontalSizeClass == .regular && isLandscape {
+      GeometryReader { geometry in
+        let isLandscape = geometry.size.width > geometry.size.height
+        if isLandscape {
         // iPad layout: keep existing horizontal carousels
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
@@ -189,6 +188,7 @@ struct MainView: View {
           }
         }
       }
+      }
     }
     .padding(.top)
     .navigationTitle("ByteSized")
@@ -232,14 +232,8 @@ struct MainView: View {
       }
       .interactiveDismissDisabled()
     }
-    .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-      isLandscape = UIDevice.current.orientation.isLandscape
-    }
-    .onAppear {
-      isLandscape = UIDevice.current.orientation.isLandscape
-    }
   }
-
+  
   @ViewBuilder
   private func LessonCardPhone(_ lesson: Lesson, isNext: Bool = false)
     -> some View

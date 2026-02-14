@@ -78,17 +78,24 @@ struct LessonSheet: View {
 //            Spacer()
 
             HStack {
-              Button("Previous") {
-                isAdvancing = false
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                  withAnimation(.smooth) {
-                    currentIndex = max(currentIndex - 1, 0)
+              if currentIndex == 0 {
+                Button("Exit") {
+                  earlyClose()
+                }
+                .buttonStyle(.glassProminent)
+              } else {
+                Button("Previous") {
+                  isAdvancing = false
+                  
+                  DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.smooth) {
+                      currentIndex = max(currentIndex - 1, 0)
+                    }
                   }
                 }
+                .buttonStyle(.glassProminent)
+                .disabled(currentIndex == 0)
               }
-              .buttonStyle(.glassProminent)
-              .disabled(currentIndex == 0)
 
               Spacer()
 

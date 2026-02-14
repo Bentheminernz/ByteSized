@@ -37,37 +37,39 @@ struct PlaygroundView: View {
     VStack {
       if showPlayground {
         HorizontalView {
-          Picker("Select View", selection: $selectedView) {
-            Text("LLM Playground").tag(CurrentView.foundationModels)
-            Text("Image Generation Playground").tag(CurrentView.imagePlayground)
-          }
-          .pickerStyle(SegmentedPickerStyle())
-          .padding(.horizontal)
-          .padding(.top)
-          
-          //      Divider()
-          
-          switch selectedView {
-          case .foundationModels:
-            FoundationModelsPlayground()
-          case .imagePlayground:
-            if let isSupported = imageCreatorService.isSupported,
-               isSupported {
-              ImagePlaygroundView()
-            } else {
-              ContentUnavailableView {
-                Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
-              } description: {
-                Text("Image Generation powered by Apple Intelligence is not supported on your device.")
+          VStack {
+            Picker("Select View", selection: $selectedView) {
+              Text("LLM Playground").tag(CurrentView.foundationModels)
+              Text("Image Generation Playground").tag(CurrentView.imagePlayground)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding(.horizontal)
+            .padding(.top)
+            
+            //      Divider()
+            
+            switch selectedView {
+            case .foundationModels:
+              FoundationModelsPlayground()
+            case .imagePlayground:
+              if let isSupported = imageCreatorService.isSupported,
+                 isSupported {
+                ImagePlaygroundView()
+              } else {
+                ContentUnavailableView {
+                  Label("Image Generation Not Supported", systemImage: "apple.intelligence.badge.xmark")
+                } description: {
+                  Text("Image Generation powered by Apple Intelligence is not supported on your device.")
 #if targetEnvironment(simulator)
-                Text("Image Playground is not supported in the simulator :), Please test on a real device.")
+                  Text("Image Playground is not supported in the simulator. If possible could you test this feature on a physical device?")
 #endif
+                }
               }
             }
           }
         } placeholder: {
           ContentUnavailableView {
-            Label("Please Rotate Your Device", systemImage: "iphone.landscape")
+            Label("Please Rotate Your Device", systemImage: "rectangle.portrait.rotate")
           }
         }
       } else {
