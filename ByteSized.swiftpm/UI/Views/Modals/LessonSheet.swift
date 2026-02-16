@@ -201,7 +201,7 @@ struct LessonSheet: View {
                       } else if selectedAnswerID == answer.id
                         && selectedAnswerID != correctAnswerID
                       {
-                        Image(systemName: "xmark.circle.fill").foregroundStyle(
+                        Image(systemName: "xmark.octagon").foregroundStyle(
                           .red
                         )
                       } else {

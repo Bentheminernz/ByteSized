@@ -839,7 +839,7 @@ struct InsightView: View {
     VStack(spacing: 20) {
       HStack(spacing: 40) {
         VStack {
-          Image(systemName: "xmark.circle.fill")
+          Image(systemName: "xmark.octagon")
             .font(.system(size: 40))
             .foregroundStyle(.red)
           Text("Memorizing")

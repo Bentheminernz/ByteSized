@@ -1,6 +1,6 @@
 //
 //  CodeView.swift
-//  ByteSized
+//  AIEducation
 //
 //  Created by Ben Lawrence on 23/11/2025.
 //
@@ -35,7 +35,7 @@ struct CodeViewer: View {
         return "curlybraces"
       }
     }
-    
+
     var name: String {
       switch self {
       case .swift:
@@ -95,7 +95,9 @@ struct CodeViewer: View {
           .padding(8)
       }
     }
-    .accessibilityLabel("A code block in \(language.name) with \(lineCount) lines")
+    .accessibilityLabel(
+      "A code block in \(language.name) with \(lineCount) lines"
+    )
     .task(id: taskID) {
       await highlightNow()
     }

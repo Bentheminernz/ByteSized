@@ -125,7 +125,7 @@ struct PromptsAndParameters2: View {
       HStack(spacing: 20) {
         VStack(alignment: .leading, spacing: 12) {
           HStack {
-            Image(systemName: "xmark.circle.fill")
+            Image(systemName: "xmark.octagon")
               .foregroundStyle(.red)
               .font(.title)
             Text("Vague Prompt")
