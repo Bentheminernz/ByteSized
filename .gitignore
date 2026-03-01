@@ -95,5 +95,6 @@ iOSInjectionProject/
 DS_Store
 /.DS_Store
 .vscode
-
-
+# This build is exact same as original ByteSized project, just without all the debug stuff as I'm unsure if Apple runs the app in a debug environment
+ByteSizedSubmission.*
+ByteSizedSubmission.*.*
